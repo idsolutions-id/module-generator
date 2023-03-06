@@ -1,0 +1,40 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('{{ table }}', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+
+            $table->unsignedInteger('created_at');
+            $table->foreignUuid('created_by')->nullable()->constrained('users')->onUpdate('cascade');
+            $table->unsignedInteger('updated_at');
+            $table->foreignUuid('updated_by')->nullable()->constrained('users')->onUpdate('cascade');
+            $table->unsignedInteger('deleted_at')->nullable();
+            $table->foreignUuid('deleted_by')->nullable()->constrained('users')->onUpdate('cascade');
+        });
+
+        Artisan::call('create:permission', ['name' => '{{ table }}']);
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('{{ table }}');
+    }
+};

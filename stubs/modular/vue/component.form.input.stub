@@ -1,0 +1,2 @@
+                <FormInput name="$VAR_NAME$" v-model="form.$VAR_NAME$" label="$TITLE$" :disabled="store.isView"
+                    placeholder="Silahkan masukan $TITLE$" class="uk-margin" />

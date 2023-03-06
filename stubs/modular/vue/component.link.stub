@@ -1,0 +1,52 @@
+<script>
+export default {
+    props: {
+        type: String,
+    },
+    setup() {
+        const auth = useAuthStore();
+        const can = auth.can;
+        return { can };
+    },
+    data() {
+        return {
+            navigations: [
+                {
+                    title: '$NAME$',
+                    permission: 'module.$LOWER_NAME$',
+                    children: [
+                        {
+                            title: '$NAME$',
+                            link: '/dashboard/$API_ROUTE$',
+                            icon: 'AppsIcon',
+                            permission: 'module.$LOWER_NAME$',
+                        },
+                        //add link here ...
+                    ],
+                },
+                //add more nav here ...
+            ]
+        }
+    }
+}
+</script>
+
+<template>
+    <template v-for="(tab,index) in navigations" :key="index">
+        <li v-if="can(`${tab.permission}-index`)" class="uk-nav-header uk-margin-remove-top">
+            <span class="navigation-side-label"><b>{{ tab.title }}</b></span>
+        </li>
+        <template v-for="tab in tab.children" :key="tab.link">
+            <li v-if="can(`${tab.permission}-index`)" class="link"
+                :class="{ 'active': $route.path == tab.link}">
+                <RouterLink :to="tab.link">
+                    <span
+                        class="navigation-side-icon material-icons md-20 uk-margin-small-right uk-margin-remove-bottom">
+                        <component v-bind:is="tab.icon" />
+                    </span>
+                    <span class="navigation-side-label">{{tab.title}}</span>
+                </RouterLink>
+            </li>
+        </template>
+    </template>
+</template>

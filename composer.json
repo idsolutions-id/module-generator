@@ -1,0 +1,38 @@
+{
+    "name": "vheins/laravel-module-generator",
+    "description": "Generate Laravel Modules from a template.",
+    "type": "laravel-module",
+    "authors": [
+        {
+            "name": "Muhammad Rheza Alfin",
+            "email": "aRhez0903@gmail.com"
+        }
+    ],
+    "keywords": [
+        "Laravel",
+        "Laravel Modules",
+        "Generator"
+    ],
+    "require": {
+        "lorisleiva/laravel-actions": "^2.4",
+        "symfony/yaml": "^6.2"
+    },
+    "require-dev": {
+        "nwidart/laravel-modules": "^9.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Vheins\\LaravelModuleGenerator\\Providers\\LaravelModuleGeneratorServiceProvider"
+            ],
+            "aliases": {
+                "ModuleGenerator": "Vheins\\LaravelModuleGenerator\\Facades\\LaravelModuleGenerator"
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Vheins\\LaravelModuleGenerator\\": ""
+        }
+    }
+}

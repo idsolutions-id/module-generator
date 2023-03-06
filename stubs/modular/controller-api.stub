@@ -1,0 +1,53 @@
+<?php
+
+namespace $CLASS_NAMESPACE$;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+use $MODULE_NAMESPACE$\$MODULE$\Models\$NAME$;
+use $MODULE_NAMESPACE$\$MODULE$\Actions\$NAME$Store;
+use $MODULE_NAMESPACE$\$MODULE$\Actions\$NAME$Update;
+use $MODULE_NAMESPACE$\$MODULE$\Actions\$NAME$Delete;
+use $MODULE_NAMESPACE$\$MODULE$\Requests\$NAME$StoreRequest;
+use $MODULE_NAMESPACE$\$MODULE$\Requests\$NAME$UpdateRequest;
+
+
+class $CLASS$ extends Controller
+{
+    protected $is_public = false;
+    protected $need_permission = true;
+    public $permission = 'module.$PERMISSION$';
+
+    public function index(Request $request)
+    {
+        $model = $NAME$::query();
+        $data = $this->search($model, $request);
+        return $this->success($data);
+    }
+
+    public function store($NAME$StoreRequest $request)
+    {
+        $store = $NAME$Store::run($request);
+        return $this->success($store);
+    }
+
+    public function show($NAME$ $$MODEL_VAR$)
+    {
+        //$$MODEL_VAR$->load();
+        return $this->success($$MODEL_VAR$);
+    }
+
+    public function update($NAME$UpdateRequest $request, $NAME$ $$MODEL_VAR$)
+    {
+        $update = $NAME$Update::run($request,$$MODEL_VAR$);
+        return $this->success($update);
+    }
+
+
+    public function destroy($NAME$ $$MODEL_VAR$)
+    {
+        $delete = $NAME$Delete::run($$MODEL_VAR$);
+        return $this->success($delete);
+    }
+}

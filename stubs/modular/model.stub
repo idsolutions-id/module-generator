@@ -1,0 +1,12 @@
+<?php
+
+namespace $NAMESPACE$;
+
+use App\Models\Model;
+
+class $CLASS$ extends Model
+{
+
+    protected $fillable = $FILLABLE$;
+
+}

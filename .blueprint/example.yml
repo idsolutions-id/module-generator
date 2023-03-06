@@ -1,0 +1,31 @@
+ExampleModuleName1:
+  ExampleSubModuleName1:
+    Fillable:
+      column_name_1: "string"
+      column_name_2: "boolean"
+      column_name_3: "integer"
+      column_name_4: "uuid"
+
+    Foreign:
+      foreign_column_name_1: table_name.column_name
+
+ExampleModuleName2:
+  ExampleSubModuleName2a:
+    Fillable:
+      column_name_1: "string"
+      column_name_2: "boolean"
+      column_name_3: "integer"
+      column_name_4: "uuid"
+
+    Foreign:
+      foreign_column_name_1: table_name.column_name
+
+  ExampleSubModuleName2b:
+    Fillable:
+      column_name_1: "string"
+      column_name_2: "boolean"
+      column_name_3: "integer"
+      column_name_4: "uuid"
+
+    Foreign:
+      foreign_column_name_1: table_name.column_name

@@ -1,0 +1,11 @@
+{
+    "name": "Laravel Module Generator",
+    "alias": "laravel-module-generator",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Vheins\\LaravelModuleGenerator\\Providers\\LaravelModuleGeneratorServiceProvider"
+    ],
+    "files": []
+}

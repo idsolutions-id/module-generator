@@ -1,0 +1,111 @@
+<script>
+export default {
+    setup() {
+        const auth = useAuthStore();
+        const can = auth.can;
+        const helper = useHelperStore();
+        const response = useResponseStore();
+        const store = useModule$CLASS$Store();
+        return { auth, can, helper, response, store };
+    },
+    data() {
+        return {
+            form: $FILLABLE$
+        }
+    },
+    methods: {
+        submit() {
+            this.store.submitForm(this.method, this.form)
+                .then(res => {
+                    this.store.setView();
+                    this.$swal({
+                        icon: 'success',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        text: 'Data Berhasil di Update!',
+                        timer: 1500,
+                        toast: true,
+                    });
+                    if (this.method == "POST") {
+                        this.$router.push(res.data.id)
+                    }
+                })
+        },
+        remove() {
+            this.$swal({
+                title: 'Hapus Data?',
+                text: "Data tidak akan dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.store.remove(this.data.id).then(() => {
+                        this.$router.push(`${this.store.route}`);
+                        this.store.setView();
+                        this.$swal({
+                            icon: 'warning',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            text: 'Data Berhasil di Hapus!',
+                            timer: 1500,
+                            toast: true,
+                        });
+                    });
+                }
+            });
+        }
+    },
+    props: {
+        method: String,
+        data: Object,
+    },
+    watch: {
+        data: function (value) {
+            if (value) $THIS_FORM$
+        },
+    }
+}
+</script>
+
+<template>
+    <div v-if="store.loading" class="uk-card uk-card-default">
+        <FacebookLoader />
+    </div>
+    <div v-else class="uk-card uk-card-default">
+        <div class="uk-card-header uk-padding-small">
+            <div class="uk-grid-small uk-flex-middle" uk-grid>
+                <div class="uk-width-expand">
+                    <h3 class="uk-card-title uk-text-truncate">
+                        {{ data && data.name ? data.name : 'Buat Company Baru' }}
+                    </h3>
+                </div>
+                <FormButtonTool :data="data" :store="store" />
+            </div>
+        </div>
+        <div class="uk-form-stacked" autocomplete="off">
+            <div class="uk-card-body uk-padding-remove-top uk-margin-top">
+$FORM$
+            </div>
+            <div v-if="(store.isEdit || store.isCreate) && (can(`${store.permission}-create`) || can(`${store.permission}-edit`))"
+                class="uk-card-footer uk-padding-small">
+                <button @click="submit" type="submit" :disabled="store.loading"
+                    class=" uk-button uk-button-small uk-border-rounded uk-button-primary red uk-float-right">
+                    <span class="material-icons uk-text-middle">
+                        <DeviceFloppyIcon />
+                    </span> Simpan
+                </button>
+
+                <button @click="remove" :disabled="store.loading"
+                    v-if="store.isEdit && can(`${store.permission}-delete`)"
+                    class="uk-button uk-button-small uk-border-rounded uk-button-warning uk-float-left">
+                    <span class="material-icons uk-text-middle">
+                        <TrashIcon />
+                    </span> Hapus
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
