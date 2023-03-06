@@ -1,8 +1,12 @@
 {
-    "name": "vheins/laravel-module-generator",
+    "name": "idsulotions/laravel-module-generator",
     "description": "Generate Laravel Modules from a template.",
     "type": "laravel-module",
     "authors": [
+        {
+            "name": "ID Solutions",
+            "email": "info@idsolutions.id"
+        },
         {
             "name": "Muhammad Rheza Alfin",
             "email": "aRhez0903@gmail.com"
