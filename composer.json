@@ -1,5 +1,5 @@
 {
-    "name": "idsulotions/laravel-module-generator",
+    "name": "idsolutions/laravel-module-generator",
     "description": "Generate Laravel Modules from a template.",
     "type": "laravel-module",
     "authors": [
