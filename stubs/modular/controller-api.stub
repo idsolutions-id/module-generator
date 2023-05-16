@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 use $MODULE_NAMESPACE$\$MODULE$\Models\$NAME$;
-use $MODULE_NAMESPACE$\$MODULE$\Actions\$NAME$Store;
-use $MODULE_NAMESPACE$\$MODULE$\Actions\$NAME$Update;
-use $MODULE_NAMESPACE$\$MODULE$\Actions\$NAME$Delete;
+use $MODULE_NAMESPACE$\$MODULE$\Actions\$NAME$\Store;
+use $MODULE_NAMESPACE$\$MODULE$\Actions\$NAME$\Update;
+use $MODULE_NAMESPACE$\$MODULE$\Actions\$NAME$\Delete;
 use $MODULE_NAMESPACE$\$MODULE$\Requests\$NAME$StoreRequest;
 use $MODULE_NAMESPACE$\$MODULE$\Requests\$NAME$UpdateRequest;
 
@@ -28,26 +28,26 @@ class $CLASS$ extends Controller
 
     public function store($NAME$StoreRequest $request)
     {
-        $store = $NAME$Store::run($request);
-        return $this->success($store);
+        $store = Store::run($request);
+        return $this->show($store, 201, '$NAME$ created');
     }
 
-    public function show($NAME$ $$MODEL_VAR$)
+    public function show($NAME$ $$MODEL_VAR$, $code = 200, $message = null)
     {
         //$$MODEL_VAR$->load();
-        return $this->success($$MODEL_VAR$);
+        return $this->success($$MODEL_VAR$, $message, $code);
     }
 
     public function update($NAME$UpdateRequest $request, $NAME$ $$MODEL_VAR$)
     {
-        $update = $NAME$Update::run($request,$$MODEL_VAR$);
-        return $this->success($update);
+        $update = Update::run($request,$$MODEL_VAR$);
+        return $this->show($update, 200, '$NAME$ updated');
     }
 
 
     public function destroy($NAME$ $$MODEL_VAR$)
     {
-        $delete = $NAME$Delete::run($$MODEL_VAR$);
-        return $this->success($delete);
+        $delete = Delete::run($$MODEL_VAR$);
+        return $this->success($delete, '$NAME$ delete successfully', 204);
     }
 }

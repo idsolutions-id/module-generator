@@ -41,7 +41,7 @@ export default {
                 :class="{ 'active': $route.path == tab.link}">
                 <RouterLink :to="tab.link">
                     <span
-                        class="navigation-side-icon material-icons md-20 uk-margin-small-right uk-margin-remove-bottom">
+                        class="navigation-side-icon material-icons uk-margin-small-right uk-margin-remove-bottom uk-flex uk-flex-middle">
                         <component v-bind:is="tab.icon" />
                     </span>
                     <span class="navigation-side-label">{{tab.title}}</span>

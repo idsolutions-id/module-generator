@@ -75,32 +75,40 @@ class CreateModuleMigration extends GeneratorCommand
     protected function getTemplateContents()
     {
         $parser = new NameParser($this->argument('name'));
+        $tableNames = explode('_', $parser->getTableName());
+        $splitNames = [];
+        foreach ($tableNames as $tableName) {
+            $splitNames[] = Str::of($tableName)->singular();
+        }
+        $unique = array_unique($splitNames);
+        $unique = implode('_', $unique);
+        $tableName = Str::of($unique)->plural();
 
         if ($parser->isCreate()) {
             return Stub::create('/migration/create.stub', [
-                'permission' => ($this->argument('basename') == $this->argument('module')) ? Str::of($parser->getTableName())->singular()->replace('_', '') : Str::of($this->argument('module').$this->argument('basename'))->snake()->replace('_', '.'),
+                'permission' => Str::of($tableName)->singular()->snake()->replace('_', '.'),
                 'class' => $this->getClass(),
-                'table' => $parser->getTableName(),
+                'table' => $tableName,
                 'fields' => $this->getSchemaParser()->render(),
             ]);
         } elseif ($parser->isAdd()) {
             return Stub::create('/migration/add.stub', [
                 'class' => $this->getClass(),
-                'table' => $parser->getTableName(),
+                'table' => $tableName,
                 'fields_up' => $this->getSchemaParser()->up(),
                 'fields_down' => $this->getSchemaParser()->down(),
             ]);
         } elseif ($parser->isDelete()) {
             return Stub::create('/migration/delete.stub', [
                 'class' => $this->getClass(),
-                'table' => $parser->getTableName(),
+                'table' => $tableName,
                 'fields_down' => $this->getSchemaParser()->up(),
                 'fields_up' => $this->getSchemaParser()->down(),
             ]);
         } elseif ($parser->isDrop()) {
             return Stub::create('/migration/drop.stub', [
                 'class' => $this->getClass(),
-                'table' => $parser->getTableName(),
+                'table' => $tableName,
                 'fields' => $this->getSchemaParser()->render(),
             ]);
         }

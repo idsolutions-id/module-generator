@@ -21,7 +21,7 @@ export default {
             <div class="uk-grid-small uk-flex-middle" uk-grid>
                 <div class="uk-width-expand">
                     <strong class="text-color-primary">
-                        {{ store.moduleName }} Detail
+                         {{ $t(store.moduleName) }}
                     </strong>
                     <DashboardsBreadcrumb showDisabled="false" v-if="store.data" :text="store.data.name" />
                 </div>
@@ -29,14 +29,14 @@ export default {
                     <div class="uk-button-group rounded">
                         <RouterLink as="button" :to="`${store.route}`" uk-tooltip="title: Back; pos: left" type="button"
                             class="uk-button uk-button-small uk-border-rounded">
-                            <ArrowLeftIcon /> <span class="uk-visible@m">Kembali</span>
+                            <ArrowLeftIcon /> <span class="uk-visible@m">{{$t('Back')}}</span>
                         </RouterLink>
                         <RouterLink :to="`${store.route}/create`" v-if="can(`${store.permission}-create`)"
                             class="uk-button uk-button-small uk-border-rounded uk-button-primary red"
                             aria-expanded="false">
                             <span class="material-icons uk-text-middle">
                                 <PlusIcon />
-                            </span> <span class="uk-visible@m">Tambah</span>
+                            </span> <span class="uk-visible@m">{{$t('Add')}}</span>
                         </RouterLink>
                     </div>
                 </div>

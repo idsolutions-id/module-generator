@@ -1,6 +1,6 @@
 import $axios from '~/helpers/axios';
 
-const data = $FILLABLE$;
+const blankData = $FILLABLE$;
 
 export const useModule$CLASS$Store = defineStore('module.$PERMISSION$', {
     state: () => ({
@@ -8,12 +8,13 @@ export const useModule$CLASS$Store = defineStore('module.$PERMISSION$', {
         permission: 'module.$PERMISSION$',
         apiRoute: '/$API_ROUTE$',
         route: '/dashboard/$API_ROUTE$',
-        data: data,
+        data: blankData,
         list: null,
         create: false,
         edit: false,
         view: true,
         loading: true,
+        form: blankData
     }),
 
     actions: {
@@ -38,6 +39,7 @@ export const useModule$CLASS$Store = defineStore('module.$PERMISSION$', {
             return new Promise((resolve, reject) => {
                 $axios.get(this.apiRoute + '/' + payload).then(res => {
                     this.data = res.data.data;
+                    this.form = res.data.data;
                     response.clearErrors();
                     resolve(res.data)
                 })
@@ -103,9 +105,13 @@ export const useModule$CLASS$Store = defineStore('module.$PERMISSION$', {
             this.create = true;
             this.data = null;
             this.loading = false;
+            this.resetForm();
         },
         setLoading(payload) {
             this.loading = payload;
+        },
+        resetForm() {
+            this.form = $FILLABLE$;
         }
     },
 

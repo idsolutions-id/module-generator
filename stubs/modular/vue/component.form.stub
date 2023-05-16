@@ -8,27 +8,27 @@ export default {
         const store = useModule$CLASS$Store();
         return { auth, can, helper, response, store };
     },
-    data() {
-        return {
-            form: $FILLABLE$
-        }
+    props: {
+        method: String,
     },
     methods: {
         submit() {
-            this.store.submitForm(this.method, this.form)
+            this.store.submitForm(this.method, this.store.form)
                 .then(res => {
                     this.store.setView();
+                    var message = '$MODULE$ has been saved!';
+                    if (this.method == "POST") {
+                        this.$router.push(res.data.id);
+                        message = '$MODULE$ has been created!';
+                    }
                     this.$swal({
                         icon: 'success',
                         position: 'top-end',
                         showConfirmButton: false,
-                        text: 'Data Berhasil di Update!',
+                        text: message,
                         timer: 1500,
                         toast: true,
                     });
-                    if (this.method == "POST") {
-                        this.$router.push(res.data.id)
-                    }
                 })
         },
         remove() {
@@ -42,7 +42,7 @@ export default {
                 confirmButtonText: 'Ya, hapus!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    this.store.remove(this.data.id).then(() => {
+                    this.store.remove(this.store.data.id).then(() => {
                         this.$router.push(`${this.store.route}`);
                         this.store.setView();
                         this.$swal({
@@ -58,15 +58,6 @@ export default {
             });
         }
     },
-    props: {
-        method: String,
-        data: Object,
-    },
-    watch: {
-        data: function (value) {
-            if (value) $THIS_FORM$
-        },
-    }
 }
 </script>
 
@@ -79,10 +70,10 @@ export default {
             <div class="uk-grid-small uk-flex-middle" uk-grid>
                 <div class="uk-width-expand">
                     <h3 class="uk-card-title uk-text-truncate">
-                        {{ data && data.name ? data.name : 'Buat Company Baru' }}
+                        {{ store.data && store.data.name ? store.data.name : store.moduleName }}
                     </h3>
                 </div>
-                <FormButtonTool :data="data" :store="store" />
+                <FormButtonTool :store="store" />
             </div>
         </div>
         <div class="uk-form-stacked" autocomplete="off">
@@ -95,15 +86,14 @@ $FORM$
                     class=" uk-button uk-button-small uk-border-rounded uk-button-primary red uk-float-right">
                     <span class="material-icons uk-text-middle">
                         <DeviceFloppyIcon />
-                    </span> Simpan
-                </button>
+                    </span> Submit</button>
 
                 <button @click="remove" :disabled="store.loading"
                     v-if="store.isEdit && can(`${store.permission}-delete`)"
                     class="uk-button uk-button-small uk-border-rounded uk-button-warning uk-float-left">
                     <span class="material-icons uk-text-middle">
                         <TrashIcon />
-                    </span> Hapus
+                    </span> {{ $t('button.delete') }}
                 </button>
             </div>
         </div>
