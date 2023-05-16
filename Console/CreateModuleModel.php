@@ -106,7 +106,16 @@ class CreateModuleModel extends GeneratorCommand
     private function handleOptionalMigrationOption()
     {
         if ($this->option('migration') === true) {
-            $migrationName = 'create_' . strtolower($this->argument('module')) . '_' . $this->createMigrationName() . '_table';
+            $tableNames = explode('_', Str::of($this->argument('module') . $this->argument('model'))->snake());
+            $splitNames = [];
+            foreach ($tableNames as $tableName) {
+                $splitNames[] = Str::of($tableName)->singular();
+            }
+            $unique = array_unique($splitNames);
+            $unique = implode('_', $unique);
+            $tableName = Str::of($unique)->plural();
+
+            $migrationName = 'create_' . $tableName  . '_' . $this->createMigrationName() . '_table';
             $this->call('create:module:migration', [
                 'name' => $migrationName,
                 'module' => $this->argument('module'),

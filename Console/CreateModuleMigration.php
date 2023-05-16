@@ -2,6 +2,7 @@
 
 namespace Vheins\LaravelModuleGenerator\Console;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Commands\GeneratorCommand;
@@ -143,7 +144,15 @@ class CreateModuleMigration extends GeneratorCommand
      */
     private function getSchemaName()
     {
-        return $this->argument('name');
+        $fileNames = explode('_', Str::of($this->argument('basename') . $this->argument('module'))->snake());
+        $splitNames = [];
+        foreach ($fileNames as $fileName) {
+            $splitNames[] = Str::of($fileName)->singular();
+        }
+        $unique = array_unique($splitNames);
+        $unique = implode('_', $unique);
+        $fileName = Str::of($unique)->plural() . '_table';
+        return $fileName;
     }
 
     /**

@@ -58,16 +58,25 @@ final class CreateModuleVueStore extends GeneratorCommand
     protected function getTemplateContents()
     {
         $module = $this->laravel['modules']->findOrFail($this->getModuleName());
+        $classNames = explode('_', Str::of($this->getClass())->snake());
+        $splitNames = [];
+        foreach ($classNames as $className) {
+            $splitNames[] = Str::of($className)->singular();
+        }
+        $unique = array_unique($splitNames);
+        $unique = implode('_', $unique);
+        $permission = Str::of($unique)->title()->replace('_', '.')->lower();
+        $class = Str::of($unique)->title()->replace('_', '');
 
         return (new Stub('/vue/store.pinia.stub', [
             'STUDLY_NAME'       => $module->getStudlyName(),
             'API_ROUTE'         => $this->pageUrl(),
-            'CLASS'             => $this->getClass(),
+            'CLASS'             => $class,
             'LOWER_NAME'        => $module->getLowerName(),
             'MODULE'            => $this->getModuleName(),
             'FILLABLE'          => $this->getFillable(),
             'NAME'              => Str::of(Str::studly($this->argument('name')))->headline(),
-            'PERMISSION'        => $this->argument('name') == $this->argument('module') ? $module->getLowerName() : $module->getLowerName() . '.' . Str::lower(Str::remove($module->getLowerName(), $this->argument('name'), false))
+            'PERMISSION'        => $permission
         ]))->render();
     }
 
@@ -107,10 +116,18 @@ final class CreateModuleVueStore extends GeneratorCommand
     {
         $path = $this->laravel['modules']->getModulePath($this->getModuleName());
         $module = $this->laravel['modules']->findOrFail($this->getModuleName());
-
         $Path = GenerateConfigReader::read('vue-stores');
 
-        return $path . $Path->getPath() . '/' . Str::of($this->getFileName())->snake()->replace('_','-') . '.js';
+        $fileNames = explode('-', Str::of($this->getFileName())->snake()->replace('_', '-'));
+        $splitNames = [];
+        foreach ($fileNames as $fileName) {
+            $splitNames[] = Str::of($fileName)->singular();
+        }
+        $unique = array_unique($splitNames);
+        $unique = implode('-', $unique);
+        $fileName = Str::of($unique);
+
+        return $path . $Path->getPath() . '/' . $fileName . '.js';
     }
 
     /**
