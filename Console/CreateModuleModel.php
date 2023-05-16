@@ -110,7 +110,7 @@ class CreateModuleModel extends GeneratorCommand
             $this->call('create:module:migration', [
                 'name' => $migrationName,
                 'module' => $this->argument('module'),
-                'basename' => $this->argument('module').$this->argument('model'),
+                'basename' => $this->argument('module') . $this->argument('model'),
                 '--fields' => $this->option('fillable')
             ]);
         }
@@ -172,6 +172,16 @@ class CreateModuleModel extends GeneratorCommand
     {
         $module = $this->laravel['modules']->findOrFail($this->getModuleName());
 
+        $tableNames = explode('_', Str::of($this->getModuleName() . $this->getModelName())->snake()->plural());
+        $splitNames = [];
+        foreach ($tableNames as $tableName) {
+            $splitNames[] = Str::of($tableName)->singular();
+        }
+        $unique = array_unique($splitNames);
+        $unique = implode('_', $unique);
+        $tableName = Str::of($unique)->plural();
+
+
         return (new Stub('/model.stub', [
             'NAME'              => $this->getModelName(),
             'FILLABLE'          => $this->getFillable(),
@@ -181,7 +191,7 @@ class CreateModuleModel extends GeneratorCommand
             'MODULE'            => $this->getModuleName(),
             'STUDLY_NAME'       => $module->getStudlyName(),
             'MODULE_NAMESPACE'  => $this->laravel['modules']->config('namespace'),
-            'TABLE_NAME'        => Str::of($this->getModuleName().$this->getModelName())->snake()->plural()
+            'TABLE_NAME'        => $tableName
         ]))->render();
     }
 
