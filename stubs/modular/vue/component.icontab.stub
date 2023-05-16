@@ -15,7 +15,7 @@ export default {
                     title: '$NAME$',
                     link: '/dashboard/$API_ROUTE$',
                     icon: 'AppsIcon',
-                    permission: 'module.$LOWER_NAME$',
+                    permission: 'module.$PERMISSIONS$',
                 },
                 //add tabs here ...
             ]

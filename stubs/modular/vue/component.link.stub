@@ -13,13 +13,13 @@ export default {
             navigations: [
                 {
                     title: '$NAME$',
-                    permission: 'module.$LOWER_NAME$',
+                    permission: 'module.$PERMISSIONS$',
                     children: [
                         {
                             title: '$NAME$',
                             link: '/dashboard/$API_ROUTE$',
                             icon: 'AppsIcon',
-                            permission: 'module.$LOWER_NAME$',
+                            permission: 'module.$PERMISSIONS$',
                         },
                         //add link here ...
                     ],

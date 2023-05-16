@@ -58,12 +58,22 @@ final class CreateModuleVueComponentTab extends GeneratorCommand
     protected function getTemplateContents()
     {
         $module = $this->laravel['modules']->findOrFail($this->getModuleName());
+        $tableNames = explode('_', Str::of($module->getStudlyName())->snake());
+        $splitNames = [];
+        foreach ($tableNames as $tableName) {
+            $splitNames[] = Str::of($tableName)->singular();
+        }
+        $unique = array_unique($splitNames);
+        $unique = implode('-', $unique);
+        $tableName = Str::of($unique)->plural();
+        $permissions = Str::of($unique)->replace('-', '.');
 
         return (new Stub('/vue/component.icontab.stub', [
             'STUDLY_NAME'       => $module->getStudlyName(),
             'API_ROUTE'         => $this->pageUrl($module->getStudlyName()),
             'CLASS'             => $this->getClass(),
-            'LOWER_NAME'        => $module->getLowerName(),
+            'LOWER_NAME'        => $tableName,
+            'PERMISSIONS'       => $permissions,
             'MODULE'            => $this->getModuleName(),
             'FILLABLE'          => $this->getFillable(),
             'NAME'              => Str::of($module->getStudlyName())->headline()
@@ -107,7 +117,7 @@ final class CreateModuleVueComponentTab extends GeneratorCommand
 
         $Path = GenerateConfigReader::read('vue-components');
 
-        return $path . $Path->getPath() . '/' . Str::of($this->getModuleName())->snake()->replace('_','-') . '-icon-tab.vue';
+        return $path . $Path->getPath() . '/' . Str::of($this->getModuleName())->snake()->replace('_', '-') . '-icon-tab.vue';
     }
 
     /**

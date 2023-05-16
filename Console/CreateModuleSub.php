@@ -162,6 +162,16 @@ class CreateModuleSub extends Command
         $routeApi = str_replace('//add more route here ...', "Route::apiResource('/" . $this->pageUrl() . "', " . $this->name . "Controller::class);\n\t//add more route here ...", $routeApi);
         file_put_contents($routeApiFile, $routeApi);
 
+        $tableNames = explode('_', Str::of($this->module . $this->name)->snake());
+        $splitNames = [];
+        foreach ($tableNames as $tableName) {
+            $splitNames[] = Str::of($tableName)->singular();
+        }
+        $unique = array_unique($splitNames);
+        $unique = implode('-', $unique);
+        $tableName = Str::of($unique)->plural();
+        $permissions = Str::of($unique)->replace('-', '.');
+
         //Add Dashboard Link
         $dashboardLinkFile = base_path() . "/modules/" . $this->module . "/Vue/components/" . Str::of($this->module)->snake()->replace('_', '-') . "-dashboard-link.vue";
         $dashboardLink = file_get_contents($dashboardLinkFile);
@@ -170,7 +180,7 @@ class CreateModuleSub extends Command
                             title: '" . Str::headline($this->name) . "',
                             link: '/dashboard/" . $this->pageUrl() . "',
                             icon: 'AppsIcon',
-                            permission: 'module." . Str::of($this->module . $this->name)->snake()->replace('_', '.') . "',
+                            permission: 'module." . $permissions . "',
                         },
                         //add link here ...
         ", $dashboardLink);
@@ -184,7 +194,7 @@ class CreateModuleSub extends Command
                     title: '" . Str::headline($this->name) . "',
                     link: '/dashboard/" . $this->pageUrl() . "',
                     icon: 'AppsIcon',
-                    permission: 'module." . Str::of($this->module . $this->name)->snake()->replace('_', '.') . "',
+                    permission: 'module." . $permissions . "',
                 },
                 //add tabs here ...
         ", $iconTab);
