@@ -58,11 +58,19 @@ final class CreateModuleVueComponentForm extends GeneratorCommand
     protected function getTemplateContents()
     {
         $module = $this->laravel['modules']->findOrFail($this->getModuleName());
+        $classNames = explode('_', Str::of($this->getClass())->snake());
+        $splitNames = [];
+        foreach ($classNames as $className) {
+            $splitNames[] = Str::of($className)->singular();
+        }
+        $unique = array_unique($splitNames);
+        $unique = implode('_', $unique);
+        $class = Str::of($unique)->title()->replace('_', '');
 
         return (new Stub('/vue/component.form.stub', [
             'STUDLY_NAME'   => $module->getStudlyName(),
             'API_ROUTE'     => $this->pageUrl($module->getStudlyName()),
-            'CLASS'         => $this->getClass(),
+            'CLASS'         => $class,
             'LOWER_NAME'    => $module->getLowerName(),
             'MODULE'        => $this->getModuleName(),
             'FILLABLE'      => $this->getFillable(),
@@ -122,10 +130,19 @@ final class CreateModuleVueComponentForm extends GeneratorCommand
     protected function getDestinationFilePath()
     {
         $path = $this->laravel['modules']->getModulePath($this->getModuleName());
-
         $Path = GenerateConfigReader::read('vue-components');
 
-        return $path . $Path->getPath() . '/' . Str::of($this->getFileName())->snake()->replace('_','-') . '-form.vue';
+        $fileNames = explode('-', Str::of($this->getFileName())->snake()->replace('_', '-'));
+        $splitNames = [];
+        foreach ($fileNames as $fileName) {
+            $splitNames[] = Str::of($fileName)->singular();
+        }
+        $unique = array_unique($splitNames);
+        $unique = implode('-', $unique);
+        $fileName = Str::of($unique);
+
+
+        return $path . $Path->getPath() . '/' . $fileName . '-form.vue';
     }
 
     /**

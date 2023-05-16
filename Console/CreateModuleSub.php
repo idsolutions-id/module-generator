@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class CreateModuleSub extends Command
 {
+    public $module, $fields;
     /**
      * The name and signature of the console command.
      *
@@ -148,7 +149,7 @@ class CreateModuleSub extends Command
         ]);
         $deleteActionFile = base_path() . "/modules/" . $this->module . "/Actions/" . $this->name . "/Delete.php";
         $deleteAction = file_get_contents($deleteActionFile);
-        $deleteAction = str_replace('//use .. ;', "use " . config('modules.namespace') . "\\" . $this->module."\\Models\\" . $this->name . ";", $deleteAction);
+        $deleteAction = str_replace('//use .. ;', "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $this->name . ";", $deleteAction);
         $deleteAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . ' $' . Str::camel($this->name) . ')', $deleteAction);
         $deleteAction = str_replace('// ..', '$handle = collect($' . Str::camel($this->name) . '->delete());', $deleteAction);
         file_put_contents($deleteActionFile, $deleteAction);
@@ -162,28 +163,28 @@ class CreateModuleSub extends Command
         file_put_contents($routeApiFile, $routeApi);
 
         //Add Dashboard Link
-        $dashboardLinkFile = base_path() . "/modules/" . $this->module . "/Vue/components/" . Str::of($this->module)->snake()->replace('_','-') . "-dashboard-link.vue";
+        $dashboardLinkFile = base_path() . "/modules/" . $this->module . "/Vue/components/" . Str::of($this->module)->snake()->replace('_', '-') . "-dashboard-link.vue";
         $dashboardLink = file_get_contents($dashboardLinkFile);
         $dashboardLink = str_replace('//add link here ...', "
                         {
                             title: '" . Str::headline($this->name) . "',
                             link: '/dashboard/" . $this->pageUrl() . "',
                             icon: 'AppsIcon',
-                            permission: 'module." . Str::of($this->module.$this->name)->snake()->replace('_', '.') . "',
+                            permission: 'module." . Str::of($this->module . $this->name)->snake()->replace('_', '.') . "',
                         },
                         //add link here ...
         ", $dashboardLink);
         file_put_contents($dashboardLinkFile, $dashboardLink);
 
         //Add Icon Tabs
-        $iconTabFile = base_path() . "/modules/" . $this->module . "/Vue/components/" . Str::of($this->module)->snake()->replace('_','-') . "-icon-tab.vue";
+        $iconTabFile = base_path() . "/modules/" . $this->module . "/Vue/components/" . Str::of($this->module)->snake()->replace('_', '-') . "-icon-tab.vue";
         $iconTab = file_get_contents($iconTabFile);
         $iconTab = str_replace('//add tabs here ...', "
                 {
                     title: '" . Str::headline($this->name) . "',
                     link: '/dashboard/" . $this->pageUrl() . "',
                     icon: 'AppsIcon',
-                    permission: 'module." . Str::of($this->module.$this->name)->snake()->replace('_', '.') . "',
+                    permission: 'module." . Str::of($this->module . $this->name)->snake()->replace('_', '.') . "',
                 },
                 //add tabs here ...
         ", $iconTab);
