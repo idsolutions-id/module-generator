@@ -55,6 +55,14 @@ class CreateModuleController extends GeneratorCommand
     protected function getTemplateContents()
     {
         $module = $this->laravel['modules']->findOrFail($this->getModuleName());
+        $tableNames = explode('_', Str::of($this->getModuleName() . $this->getController())->snake());
+        $splitNames = [];
+        foreach ($tableNames as $tableName) {
+            $splitNames[] = Str::of($tableName)->singular();
+        }
+        $unique = array_unique($splitNames);
+        $unique = implode('.', $unique);
+        $tableName = Str::of($unique);
 
         return (new Stub($this->getStubName(), [
             'MODULENAME'        => $module->getStudlyName(),
@@ -68,7 +76,7 @@ class CreateModuleController extends GeneratorCommand
             'STUDLY_NAME'       => $module->getStudlyName(),
             'MODULE_NAMESPACE'  => $this->laravel['modules']->config('namespace'),
             'MODEL_VAR'         => ($this->getModuleName() == $this->getController()) ? Str::of($this->getController())->camel() : Str::of($this->getController())->replace($this->getModuleName(), '')->camel(),
-            'PERMISSION'        => ($this->getModuleName() == $this->getController()) ? Str::of($this->getController())->snake()->replace('_', '.') : Str::of($this->getModuleName() . $this->getController())->snake()->replace('_', '.'),
+            'PERMISSION'        => $tableName,
         ]))->render();
     }
 
