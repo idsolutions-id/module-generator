@@ -58,21 +58,25 @@ class CreateModule extends Command
         $blueprints = Yaml::parse(file_get_contents($this->option('blueprint')));
         foreach ($blueprints as $module => $subModules) {
             foreach ($subModules as $subModule => $tables) {
+                $dbOnly = false;
+                if (isset($tables['CRUD'])) $dbOnly = false;
+                if (isset($tables['CRUD']) && $tables['CRUD'] == false) $dbOnly = true;
                 //Fillable
                 $fillables = [];
                 foreach ($tables['Fillable'] as $k => $v) {
-                    $fillables[] = $k.":".$v;
+                    $fillables[] = $k . ":" . $v;
                 }
                 sleep(1);
+
                 $this->call('create:module:sub', [
                     'module' => $module,
                     'name' => $subModule,
-                    '--fillable' => implode(",",$fillables)
+                    '--fillable' => implode(",", $fillables),
+                    '--db-only' => $dbOnly,
                 ]);
 
-                $this->info('Module ' . $module . ' Submodule ' . $subModule .' Created!');
+                $this->info('Module ' . $module . ' Submodule ' . $subModule . ' Created!');
             }
-
         }
         $this->call('optimize:clear');
         $this->info('Generate Blueprint Successfull');

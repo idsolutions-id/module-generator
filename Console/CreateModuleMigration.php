@@ -79,7 +79,7 @@ class CreateModuleMigration extends GeneratorCommand
         $tableNames = explode('_', $parser->getTableName());
         $splitNames = [];
         foreach ($tableNames as $tableName) {
-            $splitNames[] = Str::of($tableName)->singular();
+            $splitNames[] = $tableName != 'has' ? Str::of($tableName)->singular() : $tableName;
         }
         $unique = array_unique($splitNames);
         $unique = implode('_', $unique);
@@ -147,7 +147,7 @@ class CreateModuleMigration extends GeneratorCommand
         $fileNames = explode('_', Str::of($this->argument('basename') . $this->argument('module'))->snake());
         $splitNames = [];
         foreach ($fileNames as $fileName) {
-            $splitNames[] = Str::of($fileName)->singular();
+            $splitNames[] = $fileName != 'has' ? Str::of($fileName)->singular() : $fileName;
         }
         $unique = array_unique($splitNames);
         $unique = implode('_', $unique);

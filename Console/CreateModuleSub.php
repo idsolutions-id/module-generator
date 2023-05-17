@@ -10,13 +10,13 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class CreateModuleSub extends Command
 {
-    public $module, $fields;
+    public $module, $fields, $db_only;
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'create:module:sub {module} {name} {--fillable=}';
+    protected $signature = 'create:module:sub {module} {name} {--fillable=} {--db-only}';
 
     /**
      * The console command description.
@@ -47,6 +47,7 @@ class CreateModuleSub extends Command
     {
         return [
             ['fillable', null, InputOption::VALUE_REQUIRED, 'The specified fields table.'],
+            ['db-only', null, InputOption::VALUE_OPTIONAL, 'If true does not create form.']
         ];
     }
 
@@ -61,6 +62,7 @@ class CreateModuleSub extends Command
         //$this->name =  $this->module . Str::studly($this->argument('name'));
         $this->name =  Str::studly($this->argument('name'));
         $this->fields = $this->option('fillable');
+        $this->db_only = $this->option('db-only');
         //dd($this->module, $this->fields);
 
         //Check if module exists
@@ -70,29 +72,24 @@ class CreateModuleSub extends Command
                 'name' => [$this->module],
                 '--api' => true
             ]);
-            //Generate Vue
-            $commands = ['create:module:vue:component:tab', 'create:module:vue:component:link',];
-            foreach ($commands as $command) {
-                $this->call($command, [
-                    'name' => $this->module,
-                    'module' => $this->module,
-                    '--fillable' => $this->fields,
-                ]);
+
+            if (!$this->db_only) {
+                //Generate Vue
+                $commands = ['create:module:vue:component:tab', 'create:module:vue:component:link',];
+                foreach ($commands as $command) {
+                    $this->call($command, [
+                        'name' => $this->module,
+                        'module' => $this->module,
+                        '--fillable' => $this->fields,
+                    ]);
+                }
+                //Fix Route File
+                $routeApiFile = base_path() . "/modules/" . $this->module . "/api.php";
+                $routeApi = file_get_contents($routeApiFile);
+                $routeApi = str_replace('$API_ROUTE$', Str::of($this->module)->plural()->lower(), $routeApi);
+                file_put_contents($routeApiFile, $routeApi);
             }
-            //Fix Route File
-            $routeApiFile = base_path() . "/modules/" . $this->module . "/api.php";
-            $routeApi = file_get_contents($routeApiFile);
-            $routeApi = str_replace('$API_ROUTE$', Str::of($this->module)->plural()->lower(), $routeApi);
-            file_put_contents($routeApiFile, $routeApi);
         }
-
-
-        //Generate Controller
-        $this->call('create:module:controller', [
-            'controller' => $this->name,
-            'module' => $this->module,
-            '--api' => true
-        ]);
 
         //Generate Model
         $this->call('create:module:model', [
@@ -102,80 +99,88 @@ class CreateModuleSub extends Command
             '--migration' => true
         ]);
 
-        //Generate Create Request
-        $this->call('create:module:request', [
-            'name' => $this->name . 'StoreRequest',
-            'module' => $this->module,
-            '--fillable' => $this->fields,
-        ]);
-        //Generate Update Request
-        $this->call('create:module:request', [
-            'name' => $this->name . 'UpdateRequest',
-            'module' => $this->module,
-            '--fillable' => $this->fields,
-        ]);
+        if (!$this->db_only) {
+            //Generate Controller
+            $this->call('create:module:controller', [
+                'controller' => $this->name,
+                'module' => $this->module,
+                '--api' => true
+            ]);
 
-        //Generate Create Action
-        $this->call('create:module:action', [
-            'name' => $this->name . '/Store',
-            'module' => $this->module,
-        ]);
-        //Create Store Action
-        $storeActionFile = base_path() . "/modules/" . $this->module . "/Actions/" . $this->name . "/Store.php";
-        $storeAction = file_get_contents($storeActionFile);
-        $storeAction = str_replace('//use .. ;', "use " . config('modules.namespace') . "\\$this->module\\Models\\" . $this->name . ";\nuse " . config('modules.namespace') . "\\$this->module\\Requests\\" . $this->name . "StoreRequest;", $storeAction);
-        $storeAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . 'StoreRequest $request)', $storeAction);
-        $storeAction = str_replace('// ..', '$handle = ' . $this->name . '::create($request->validated());', $storeAction);
-        file_put_contents($storeActionFile, $storeAction);
+            //Generate Create Request
+            $this->call('create:module:request', [
+                'name' => $this->name . 'StoreRequest',
+                'module' => $this->module,
+                '--fillable' => $this->fields,
+            ]);
+            //Generate Update Request
+            $this->call('create:module:request', [
+                'name' => $this->name . 'UpdateRequest',
+                'module' => $this->module,
+                '--fillable' => $this->fields,
+            ]);
 
-        //Generate Update Action
-        $this->call('create:module:action', [
-            'name' => $this->name . '/Update',
-            'module' => $this->module,
-        ]);
-        //Create Update Action
-        $updateActionFile = base_path() . "/modules/" . $this->module . "/Actions/" . $this->name . "/Update.php";
-        $updateAction = file_get_contents($updateActionFile);
-        $updateAction = str_replace('//use .. ;', "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $this->name . ";\nuse " . config('modules.namespace') . "\\$this->module\\Requests\\" . $this->name . "UpdateRequest;",  $updateAction);
-        $updateAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . 'UpdateRequest $request, ' . $this->name . ' $' . Str::camel($this->name) . ')', $updateAction);
-        $updateAction = str_replace('// ..', '$' . Str::camel($this->name) . '->update($request->validated());', $updateAction);
-        $updateAction = str_replace('return $handle;', 'return $' . Str::camel($this->name) . ';', $updateAction);
-        file_put_contents($updateActionFile, $updateAction);
+            //Generate Create Action
+            $this->call('create:module:action', [
+                'name' => $this->name . '/Store',
+                'module' => $this->module,
+            ]);
+            //Create Store Action
+            $storeActionFile = base_path() . "/modules/" . $this->module . "/Actions/" . $this->name . "/Store.php";
+            $storeAction = file_get_contents($storeActionFile);
+            $storeAction = str_replace('//use .. ;', "use " . config('modules.namespace') . "\\$this->module\\Models\\" . $this->name . ";\nuse " . config('modules.namespace') . "\\$this->module\\Requests\\" . $this->name . "StoreRequest;", $storeAction);
+            $storeAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . 'StoreRequest $request)', $storeAction);
+            $storeAction = str_replace('// ..', '$handle = ' . $this->name . '::create($request->validated());', $storeAction);
+            file_put_contents($storeActionFile, $storeAction);
 
-        //Generate Delete Action
-        $this->call('create:module:action', [
-            'name' => $this->name . '/Delete',
-            'module' => $this->module,
-        ]);
-        $deleteActionFile = base_path() . "/modules/" . $this->module . "/Actions/" . $this->name . "/Delete.php";
-        $deleteAction = file_get_contents($deleteActionFile);
-        $deleteAction = str_replace('//use .. ;', "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $this->name . ";", $deleteAction);
-        $deleteAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . ' $' . Str::camel($this->name) . ')', $deleteAction);
-        $deleteAction = str_replace('// ..', '$handle = collect($' . Str::camel($this->name) . '->delete());', $deleteAction);
-        file_put_contents($deleteActionFile, $deleteAction);
+            //Generate Update Action
+            $this->call('create:module:action', [
+                'name' => $this->name . '/Update',
+                'module' => $this->module,
+            ]);
+            //Create Update Action
+            $updateActionFile = base_path() . "/modules/" . $this->module . "/Actions/" . $this->name . "/Update.php";
+            $updateAction = file_get_contents($updateActionFile);
+            $updateAction = str_replace('//use .. ;', "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $this->name . ";\nuse " . config('modules.namespace') . "\\$this->module\\Requests\\" . $this->name . "UpdateRequest;",  $updateAction);
+            $updateAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . 'UpdateRequest $request, ' . $this->name . ' $' . Str::camel($this->name) . ')', $updateAction);
+            $updateAction = str_replace('// ..', '$' . Str::camel($this->name) . '->update($request->validated());', $updateAction);
+            $updateAction = str_replace('return $handle;', 'return $' . Str::camel($this->name) . ';', $updateAction);
+            file_put_contents($updateActionFile, $updateAction);
+
+            //Generate Delete Action
+            $this->call('create:module:action', [
+                'name' => $this->name . '/Delete',
+                'module' => $this->module,
+            ]);
+            $deleteActionFile = base_path() . "/modules/" . $this->module . "/Actions/" . $this->name . "/Delete.php";
+            $deleteAction = file_get_contents($deleteActionFile);
+            $deleteAction = str_replace('//use .. ;', "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $this->name . ";", $deleteAction);
+            $deleteAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . ' $' . Str::camel($this->name) . ')', $deleteAction);
+            $deleteAction = str_replace('// ..', '$handle = collect($' . Str::camel($this->name) . '->delete());', $deleteAction);
+            file_put_contents($deleteActionFile, $deleteAction);
 
 
-        //Add New API Route
-        $routeApiFile = base_path() . "/modules/" . $this->module . "/api.php";
-        $routeApi = file_get_contents($routeApiFile);
-        $routeApi = str_replace('//add more class here ...', "use " . config('modules.namespace') . "\\" . $this->module . "\\Controllers\\" . $this->name . "Controller;\n//add more class here ...", $routeApi);
-        $routeApi = str_replace('//add more route here ...', "Route::apiResource('/" . $this->pageUrl() . "', " . $this->name . "Controller::class);\n\t//add more route here ...", $routeApi);
-        file_put_contents($routeApiFile, $routeApi);
+            //Add New API Route
+            $routeApiFile = base_path() . "/modules/" . $this->module . "/api.php";
+            $routeApi = file_get_contents($routeApiFile);
+            $routeApi = str_replace('//add more class here ...', "use " . config('modules.namespace') . "\\" . $this->module . "\\Controllers\\" . $this->name . "Controller;\n//add more class here ...", $routeApi);
+            $routeApi = str_replace('//add more route here ...', "Route::apiResource('/" . $this->pageUrl() . "', " . $this->name . "Controller::class);\n\t//add more route here ...", $routeApi);
+            file_put_contents($routeApiFile, $routeApi);
 
-        $tableNames = explode('_', Str::of($this->module . $this->name)->snake());
-        $splitNames = [];
-        foreach ($tableNames as $tableName) {
-            $splitNames[] = Str::of($tableName)->singular();
-        }
-        $unique = array_unique($splitNames);
-        $unique = implode('-', $unique);
-        $tableName = Str::of($unique)->plural();
-        $permissions = Str::of($unique)->replace('-', '.');
+            $tableNames = explode('_', Str::of($this->module . $this->name)->snake());
+            $splitNames = [];
+            foreach ($tableNames as $tableName) {
+                $splitNames[] = Str::of($tableName)->singular();
+            }
+            $unique = array_unique($splitNames);
+            $unique = implode('-', $unique);
+            $tableName = Str::of($unique)->plural();
+            $permissions = Str::of($unique)->replace('-', '.');
 
-        //Add Dashboard Link
-        $dashboardLinkFile = base_path() . "/modules/" . $this->module . "/Vue/components/" . Str::of($this->module)->snake()->replace('_', '-') . "-dashboard-link.vue";
-        $dashboardLink = file_get_contents($dashboardLinkFile);
-        $dashboardLink = str_replace('//add link here ...', "
+            //Add Dashboard Link
+            $dashboardLinkFile = base_path() . "/modules/" . $this->module . "/Vue/components/" . Str::of($this->module)->snake()->replace('_', '-') . "-dashboard-link.vue";
+            $dashboardLink = file_get_contents($dashboardLinkFile);
+            $dashboardLink = str_replace('//add link here ...', "
                         {
                             title: '" . Str::headline($this->name) . "',
                             link: '/dashboard/" . $this->pageUrl() . "',
@@ -184,12 +189,12 @@ class CreateModuleSub extends Command
                         },
                         //add link here ...
         ", $dashboardLink);
-        file_put_contents($dashboardLinkFile, $dashboardLink);
+            file_put_contents($dashboardLinkFile, $dashboardLink);
 
-        //Add Icon Tabs
-        $iconTabFile = base_path() . "/modules/" . $this->module . "/Vue/components/" . Str::of($this->module)->snake()->replace('_', '-') . "-icon-tab.vue";
-        $iconTab = file_get_contents($iconTabFile);
-        $iconTab = str_replace('//add tabs here ...', "
+            //Add Icon Tabs
+            $iconTabFile = base_path() . "/modules/" . $this->module . "/Vue/components/" . Str::of($this->module)->snake()->replace('_', '-') . "-icon-tab.vue";
+            $iconTab = file_get_contents($iconTabFile);
+            $iconTab = str_replace('//add tabs here ...', "
                 {
                     title: '" . Str::headline($this->name) . "',
                     link: '/dashboard/" . $this->pageUrl() . "',
@@ -198,31 +203,32 @@ class CreateModuleSub extends Command
                 },
                 //add tabs here ...
         ", $iconTab);
-        file_put_contents($iconTabFile, $iconTab);
+            file_put_contents($iconTabFile, $iconTab);
 
-        //Fix Controller File
-        $controllerFile = base_path() . "/modules/" . $this->module . "/Controllers/" . Str::studly($this->name) . "Controller.php";
-        $controller = file_get_contents($controllerFile);
-        $controller = str_replace('$modelVar$', Str::camel($this->name), $controller);
-        file_put_contents($controllerFile, $controller);
+            //Fix Controller File
+            $controllerFile = base_path() . "/modules/" . $this->module . "/Controllers/" . Str::studly($this->name) . "Controller.php";
+            $controller = file_get_contents($controllerFile);
+            $controller = str_replace('$modelVar$', Str::camel($this->name), $controller);
+            file_put_contents($controllerFile, $controller);
 
 
-        //Generate Vue
-        $commands = [
-            'create:module:vue:store',
-            'create:module:vue:page:index',
-            'create:module:vue:page:new',
-            'create:module:vue:page:view',
-            'create:module:vue:component:form',
-            //'create:module:vue:component:link',
-            //'create:module:vue:component:tab',
-        ];
-        foreach ($commands as $command) {
-            $this->call($command, [
-                'name' =>  $this->module . $this->name,
-                'module' => $this->module,
-                '--fillable' => $this->fields,
-            ]);
+            //Generate Vue
+            $commands = [
+                'create:module:vue:store',
+                'create:module:vue:page:index',
+                'create:module:vue:page:new',
+                'create:module:vue:page:view',
+                'create:module:vue:component:form',
+                //'create:module:vue:component:link',
+                //'create:module:vue:component:tab',
+            ];
+            foreach ($commands as $command) {
+                $this->call($command, [
+                    'name' =>  $this->module . $this->name,
+                    'module' => $this->module,
+                    '--fillable' => $this->fields,
+                ]);
+            }
         }
 
         //Clear Cache

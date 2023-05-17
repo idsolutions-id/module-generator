@@ -109,7 +109,7 @@ class CreateModuleModel extends GeneratorCommand
             $tableNames = explode('_', Str::of($this->argument('module') . $this->argument('model'))->snake());
             $splitNames = [];
             foreach ($tableNames as $tableName) {
-                $splitNames[] = Str::of($tableName)->singular();
+                $splitNames[] = $tableName != 'has' ? Str::of($tableName)->singular() : $tableName;
             }
             $unique = array_unique($splitNames);
             $unique = implode('_', $unique);
@@ -184,7 +184,7 @@ class CreateModuleModel extends GeneratorCommand
         $tableNames = explode('_', Str::of($this->getModuleName() . $this->getModelName())->snake()->plural());
         $splitNames = [];
         foreach ($tableNames as $tableName) {
-            $splitNames[] = Str::of($tableName)->singular();
+            $splitNames[] = $tableName != 'has' ? Str::of($tableName)->singular() : $tableName;
         }
         $unique = array_unique($splitNames);
         $unique = implode('_', $unique);
