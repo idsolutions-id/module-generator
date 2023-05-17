@@ -58,7 +58,7 @@ final class CreateModuleVuePageView extends GeneratorCommand
     protected function getTemplateContents()
     {
         $module = $this->laravel['modules']->findOrFail($this->getModuleName());
-        $classNames = explode('_', Str::of($module->getStudlyName())->snake());
+        $classNames = explode('_', Str::of($this->getClass())->snake());
         $splitNames = [];
         foreach ($classNames as $className) {
             $splitNames[] = Str::of($className)->singular();
