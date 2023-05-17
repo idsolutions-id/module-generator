@@ -87,7 +87,7 @@ class CreateRelation
 
             $strKey = Str::of($key);
             $strVal = Str::of($val);
-            $model = str_replace('//Model Relationship', "//Model Relationship\n\tpublic function " . $strKey->camel()->plural() . "(): " . $k . "\n\t{\n\t\treturn " . '$this->' . Str::camel($k) . "(\n\t\t\t" . $strKey->studly() . "::class,\n\t\t\t" . $strVal->studly() . "::class,\n\t\t\t'" . Str::snake($this->name) . "_id',\n\t\t\t'id',\n\t\t\t'id',\n\t\t\t'" . $strKey->snake() . "_id'\n\t\t)->latestOfMany();\n\t}\n", $model);
+            $model = str_replace('//Model Relationship', "//Model Relationship\n\tpublic function " . $strKey->camel()->plural() . "(): " . $k . "\n\t{\n\t\treturn " . '$this->' . Str::camel($k) . "(\n\t\t\t" . $strKey->studly() . "::class,\n\t\t\t" . $strVal->studly() . "::class,\n\t\t\t'" . Str::snake($this->name) . "_id',\n\t\t\t'id',\n\t\t\t'id',\n\t\t\t'" . $strKey->snake() . "_id'\n\t\t)->latest();\n\t}\n", $model);
 
 
             file_put_contents($this->modelFile, $model);
@@ -133,7 +133,7 @@ class CreateRelation
 
             $strKey = Str::of($key);
             $strVal = Str::of($val);
-            $model = str_replace('//Model Relationship', "//Model Relationship\n\tpublic function " . $strKey->camel()->plural() . "(): " . $k . "\n\t{\n\t\treturn " . '$this->' . Str::camel($k) . "(\n\t\t\t" . $strKey->studly() . "::class,\n\t\t\t" . $strVal->studly() . "::class,\n\t\t\t'" . Str::snake($this->name) . "_id',\n\t\t\t'id',\n\t\t\t'id',\n\t\t\t'" . $strKey->snake() . "_id'\n\t\t)->latestOfMany();\n\t}\n", $model);
+            $model = str_replace('//Model Relationship', "//Model Relationship\n\tpublic function " . $strKey->camel()->plural() . "(): " . $k . "\n\t{\n\t\treturn " . '$this->' . Str::camel($k) . "(\n\t\t\t" . $strKey->studly() . "::class,\n\t\t\t" . $strVal->studly() . "::class,\n\t\t\t'" . Str::snake($this->name) . "_id',\n\t\t\t'id',\n\t\t\t'id',\n\t\t\t'" . $strKey->snake() . "_id'\n\t\t)->latest();\n\t}\n", $model);
 
 
             file_put_contents($this->modelFile, $model);
