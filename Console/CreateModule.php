@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use Vheins\LaravelModuleGenerator\Action\CreateRelation;
 
 class CreateModule extends Command
 {
@@ -66,8 +67,6 @@ class CreateModule extends Command
                 foreach ($tables['Fillable'] as $k => $v) {
                     $fillables[] = $k . ":" . $v;
                 }
-                sleep(1);
-
                 $this->call('create:module:sub', [
                     'module' => $module,
                     'name' => $subModule,
@@ -75,7 +74,18 @@ class CreateModule extends Command
                     '--db-only' => $dbOnly,
                 ]);
 
+                if (isset($tables['Relation'])) {
+                    $args = [
+                        'module' => $module,
+                        'name' => $subModule,
+                        'relations' => $tables['Relation'],
+                    ];
+
+                    CreateRelation::run($args);
+                }
+
                 $this->info('Module ' . $module . ' Submodule ' . $subModule . ' Created!');
+                sleep(1);
             }
         }
         $this->call('optimize:clear');
