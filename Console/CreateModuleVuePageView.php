@@ -58,11 +58,18 @@ final class CreateModuleVuePageView extends GeneratorCommand
     protected function getTemplateContents()
     {
         $module = $this->laravel['modules']->findOrFail($this->getModuleName());
-
+        $classNames = explode('_', Str::of($module->getStudlyName())->snake());
+        $splitNames = [];
+        foreach ($classNames as $className) {
+            $splitNames[] = Str::of($className)->singular();
+        }
+        $unique = array_unique($splitNames);
+        $unique = implode('_', $unique);
+        $classNames = Str::of($unique)->plural()->studly();
         return (new Stub('/vue/page.[id].stub', [
             'STUDLY_NAME'   => $module->getStudlyName(),
             'API_ROUTE'     => $this->pageUrl($module->getStudlyName()),
-            'CLASS'         => $this->getClass(),
+            'CLASS'         => $classNames,
             'LOWER_NAME'    => $module->getLowerName(),
             'MODULE'        => $this->getModuleName(),
             'SEARCHABLE'    => $this->getSearchable(),
