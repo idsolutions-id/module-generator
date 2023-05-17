@@ -65,7 +65,7 @@ final class CreateModuleVuePageIndex extends GeneratorCommand
         }
         $unique = array_unique($splitNames);
         $unique = implode('_', $unique);
-        $classNames = Str::of($unique)->plural()->studly();
+        $classNames = Str::of($unique)->studly();
 
         return (new Stub('/vue/page.index.stub', [
             'STUDLY_NAME'   => $module->getStudlyName(),

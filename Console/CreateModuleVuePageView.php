@@ -65,7 +65,8 @@ final class CreateModuleVuePageView extends GeneratorCommand
         }
         $unique = array_unique($splitNames);
         $unique = implode('_', $unique);
-        $classNames = Str::of($unique)->plural()->studly();
+        $classNames = Str::of($unique)->studly();
+
         return (new Stub('/vue/page.[id].stub', [
             'STUDLY_NAME'   => $module->getStudlyName(),
             'API_ROUTE'     => $this->pageUrl($module->getStudlyName()),
