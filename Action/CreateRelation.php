@@ -56,7 +56,7 @@ class CreateRelation
             $model = file_get_contents($this->modelFile);
 
             //Add class refferences || Check if model references exist
-            $class = "use IDS\\" . $this->module . "\\Models\\" . $m . ";";
+            $class = "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $m . ";";
             $contains = Str::contains($model, $class);
             if (!$contains)
                 $model = str_replace('//Class Refferences', "//Class Refferences\n" . $class, $model);
@@ -74,13 +74,13 @@ class CreateRelation
             $model = file_get_contents($this->modelFile);
 
             //Add class refferences || Check if model references exist
-            $class = "use IDS\\" . $this->module . "\\Models\\" . $val . ";";
+            $class = "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $val . ";";
             $contains = Str::contains($model, $class);
             if (!$contains)
                 $model = str_replace('//Class Refferences', "//Class Refferences\n" . $class, $model);
 
             //Add class refferences || Check if model references exist
-            $class = "use IDS\\" . $this->module . "\\Models\\" . $key . ";";
+            $class = "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $key . ";";
             $contains = Str::contains($model, $class);
             if (!$contains)
                 $model = str_replace('//Class Refferences', "//Class Refferences\n" . $class, $model);
@@ -102,7 +102,7 @@ class CreateRelation
             $model = file_get_contents($this->modelFile);
 
             //Add class refferences || Check if model references exist
-            $class = "use IDS\\" . $this->module . "\\Models\\" . $m . ";";
+            $class = "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $m . ";";
             $contains = Str::contains($model, $class);
             if (!$contains)
                 $model = str_replace('//Class Refferences', "//Class Refferences\n" . $class, $model);
@@ -120,13 +120,13 @@ class CreateRelation
             $model = file_get_contents($this->modelFile);
 
             //Add class refferences || Check if model references exist
-            $class = "use IDS\\" . $this->module . "\\Models\\" . $val . ";";
+            $class = "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $val . ";";
             $contains = Str::contains($model, $class);
             if (!$contains)
                 $model = str_replace('//Class Refferences', "//Class Refferences\n" . $class, $model);
 
             //Add class refferences || Check if model references exist
-            $class = "use IDS\\" . $this->module . "\\Models\\" . $key . ";";
+            $class = "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $key . ";";
             $contains = Str::contains($model, $class);
             if (!$contains)
                 $model = str_replace('//Class Refferences', "//Class Refferences\n" . $class, $model);
@@ -148,7 +148,7 @@ class CreateRelation
             $model = file_get_contents($this->modelFile);
 
             //Add class refferences || Check if model references exist
-            $class = "use IDS\\" . $this->module . "\\Models\\" . $m . ";";
+            $class = "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $m . ";";
             $contains = Str::contains($model, $class);
             if (!$contains)
                 $model = str_replace('//Class Refferences', "//Class Refferences\n" . $class, $model);

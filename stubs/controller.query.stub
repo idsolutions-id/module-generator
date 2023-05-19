@@ -1,0 +1,16 @@
+<?php
+
+namespace {{ namespace }};
+
+//Class Refferences
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+class QueryController extends Controller
+{
+    protected $is_public = false;
+    protected $need_permission = true;
+    public $permission = 'module.$PERMISSION$';
+
+    //Query Select2
+}

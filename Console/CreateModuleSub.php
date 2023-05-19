@@ -160,18 +160,6 @@ class CreateModuleSub extends Command
             file_put_contents($deleteActionFile, $deleteAction);
 
 
-            //Add New API Route
-            $routeApiFile = base_path() . "/modules/" . $this->module . "/api.php";
-            $routeApi = file_get_contents($routeApiFile);
-            $routeClass = "use " . config('modules.namespace') . "\\" . $this->module . "\\Controllers\\" . $this->name . "Controller;";
-            $contains = Str::contains($routeApi, $routeClass);
-            if (!$contains) $routeApi = str_replace('//add more class here ...', $routeClass . "\n//add more class here ...", $routeApi);
-            $routeText = "Route::apiResource('/" . $this->pageUrl() . "', " . $this->name . "Controller::class);";
-            $contains = Str::contains($routeApi, $routeText);
-            if (!$contains)
-                $routeApi = str_replace('//add more route here ...', $routeText . "\n\t//add more route here ...", $routeApi);
-            file_put_contents($routeApiFile, $routeApi);
-
             $tableNames = explode('_', Str::of($this->module . $this->name)->snake());
             $splitNames = [];
             foreach ($tableNames as $tableName) {
@@ -181,6 +169,18 @@ class CreateModuleSub extends Command
             $unique = implode('-', $unique);
             $tableName = Str::of($unique)->plural();
             $permissions = Str::of($unique)->replace('-', '.');
+
+            //Add New API Route
+            $routeApiFile = base_path() . "/modules/" . $this->module . "/api.php";
+            $routeApi = file_get_contents($routeApiFile);
+            $routeClass = "use " . config('modules.namespace') . "\\" . $this->module . "\\Controllers\\" . $this->name . "Controller;";
+            $contains = Str::contains($routeApi, $routeClass);
+            if (!$contains) $routeApi = str_replace('//add more class here ...', $routeClass . "\n//add more class here ...", $routeApi);
+            $routeText = "Route::apiResource('" . $this->pageUrl() . "', " . $this->name . "Controller::class,['as'=>'" . Str::lower($this->module) . "']);";
+            $contains = Str::contains($routeApi, $routeText);
+            if (!$contains && $this->pageUrl() != '')
+                $routeApi = str_replace('//add more route here ...', "//add more route here ...\n\t\t" . $routeText, $routeApi);
+            file_put_contents($routeApiFile, $routeApi);
 
             //Add Dashboard Link
             $dashboardLinkFile = base_path() . "/modules/" . $this->module . "/Vue/components/" . Str::of($this->module)->snake()->replace('_', '-') . "-dashboard-link.vue";
@@ -243,10 +243,12 @@ class CreateModuleSub extends Command
     private function pageUrl()
     {
         if ($this->argument('name') == $this->argument('module')) {
-            return Str::of($this->argument('module'))->headline()->plural()->slug();
+            //return Str::of($this->argument('module'))->headline()->plural()->slug();
+            return '';
         } else {
-            return Str::of($this->argument('module'))->headline()->plural()->slug() . '/' .
-                Str::of($this->argument('name'))->remove($this->argument('module'), false)->headline()->plural()->slug();
+            // return Str::of($this->argument('module'))->headline()->plural()->slug() . '/' .
+            //     Str::of($this->argument('name'))->remove($this->argument('module'), false)->headline()->plural()->slug();
+            return Str::of($this->argument('name'))->remove($this->argument('module'), false)->headline()->plural()->slug();
         }
     }
 }

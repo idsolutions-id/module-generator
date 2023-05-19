@@ -16,6 +16,9 @@ use $MODULE_NAMESPACE$\$STUDLY_NAME$\Controllers\$STUDLY_NAME$Controller;
 */
 
 Route::prefix('v1')->middleware('jwt.verify')->group(function () {
-    //add more route here ...
-    Route::apiResource('/$API_ROUTE$', $STUDLY_NAME$Controller::class);
+    Route::prefix('$API_ROUTE$')->group(function(){
+        //add more route here ...
+        //add more queries here ...
+    });
+    Route::apiResource('$API_ROUTE$', $STUDLY_NAME$Controller::class);
 });
