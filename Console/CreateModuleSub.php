@@ -78,7 +78,7 @@ class CreateModuleSub extends Command
                 $commands = ['create:module:vue:component:tab', 'create:module:vue:component:link',];
                 foreach ($commands as $command) {
                     $this->call($command, [
-                        'name' => $this->module,
+                        'name' => $this->name,
                         'module' => $this->module,
                         '--fillable' => $this->fields,
                     ]);
@@ -187,7 +187,7 @@ class CreateModuleSub extends Command
             $dashboardLink = file_get_contents($dashboardLinkFile);
             $dashboardLink = str_replace('//add link here ...', "
                         {
-                            title: '" . Str::headline($this->name) . "',
+                            title: this.t('" . Str::headline($this->name) . "'),
                             link: '/dashboard/" . $this->pageUrl() . "',
                             icon: 'AppsIcon',
                             permission: 'module." . $permissions . "',
@@ -201,7 +201,7 @@ class CreateModuleSub extends Command
             $iconTab = file_get_contents($iconTabFile);
             $iconTab = str_replace('//add tabs here ...', "
                 {
-                    title: '" . Str::headline($this->name) . "',
+                    title: this.t('" . Str::headline($this->name) . "'),
                     link: '/dashboard/" . $this->pageUrl() . "',
                     icon: 'AppsIcon',
                     permission: 'module." . $permissions . "',
@@ -224,8 +224,6 @@ class CreateModuleSub extends Command
                 'create:module:vue:page:new',
                 'create:module:vue:page:view',
                 'create:module:vue:component:form',
-                //'create:module:vue:component:link',
-                //'create:module:vue:component:tab',
             ];
             foreach ($commands as $command) {
                 $this->call($command, [
@@ -242,13 +240,14 @@ class CreateModuleSub extends Command
 
     private function pageUrl()
     {
-        if ($this->argument('name') == $this->argument('module')) {
-            //return Str::of($this->argument('module'))->headline()->plural()->slug();
-            return '';
-        } else {
-            // return Str::of($this->argument('module'))->headline()->plural()->slug() . '/' .
-            //     Str::of($this->argument('name'))->remove($this->argument('module'), false)->headline()->plural()->slug();
-            return Str::of($this->argument('name'))->remove($this->argument('module'), false)->headline()->plural()->slug();
+        $module = $this->argument('module') . '_' . $this->argument('name');
+        $tableNames = explode('_', $module);
+        $splitNames = [];
+        foreach ($tableNames as $tableName) {
+            $splitNames[] = Str::of($tableName)->snake()->slug()->plural();
         }
+        $unique = array_unique($splitNames);
+        $url = implode('/', $unique);
+        return $url;
     }
 }

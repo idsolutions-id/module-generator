@@ -16,12 +16,6 @@ export default {
                     title: this.t('$NAME$'),
                     permission: 'module.$PERMISSIONS$',
                     children: [
-                        {
-                            title: this.t('$NAME$'),
-                            link: '/dashboard/$API_ROUTE$',
-                            icon: 'AppsIcon',
-                            permission: 'module.$PERMISSIONS$',
-                        },
                         //add link here ...
                     ],
                 },

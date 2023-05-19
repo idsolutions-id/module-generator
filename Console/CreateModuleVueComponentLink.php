@@ -70,7 +70,7 @@ final class CreateModuleVueComponentLink extends GeneratorCommand
 
         return (new Stub('/vue/component.link.stub', [
             'STUDLY_NAME'       => $module->getStudlyName(),
-            'API_ROUTE'         => $this->pageUrl($module->getStudlyName()),
+            'API_ROUTE'         => $this->pageUrl(),
             'CLASS'             => $this->getClass(),
             'LOWER_NAME'        => $tableName,
             'PERMISSIONS'       => $permissions,
@@ -84,9 +84,17 @@ final class CreateModuleVueComponentLink extends GeneratorCommand
         ]))->render();
     }
 
-    private function pageUrl($text)
+    private function pageUrl()
     {
-        return Str::of($text)->headline()->plural()->slug();
+        $module = $this->laravel['modules']->findOrFail($this->getModuleName());
+        $tableNames = explode('_', Str::of($module->getStudlyName())->snake());
+        $splitNames = [];
+        foreach ($tableNames as $tableName) {
+            $splitNames[] = Str::of($tableName)->plural();
+        }
+        $unique = array_unique($splitNames);
+        $url = implode('/', $unique);
+        return $url;
     }
 
     /**
