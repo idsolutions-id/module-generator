@@ -30,7 +30,7 @@ class CreateQuery
         $query = "public function " . Str::of($this->name)->camel()->plural() . '(Request $request)';
         $contains = Str::contains($text, $query);
         if (!$contains) {
-            $function = "public function " . Str::of($this->name)->camel()->plural() . '(Request $request)' . "\n\t{\n\t\t" . '$model = ' . $this->name . "::select('id','name');\n\t\t" . '$data = $this->search($model, $request);' . "\n\t\t" . 'return $this->success($data);' . "\n\t}\n";
+            $function = "public function " . Str::of($this->name)->camel()->plural() . '(Request $request)' . "\n\t{\n\t\t" . '$model = ' . $this->name . "::select('id', 'name');\n\t\t" . '$data = $this->search($model, $request);' . "\n\t\t" . 'return $this->success($data);' . "\n\t}\n";
             $text = str_replace("//Query Select2", "//Query Select2\n\t" . $function, $text);
         }
 
