@@ -4,15 +4,16 @@ export default {
         type: String,
     },
     setup() {
+        const { t } = useI18n();
         const auth = useAuthStore();
         const can = auth.can;
-        return { can };
+        return { can, t };
     },
     data() {
         return {
             tabs: [
                 {
-                    title: '$NAME$',
+                    title: this.t('$NAME$'),
                     link: '/dashboard/$API_ROUTE$',
                     icon: 'AppsIcon',
                     permission: 'module.$PERMISSIONS$',
@@ -70,7 +71,7 @@ export default {
                     <div class="uk-card uk-card-default uk-padding-small uk-text-center remove-top-border">
                         <component v-bind:is="tab.icon" />
                         <h3 class="uk-heading-primary uk-margin-remove uk-text-default">
-                            {{tab.title}}
+                            {{ tab.title }}
                         </h3>
                         <!-- <div class="uk-text-small">
                             <span class="uk-text-muted uk-visible@m"> Setting master perusahaan </span>

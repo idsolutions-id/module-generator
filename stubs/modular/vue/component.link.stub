@@ -4,19 +4,20 @@ export default {
         type: String,
     },
     setup() {
+        const { t } = useI18n();
         const auth = useAuthStore();
         const can = auth.can;
-        return { can };
+        return { can, t };
     },
     data() {
         return {
             navigations: [
                 {
-                    title: '$NAME$',
+                    title: this.t('$NAME$'),
                     permission: 'module.$PERMISSIONS$',
                     children: [
                         {
-                            title: '$NAME$',
+                            title: this.t('$NAME$'),
                             link: '/dashboard/$API_ROUTE$',
                             icon: 'AppsIcon',
                             permission: 'module.$PERMISSIONS$',

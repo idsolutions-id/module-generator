@@ -1,0 +1,3 @@
+                <FormSelect2 name="$VAR_NAME$" v-model="store.form.$VAR_NAME$" :label="$t('$TITLE$')" :disabled="store.isView"
+                    source="/$MODULE$/queries/$ENDPOINT$" labelName="name"
+                    :placeholder="$t('Please Enter $TITLE$')" class="uk-margin" />

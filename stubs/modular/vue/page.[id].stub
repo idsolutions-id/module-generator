@@ -1,13 +1,14 @@
 <script>
 export default {
     setup() {
+        const { t } = useI18n();
         const layout = useLayoutStore();
         layout.setLayout('dashboard');
         const auth = useAuthStore();
         const can = auth.can;
 
         const store = useModule$CLASS$Store();
-        return { auth, can, store };
+        return { auth, can, store, t };
     },
     mounted() {
         this.store.fetchData(this.$route.params.id);

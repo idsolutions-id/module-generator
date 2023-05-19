@@ -1,8 +1,7 @@
-
-
 <script>
 export default {
     setup() {
+        const { t } = useI18n();
         const layout = useLayoutStore();
         layout.setLayout('dashboard');
         const auth = useAuthStore();
@@ -29,7 +28,7 @@ export default {
             }
         };
 
-        return { can, store, options };
+        return { can, store, options, t };
     }
 }
 </script>
@@ -39,7 +38,7 @@ export default {
         <div class="uk-grid-small uk-flex-middle" uk-grid>
             <div class="uk-width-expand uk-first-column">
                 <strong class="text-color-primary">
-                    {{$t(store.moduleName)}}
+                    {{ $t(store.moduleName) }}
                 </strong>
                 <DashboardsBreadcrumb showDisabled="true" />
             </div>
@@ -47,12 +46,12 @@ export default {
                 <div class="uk-button-group rounded">
                     <RouterLink as="button" :to="store.route" uk-tooltip="title: Back; pos: left" type="button"
                         class="uk-button uk-button-small uk-border-rounded uk-flex uk-flex-middle">
-                        <ArrowLeftIcon /> <span class="uk-visible@m">{{$t('Back')}}</span>
+                        <ArrowLeftIcon /> <span class="uk-visible@m"> {{ $t('Back') }}</span>
                     </RouterLink>
                     <RouterLink :to="`${store.route}/create`" v-if="can(`${store.permission}-create`) && !options.hideAction"
                         class="uk-button uk-button-small uk-border-rounded uk-button-primary red uk-flex uk-flex-middle" aria-expanded="false">
                         <PlusIcon />
-                        <span class="uk-visible@m">{{$t('Add')}}</span>
+                        <span class="uk-visible@m">{{ $t('Add') }}</span>
                     </RouterLink>
                 </div>
             </div>

@@ -178,11 +178,40 @@ final class CreateModuleVueComponentForm extends GeneratorCommand
 
     protected function getInputTemplateContents($name, $type)
     {
-        $pathStub = '/vue/component.form.input.stub';
-        if ($type == 'text') $pathStub = '/vue/component.form.textarea.stub';
+        switch ($type) {
+            case 'boolean':
+                $pathStub = '/vue/component.form.boolean.stub';
+                break;
+
+            default:
+                $pathStub = '/vue/component.form.input.stub';
+
+                //Numerical
+                if (in_array($type, [
+                    'bigInteger', 'mediumInteger', 'smallInteger', 'tinyInteger', 'integer', 'decimal', 'double', 'float',
+                    'unsignedBigInteger', 'unsignedMediumInteger', 'unsignedSmallInteger', 'unsignedTinyInteger', 'unsignedInteger', 'unsignedDecimal', 'unsignedDouble', 'unsignedFloat'
+                ])) $pathStub = '/vue/component.form.number.stub';
+
+                //Textarea
+                if (in_array($type, [
+                    'text', 'mediumText', 'longText', 'tinyText'
+                ])) $pathStub = '/vue/component.form.textarea.stub';
+
+                //Foreign Keys
+                if (in_array($type, [
+                    'foreignId', 'foreignUuid', 'foreignUlid',
+                ])) {
+                    $pathStub = '/vue/component.form.select.stub';
+                    $name = Str::of($name)->replace('_id', '')->toString();
+                }
+
+                break;
+        }
         return (new Stub($pathStub, [
             'TITLE'     => Str::replace("_", " ", Str::title($name)),
             'VAR_NAME'  => Str::camel($name),
+            'MODULE'    => Str::of($this->getModuleName())->snake()->slug()->plural(),
+            'ENDPOINT'    => Str::of($name)->snake()->slug()->plural(),
         ]))->render();
     }
 }

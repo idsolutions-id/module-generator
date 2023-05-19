@@ -1,6 +1,7 @@
 <script>
 export default {
     setup() {
+        const { t } = useI18n();
         const layout = useLayoutStore();
         layout.setLayout('dashboard');
         const auth = useAuthStore();
@@ -9,7 +10,7 @@ export default {
         const store = useModule$CLASS$Store();
         store.setCreate();
 
-        return { auth, can, store };
+        return { auth, can, store, t };
     }
 }
 </script>
@@ -20,7 +21,7 @@ export default {
             <div class="uk-grid-small uk-flex-middle" uk-grid>
                 <div class="uk-width-expand uk-first-column">
                     <strong class="text-color-primary">
-                        {{$t(store.moduleName)}}
+                        {{ $t(store.moduleName) }}
                     </strong>
                     <DashboardsBreadcrumb showDisabled="true" />
                 </div>
