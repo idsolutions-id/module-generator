@@ -86,7 +86,7 @@ class CreateModuleSub extends Command
                 //Fix Route File
                 $routeApiFile = base_path() . "/modules/" . $this->module . "/api.php";
                 $routeApi = file_get_contents($routeApiFile);
-                $routeApi = str_replace('$API_ROUTE$', Str::of($this->module)->plural()->lower(), $routeApi);
+                $routeApi = str_replace('$API_ROUTE$', Str::of($this->module)->snake()->slug()->plural()->lower(), $routeApi);
                 file_put_contents($routeApiFile, $routeApi);
             }
         }
@@ -176,7 +176,7 @@ class CreateModuleSub extends Command
             $routeClass = "use " . config('modules.namespace') . "\\" . $this->module . "\\Controllers\\" . $this->name . "Controller;";
             $contains = Str::contains($routeApi, $routeClass);
             if (!$contains) $routeApi = str_replace('//add more class here ...', $routeClass . "\n//add more class here ...", $routeApi);
-            $routeText = "Route::apiResource('" . $this->pageUrl() . "', " . $this->name . "Controller::class,['as'=>'" . Str::lower($this->module) . "']);";
+            $routeText = "Route::apiResource('" . $this->pageUrl() . "', " . $this->name . "Controller::class, ['as' => '" . Str::of($this->module)->snake()->slug() . "']);";
             $contains = Str::contains($routeApi, $routeText);
             if (!$contains && $this->pageUrl() != '')
                 $routeApi = str_replace('//add more route here ...', "//add more route here ...\n\t\t" . $routeText, $routeApi);
