@@ -128,7 +128,7 @@ class CreateModuleSub extends Command
             //Create Store Action
             $storeActionFile = base_path() . "/modules/" . $this->module . "/Actions/" . $this->name . "/Store.php";
             $storeAction = file_get_contents($storeActionFile);
-            $storeAction = str_replace('//use .. ;', "use " . config('modules.namespace') . "\\$this->module\\Models\\" . $this->name . ";\nuse " . config('modules.namespace') . "\\$this->module\\Requests\\" . $this->name . "StoreRequest;", $storeAction);
+            $storeAction = str_replace('//use .. ;', "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $this->name . ";\nuse " . config('modules.namespace') . "\\$this->module\\Requests\\" . $this->name . "StoreRequest;", $storeAction);
             $storeAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . 'StoreRequest $request)', $storeAction);
             $storeAction = str_replace('// ..', '$handle = ' . $this->name . '::create($request->validated());', $storeAction);
             file_put_contents($storeActionFile, $storeAction);
@@ -240,7 +240,8 @@ class CreateModuleSub extends Command
 
     private function pageUrl()
     {
-        $module = $this->argument('module') . '_' . $this->argument('name');
+        //$module = $this->argument('module') . '_' . $this->argument('name');
+        $module = $this->argument('name');
         $tableNames = explode('_', $module);
         $splitNames = [];
         foreach ($tableNames as $tableName) {

@@ -60,9 +60,10 @@ class CreateModuleAction extends GeneratorCommand
     protected function getTemplateContents()
     {
         $module = $this->laravel['modules']->findOrFail($this->getModuleName());
+        $namespace = $this->getClassNamespace($module);
 
         return (new Stub('/action.stub', [
-            'NAMESPACE' => $this->getClassNamespace($module),
+            'NAMESPACE' => $namespace,
             'CLASS'     => $this->getClass(),
         ]))->render();
     }
