@@ -2,12 +2,14 @@
 
 namespace $NAMESPACE$;
 
+use App\Helpers\Helper;
 use Lorisleiva\Actions\Concerns\AsAction;
 //use .. ;
 
 class $CLASS$
 {
     use AsAction;
+    public $fillable;
 
     public function handle($handle)
     {

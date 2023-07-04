@@ -11,25 +11,11 @@ use Symfony\Component\Console\Input\InputArgument;
 class CreateModuleSub extends Command
 {
     public $module, $fields, $db_only;
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'create:module:sub {module} {name} {--fillable=} {--db-only}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+    protected $signature = 'create:module:sub {module} {name} {--fillable=} {--db-only}';
     protected $description = 'Create Module Scaffold';
 
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
+
     protected function getArguments()
     {
         return [
@@ -59,11 +45,9 @@ class CreateModuleSub extends Command
     public function handle()
     {
         $this->module = Str::studly($this->argument('module'));
-        //$this->name =  $this->module . Str::studly($this->argument('name'));
         $this->name =  Str::studly($this->argument('name'));
         $this->fields = $this->option('fillable');
         $this->db_only = $this->option('db-only');
-        //dd($this->module, $this->fields);
 
         //Check if module exists
         if (!Module::collections()->has($this->module)) {
@@ -120,46 +104,17 @@ class CreateModuleSub extends Command
                 '--fillable' => $this->fields,
             ]);
 
+
             //Generate Create Action
-            $this->call('create:module:action', [
-                'name' => $this->name . '/Store',
-                'module' => $this->module,
-            ]);
-            //Create Store Action
-            $storeActionFile = base_path() . "/modules/" . $this->module . "/Actions/" . $this->name . "/Store.php";
-            $storeAction = file_get_contents($storeActionFile);
-            $storeAction = str_replace('//use .. ;', "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $this->name . ";\nuse " . config('modules.namespace') . "\\$this->module\\Requests\\" . $this->name . "StoreRequest;", $storeAction);
-            $storeAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . 'StoreRequest $request)', $storeAction);
-            $storeAction = str_replace('// ..', '$handle = ' . $this->name . '::create($request->validated());', $storeAction);
-            file_put_contents($storeActionFile, $storeAction);
+            $this->createActionStore();
 
             //Generate Update Action
-            $this->call('create:module:action', [
-                'name' => $this->name . '/Update',
-                'module' => $this->module,
-            ]);
-            //Create Update Action
-            $updateActionFile = base_path() . "/modules/" . $this->module . "/Actions/" . $this->name . "/Update.php";
-            $updateAction = file_get_contents($updateActionFile);
-            $updateAction = str_replace('//use .. ;', "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $this->name . ";\nuse " . config('modules.namespace') . "\\$this->module\\Requests\\" . $this->name . "UpdateRequest;",  $updateAction);
-            $updateAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . 'UpdateRequest $request, ' . $this->name . ' $' . Str::camel($this->name) . ')', $updateAction);
-            $updateAction = str_replace('// ..', '$' . Str::camel($this->name) . '->update($request->validated());', $updateAction);
-            $updateAction = str_replace('return $handle;', 'return $' . Str::camel($this->name) . ';', $updateAction);
-            file_put_contents($updateActionFile, $updateAction);
+            $this->createActionUpdate();
 
             //Generate Delete Action
-            $this->call('create:module:action', [
-                'name' => $this->name . '/Delete',
-                'module' => $this->module,
-            ]);
-            $deleteActionFile = base_path() . "/modules/" . $this->module . "/Actions/" . $this->name . "/Delete.php";
-            $deleteAction = file_get_contents($deleteActionFile);
-            $deleteAction = str_replace('//use .. ;', "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $this->name . ";", $deleteAction);
-            $deleteAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . ' $' . Str::camel($this->name) . ')', $deleteAction);
-            $deleteAction = str_replace('// ..', '$handle = collect($' . Str::camel($this->name) . '->delete());', $deleteAction);
-            file_put_contents($deleteActionFile, $deleteAction);
+            $this->createActionDelete();
 
-
+            // create unique table
             $tableNames = explode('_', Str::of($this->module . $this->name)->snake());
             $splitNames = [];
             foreach ($tableNames as $tableName) {
@@ -250,5 +205,71 @@ class CreateModuleSub extends Command
         $unique = array_unique($splitNames);
         $url = implode('/', $unique);
         return $url;
+    }
+
+    private function getForeign()
+    {
+        $foreign = [];
+        if (!is_null($this->fields)) {
+            foreach (explode(',', $this->fields) as $var) {
+                $dataType = Str::lower(explode(':', $var)[1]);
+                $textVar = Str::of(explode(':', $var)[0])->lower()->replace('_id', '')->toString();
+                if (in_array($dataType, ['foreignuuid', 'foreignid'])) {
+                    $foreign[] = $textVar;
+                }
+            }
+        }
+
+        return $foreign;
+    }
+
+    private function createActionStore()
+    {
+        $this->call('create:module:action', [
+            'name' => $this->name . '/Store',
+            'module' => $this->module,
+        ]);
+
+        $foreign = $this->getForeign();
+        //Create Store Action
+        $storeActionFile = base_path() . "/modules/" . $this->module . "/Actions/" . $this->name . "/Store.php";
+        $storeAction = file_get_contents($storeActionFile);
+        $storeAction = str_replace('//use .. ;', "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $this->name . ";\nuse " . config('modules.namespace') . "\\$this->module\\Requests\\" . $this->name . "StoreRequest;", $storeAction);
+        $storeAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . 'StoreRequest $request)', $storeAction);
+        if (count($foreign) > 0) {
+            $storeAction = str_replace('// ..', '$request = Helper::mergeRequest(' . json_encode($foreign) . ', $request);' . "\n\t\t// ..", $storeAction);
+        }
+        $storeAction = str_replace('// ..', '$fillable = app(' . $this->name . '::class)->getFillable();' . "\n\t\t" . '$handle = ' . $this->name . '::create($request->only($fillable));', $storeAction);
+        file_put_contents($storeActionFile, $storeAction);
+    }
+
+    private function createActionUpdate()
+    {
+        $this->call('create:module:action', [
+            'name' => $this->name . '/Update',
+            'module' => $this->module,
+        ]);
+        //Create Update Action
+        $updateActionFile = base_path() . "/modules/" . $this->module . "/Actions/" . $this->name . "/Update.php";
+        $updateAction = file_get_contents($updateActionFile);
+        $updateAction = str_replace('//use .. ;', "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $this->name . ";\nuse " . config('modules.namespace') . "\\$this->module\\Requests\\" . $this->name . "UpdateRequest;",  $updateAction);
+        $updateAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . 'UpdateRequest $request, ' . $this->name . ' $' . Str::camel($this->name) . ')', $updateAction);
+        $updateAction = str_replace('// ..', '$fillable = app(' . $this->name . '::class)->getFillable();' . "\n\t\t" . '$' . Str::camel($this->name) . '->update($request->only($fillable));', $updateAction);
+        $updateAction = str_replace('return $handle;', 'return $' . Str::camel($this->name) . ';', $updateAction);
+        file_put_contents($updateActionFile, $updateAction);
+    }
+
+    private function createActionDelete()
+    {
+        $this->call('create:module:action', [
+            'name' => $this->name . '/Delete',
+            'module' => $this->module,
+        ]);
+        $deleteActionFile = base_path() . "/modules/" . $this->module . "/Actions/" . $this->name . "/Delete.php";
+        $deleteAction = file_get_contents($deleteActionFile);
+        $deleteAction = str_replace('//use .. ;', "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $this->name . ";", $deleteAction);
+        $deleteAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . ' $' . Str::camel($this->name) . ')', $deleteAction);
+        $deleteAction = str_replace('// ..', '$handle = collect($' . Str::camel($this->name) . '->delete());', $deleteAction);
+        file_put_contents($deleteActionFile, $deleteAction);
     }
 }

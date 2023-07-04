@@ -91,7 +91,11 @@ class CreateModuleRequest extends GeneratorCommand
         $fillable = $this->option('fillable');
         if (!is_null($fillable)) {
             foreach (explode(',', $fillable) as $var) {
-                $arrays[] = "'" . explode(':', $var)[0] . "' => 'required'";
+                $textVar = explode(':', $var)[0];
+                $isForeign = Str::of($textVar)->contains('_id');
+                if ($isForeign) $arrays[] = "'" . Str::of($textVar)->replace('_id', '') . "' => 'required|array'";
+                $array = "'" . Str::of($textVar)->replace('_id', '.id') . "' => 'required'";
+                $arrays[] = $array;
             };
             return "[" . $tabs . implode("," . $tabs, $arrays) . "\n\t\t]";
         }

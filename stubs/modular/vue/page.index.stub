@@ -21,7 +21,7 @@ export default {
             textNowrap: [],
             numberFormat: [],
             hideAction: false,
-            bulkAction: true,
+            bulkAction: false,
             mobile: {
                 header: ['name'],
                 body: $HEADER$

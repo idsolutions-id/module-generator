@@ -13,37 +13,11 @@ use Vheins\LaravelModuleGenerator\Action\FixQueryApi;
 
 class CreateModule extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'create:module {--blueprint=}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+    protected $signature = 'create:module {--blueprint=}';
     protected $description = 'Create Module Scaffold';
 
-    // /**
-    //  * Get the console command arguments.
-    //  *
-    //  * @return array
-    //  */
-    // protected function getArguments()
-    // {
-    //     return [
-    //         ['module', InputArgument::REQUIRED, 'The name of module will be created.'],
-    //     ];
-    // }
 
-    /**
-     * Get the console command options.
-     *
-     * @return array
-     */
     protected function getOptions()
     {
         return [
@@ -51,14 +25,10 @@ class CreateModule extends Command
         ];
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
+
     public function handle()
     {
-        $blueprints = Yaml::parse(file_get_contents($this->option('blueprint')));
+        $blueprints = Yaml::parse(file_get_contents('.blueprint/' . $this->option('blueprint')));
         foreach ($blueprints as $module => $subModules) {
             $query = [];
             foreach ($subModules as $subModule => $tables) {
@@ -101,5 +71,6 @@ class CreateModule extends Command
         $this->call('optimize:clear');
         $this->info('Generate Blueprint Successfull');
         $this->info('Please restart webserver / sail and vite');
+        return true;
     }
 }

@@ -35,8 +35,7 @@ export default {
             <li v-if="can(`${tab.permission}-index`)" class="link"
                 :class="{ 'active': $route.path == tab.link}">
                 <RouterLink :to="tab.link">
-                    <span
-                        class="navigation-side-icon material-icons uk-margin-small-right uk-margin-remove-bottom uk-flex uk-flex-middle">
+                    <span class="uk-padding-small uk-padding-remove-horizontal uk-flex uk-flex-middle">
                         <component v-bind:is="tab.icon" />
                     </span>
                     <span class="navigation-side-label">{{tab.title}}</span>

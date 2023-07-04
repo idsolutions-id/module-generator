@@ -5,9 +5,7 @@ export default {
     },
     setup() {
         const { t } = useI18n();
-        const auth = useAuthStore();
-        const can = auth.can;
-        return { can, t };
+        return { t };
     },
     data() {
         return {
@@ -20,59 +18,5 @@ export default {
 </script>
 
 <template>
-    <div v-if="type!='icon'">
-        <ul class="uk-visible@s uk-margin-remove-vertical" uk-tab>
-            <template v-for="tab in tabs" :key="tab.link">
-                <li v-if="can(`${tab.permission}-index`)"
-                    :class="{ 'uk-active': (tab.link == $route.path || `${tab.link}/create` == $route.path || `${tab.link}/${$route.params.id}` == $route.path)}">
-                    <RouterLink :to="tab.link">
-                        <component v-bind:is="tab.icon" /> {{tab.title}}
-                    </RouterLink>
-                </li>
-            </template>
-        </ul>
-        <div class="uk-background-default">
-            <div uk-grid>
-                <div class="uk-width-expand">
-                </div>
-                <div class="uk-width-auto">
-                    <button class="uk-hidden@s uk-button uk-button-small uk-button-primary red" type="button">
-                        <span class=" material-icons uk-text-middle">
-                            <LayoutNavbarExpandIcon />
-                        </span>
-                    </button>
-                    <div uk-dropdown="mode: click">
-                        <ul class="uk-nav uk-dropdown-nav">
-                            <template v-for="tab in tabs" :key="tab.link">
-                                <li v-if="can(`${tab.permission}-index`)"
-                                    :class="{ 'uk-active': (tab.link == $route.path || `${tab.link}/create` == $route.path || `${tab.link}/${$route.params.id}` == $route.path)}">
-                                    <RouterLink :to="tab.link">
-                                        <component v-bind:is="tab.icon" /> {{tab.title}}
-                                    </RouterLink>
-                                </li>
-                            </template>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <template v-else>
-        <div class="uk-grid-match uk-grid-small uk-child-width-1-4@l uk-child-width-1-2 uk-padding-small uk-margin-small-top uk-grid"
-            uk-grid>
-            <div v-for="tab in tabs" :key="tab.link">
-                <RouterLink :to="tab.link">
-                    <div class="uk-card uk-card-default uk-padding-small uk-text-center remove-top-border">
-                        <component v-bind:is="tab.icon" />
-                        <h3 class="uk-heading-primary uk-margin-remove uk-text-default">
-                            {{ tab.title }}
-                        </h3>
-                        <!-- <div class="uk-text-small">
-                            <span class="uk-text-muted uk-visible@m"> Setting master perusahaan </span>
-                        </div> -->
-                    </div>
-                </RouterLink>
-            </div>
-        </div>
-    </template>
+    <PartialsIconTab :tabs="tabs" :type="type" />
 </template>
