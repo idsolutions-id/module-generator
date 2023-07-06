@@ -4,6 +4,7 @@ namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 use Nwidart\Modules\Facades\Module;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
@@ -50,29 +51,29 @@ class CreateModuleSub extends Command
         $this->db_only = $this->option('db-only');
 
         //Check if module exists
+        //if ($this->name == 'Transaction') dd($this->db_only);
         if (!Module::collections()->has($this->module)) {
             //Generate Module
             $this->call('module:make', [
                 'name' => [$this->module],
                 '--api' => true
             ]);
-
-            if (!$this->db_only) {
-                //Generate Vue
-                $commands = ['create:module:vue:component:tab', 'create:module:vue:component:link',];
-                foreach ($commands as $command) {
-                    $this->call($command, [
-                        'name' => $this->name,
-                        'module' => $this->module,
-                        '--fillable' => $this->fields,
-                    ]);
-                }
-                //Fix Route File
-                $routeApiFile = base_path() . "/modules/" . $this->module . "/api.php";
-                $routeApi = file_get_contents($routeApiFile);
-                $routeApi = str_replace('$API_ROUTE$', Str::of($this->module)->snake()->slug()->plural()->lower(), $routeApi);
-                file_put_contents($routeApiFile, $routeApi);
+        }
+        if (!$this->db_only) {
+            //Generate Vue
+            $commands = ['create:module:vue:component:tab', 'create:module:vue:component:link',];
+            foreach ($commands as $command) {
+                $this->call($command, [
+                    'name' => $this->name,
+                    'module' => $this->module,
+                    '--fillable' => $this->fields,
+                ]);
             }
+            //Fix Route File
+            $routeApiFile = base_path() . "/modules/" . $this->module . "/api.php";
+            $routeApi = file_get_contents($routeApiFile);
+            $routeApi = str_replace('$API_ROUTE$', Str::of($this->module)->snake()->slug()->plural()->lower(), $routeApi);
+            file_put_contents($routeApiFile, $routeApi);
         }
 
         //Generate Model
@@ -139,8 +140,9 @@ class CreateModuleSub extends Command
 
             //Add Dashboard Link
             $dashboardLinkFile = base_path() . "/modules/" . $this->module . "/Vue/components/" . Str::of($this->module)->snake()->replace('_', '-') . "-dashboard-link.vue";
-            $dashboardLink = file_get_contents($dashboardLinkFile);
-            $dashboardLink = str_replace('//add link here ...', "
+            if (File::exists($dashboardLinkFile)) {
+                $dashboardLink = file_get_contents($dashboardLinkFile);
+                $dashboardLink = str_replace('//add link here ...', "
                         {
                             title: this.t('" . Str::headline($this->name) . "'),
                             link: '/dashboard/" . $this->pageUrl() . "',
@@ -149,12 +151,13 @@ class CreateModuleSub extends Command
                         },
                         //add link here ...
         ", $dashboardLink);
-            file_put_contents($dashboardLinkFile, $dashboardLink);
-
+                file_put_contents($dashboardLinkFile, $dashboardLink);
+            }
             //Add Icon Tabs
             $iconTabFile = base_path() . "/modules/" . $this->module . "/Vue/components/" . Str::of($this->module)->snake()->replace('_', '-') . "-icon-tab.vue";
-            $iconTab = file_get_contents($iconTabFile);
-            $iconTab = str_replace('//add tabs here ...', "
+            if (File::exists($iconTabFile)) {
+                $iconTab = file_get_contents($iconTabFile);
+                $iconTab = str_replace('//add tabs here ...', "
                 {
                     title: this.t('" . Str::headline($this->name) . "'),
                     link: '/dashboard/" . $this->pageUrl() . "',
@@ -163,14 +166,16 @@ class CreateModuleSub extends Command
                 },
                 //add tabs here ...
         ", $iconTab);
-            file_put_contents($iconTabFile, $iconTab);
+                file_put_contents($iconTabFile, $iconTab);
+            }
 
             //Fix Controller File
             $controllerFile = base_path() . "/modules/" . $this->module . "/Controllers/" . Str::studly($this->name) . "Controller.php";
-            $controller = file_get_contents($controllerFile);
-            $controller = str_replace('$modelVar$', Str::camel($this->name), $controller);
-            file_put_contents($controllerFile, $controller);
-
+            if (File::exists($controllerFile)) {
+                $controller = file_get_contents($controllerFile);
+                $controller = str_replace('$modelVar$', Str::camel($this->name), $controller);
+                file_put_contents($controllerFile, $controller);
+            }
 
             //Generate Vue
             $commands = [

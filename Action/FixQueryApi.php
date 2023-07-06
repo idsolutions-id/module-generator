@@ -31,7 +31,7 @@ class FixQueryApi
         foreach ($this->query as $val) {
             $v = Str::slug($val->toString());
             $cv = Str::camel($v);
-            $routeText = "Route::get('" . $v . "', '" . $cv . "')->name('" . Str::of($this->module)->snake()->slug() . "." . $cv . ".query');";
+            $routeText = "Route::get('" . $v . "', '" . $cv . "')->name('" . Str::of($this->module)->snake()->slug() . "." . Str::of($cv)->snake()->slug() . ".query');";
             $contains = Str::contains($textApi, $routeText);
             if (!$contains)
                 $textApi = str_replace('//add more queries here ...', "//add more queries here ...\n\t\t\t" . $routeText, $textApi);

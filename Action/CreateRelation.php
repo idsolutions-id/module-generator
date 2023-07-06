@@ -44,6 +44,12 @@ class CreateRelation
                 case "HasManyThrough":
                     $this->hasManyThrough($k, $v);
                     break;
+                case "MorphOne":
+                    $this->morphOne($k, $v);
+                    break;
+                case "MorphMany":
+                    $this->morphMany($k, $v);
+                    break;
             }
         }
     }
@@ -143,7 +149,6 @@ class CreateRelation
     private function belongsTo($k, $v)
     {
         $v = Arr::sortDesc($v);
-        $reff = "use Illuminate\Database\Eloquent\Relations\BelongsTo;";
         foreach ($v as $m) {
             $model = file_get_contents($this->modelFile);
 
@@ -155,6 +160,44 @@ class CreateRelation
 
             $mm = Str::of($m);
             $model = str_replace('//Model Relationship', "//Model Relationship\n\tpublic function " . $mm->camel()->singular() . "(): " . $k . "\n\t{\n\t\treturn " . '$this->' . Str::camel($k) . "(" . $mm->studly() . "::class);\n\t}\n", $model);
+            file_put_contents($this->modelFile, $model);
+        }
+    }
+
+    private function morphOne($k, $v)
+    {
+        $v = Arr::sortDesc($v);
+        foreach ($v as $key => $val) {
+            $model = file_get_contents($this->modelFile);
+
+            //Add class refferences || Check if model references exist
+            $class = "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $key . ";";
+            $contains = Str::contains($model, $class);
+            if (!$contains)
+                $model = str_replace('//Class Refferences', "//Class Refferences\n" . $class, $model);
+
+            $strKey = Str::of($key);
+            $strVal = Str::of($val);
+            $model = str_replace('//Model Relationship', "//Model Relationship\n\tpublic function " . $strKey->camel()->singular() . "(): " . $k . "\n\t{\n\t\treturn " . '$this->' . Str::camel($k) . "(" . $strKey->studly() . "::class,'" . $strVal->snake() . "');\n\t}\n", $model);
+            file_put_contents($this->modelFile, $model);
+        }
+    }
+
+    private function morphMany($k, $v)
+    {
+        $v = Arr::sortDesc($v);
+        foreach ($v as $key => $val) {
+            $model = file_get_contents($this->modelFile);
+
+            //Add class refferences || Check if model references exist
+            $class = "use " . config('modules.namespace') . "\\" . $this->module . "\\Models\\" . $key . ";";
+            $contains = Str::contains($model, $class);
+            if (!$contains)
+                $model = str_replace('//Class Refferences', "//Class Refferences\n" . $class, $model);
+
+            $strKey = Str::of($key);
+            $strVal = Str::of($val);
+            $model = str_replace('//Model Relationship', "//Model Relationship\n\tpublic function " . $strKey->camel()->singular() . "(): " . $k . "\n\t{\n\t\treturn " . '$this->' . Str::camel($k) . "(" . $strKey->studly() . "::class,'" . $strVal->snake() . "');\n\t}\n", $model);
             file_put_contents($this->modelFile, $model);
         }
     }
