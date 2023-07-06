@@ -50,7 +50,21 @@ class CreateRelation
                 case "MorphMany":
                     $this->morphMany($k, $v);
                     break;
+                case "MorphTo":
+                    $this->morphTo($k, $v);
+                    break;
             }
+        }
+    }
+
+    private function morphTo($k, $v)
+    {
+        $v = Arr::sortDesc($v);
+        foreach ($v as $m) {
+            $model = file_get_contents($this->modelFile);
+            $mm = Str::of($m);
+            $model = str_replace('//Model Relationship', "//Model Relationship\n\tpublic function " . $mm->camel()->singular() . "()\n\t{\n\t\treturn " . '$this->' . Str::camel($k) . "();\n\t}\n", $model);
+            file_put_contents($this->modelFile, $model);
         }
     }
 
