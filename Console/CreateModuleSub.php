@@ -132,7 +132,7 @@ class CreateModuleSub extends Command
             $routeClass = "use " . config('modules.namespace') . "\\" . $this->module . "\\Controllers\\" . $this->name . "Controller;";
             $contains = Str::contains($routeApi, $routeClass);
             if (!$contains) $routeApi = str_replace('//add more class here ...', $routeClass . "\n//add more class here ...", $routeApi);
-            $routeText = "Route::apiResource('" . $this->pageUrl() . "', " . $this->name . "Controller::class, ['as' => '" . Str::of($this->module)->snake()->slug() . "']);";
+            $routeText = "Route::apiResource('" . $this->pageUrl() . "', " . $this->name . "Controller::class, ['as' => '" . Str::of($this->module)->plural()->snake()->slug() . "']);";
             $contains = Str::contains($routeApi, $routeText);
             if (!$contains && $this->pageUrl() != '')
                 $routeApi = str_replace('//add more route here ...', "//add more route here ...\n\t\t" . $routeText, $routeApi);
