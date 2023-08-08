@@ -11,6 +11,7 @@ use Vheins\LaravelModuleGenerator\Console\CreateModuleMigration;
 use Vheins\LaravelModuleGenerator\Console\CreateModuleModel;
 use Vheins\LaravelModuleGenerator\Console\CreateModuleRequest;
 use Vheins\LaravelModuleGenerator\Console\CreateModuleSub;
+use Vheins\LaravelModuleGenerator\Console\CreateModuleVueComponentFilter;
 use Vheins\LaravelModuleGenerator\Console\CreateModuleVueComponentForm;
 use Vheins\LaravelModuleGenerator\Console\CreateModuleVueComponentLink;
 use Vheins\LaravelModuleGenerator\Console\CreateModuleVueComponentTab;
@@ -68,6 +69,7 @@ class LaravelModuleGeneratorServiceProvider extends ServiceProvider
             CreateModuleModel::class,
             CreateModuleRequest::class,
             CreateModuleSub::class,
+            CreateModuleVueComponentFilter::class,
             CreateModuleVueComponentForm::class,
             CreateModuleVueComponentLink::class,
             CreateModuleVueComponentTab::class,

@@ -184,6 +184,7 @@ class CreateModuleSub extends Command
                 'create:module:vue:page:new',
                 'create:module:vue:page:view',
                 'create:module:vue:component:form',
+                'create:module:vue:component:filter',
             ];
             foreach ($commands as $command) {
                 $this->call($command, [

@@ -75,6 +75,8 @@ final class CreateModuleVueStore extends GeneratorCommand
             'LOWER_NAME'        => $module->getLowerName(),
             'MODULE'            => $this->getModuleName(),
             'FILLABLE'          => $this->getFillable(),
+            'FILTER'            => $this->getFilter(),
+            'HEADER'            => $this->getHeader(),
             'NAME'              => Str::of(Str::studly($this->argument('name')))->headline(),
             'PERMISSION'        => $permission
         ]))->render();
@@ -90,6 +92,25 @@ final class CreateModuleVueStore extends GeneratorCommand
         }
     }
 
+    private function getHeader()
+    {
+        $fillable = $this->option('fillable');
+        if (!is_null($fillable)) {
+
+            foreach (explode(',', $fillable) as $var) {
+                $key = explode(':', $var)[1];
+                $val = explode(':', $var)[0];
+                if (in_array($key, [
+                    'foreignId', 'foreignUuid', 'foreignUlid',
+                ])) $val = Str::of($val)->replace('_id', '')->toString() . '.name';
+                $arrays[] = "{ '" . Str::camel($val) . "': '" . Str::of($val)->replace('.', '_')->headline() . "' }";
+            };
+            return "[\n\t\t\t" . implode(", \n\t\t\t", $arrays) . "\n\t\t]";
+        }
+
+        return '[]';
+    }
+
     /**
      * @return string
      */
@@ -99,9 +120,31 @@ final class CreateModuleVueStore extends GeneratorCommand
         if (!is_null($fillable)) {
 
             foreach (explode(',', $fillable) as $var) {
-                $arrays[] = Str::camel(explode(':', $var)[0]) . ": null";
+                $key = explode(':', $var)[0];
+                $arrays[] = Str::of($key)->replace('_id', '')->camel() . ": null";
             };
             return "{\n\t" . implode(",\n\t", $arrays) . "\n}";
+        }
+
+        return '{}';
+    }
+
+    /**
+     * @return string
+     */
+    private function getFilter()
+    {
+        $fillable = $this->option('fillable');
+        if (!is_null($fillable)) {
+            $arrays = [];
+            foreach (explode(',', $fillable) as $var) {
+                $key = explode(':', $var)[1];
+                $val = explode(':', $var)[0];
+                if (in_array($key, [
+                    'foreignId', 'foreignUuid', 'foreignUlid',
+                ])) $arrays[] = Str::of($val)->replace('_id', '')->camel() . ": null";
+            };
+            return "{\n\t\t\t" . implode(",\n\t\t\t", $arrays) . "\n\t\t}";
         }
 
         return '{}';
