@@ -14,15 +14,17 @@ export const useModule$CLASS$Store = defineStore('module.$PERMISSION$', {
         edit: false,
         view: true,
         loading: true,
-        form: blankData
+        form: blankData,
+        filter: $FILTER$,
+        exportFields: $HEADER$,
     }),
 
     actions: {
-        fetchAll() {
+        fetchAll(payload) {
             this.loading = true;
             const response = useResponseStore();
             return new Promise((resolve, reject) => {
-                $axios.get(this.apiRoute).then(res => {
+                $axios.get(this.apiRoute, { params: payload }).then(res => {
                     if (res.data.success == true) {
                         this.list = res.data.data;
                         response.clearErrors();
@@ -42,21 +44,6 @@ export const useModule$CLASS$Store = defineStore('module.$PERMISSION$', {
                 $axios.get(this.apiRoute + '/' + payload).then(res => {
                     this.data = res.data.data;
                     this.form = res.data.data;
-                    response.clearErrors();
-                    resolve(res.data)
-                }).catch(err => {
-                    reject(err);
-                })
-                this.loading = false;
-            })
-        },
-        fetchOption() {
-            this.loading = true;
-            this.setCreate();
-            const response = useResponseStore();
-            return new Promise((resolve, reject) => {
-                $axios.options(this.apiRoute).then(res => {
-                    this.data = res.data.data;
                     response.clearErrors();
                     resolve(res.data)
                 }).catch(err => {
@@ -122,10 +109,16 @@ export const useModule$CLASS$Store = defineStore('module.$PERMISSION$', {
         },
         resetForm() {
             this.form = $FILLABLE$;
-        }
+        },
+        resetFilter() {
+            this.filter = $FILTER$;
+        },
     },
 
     getters: {
+        countFilter() {
+            return Object.values(this.filter).filter(val => val != null).length
+        },
         isCreate() {
             return this.create ? true : false;
         },

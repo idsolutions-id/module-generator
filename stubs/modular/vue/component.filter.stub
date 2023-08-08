@@ -1,0 +1,104 @@
+<script>
+export default {
+    setup() {
+        const datatable = useDatatableStore();
+        const filter = datatable.getFilter;
+        const store = useModule$CLASS$Store();
+        return { datatable, filter, store };
+    },
+    data() {
+        return {
+            downloadLink: null,
+        }
+    },
+    methods: {
+        async fetchCsv() {
+            var filter = this.datatable.getFilter(this.store.apiRoute);
+            var params = {
+                'skipPagination': true,
+            };
+            if (filter != null) {
+                Object.entries(filter).forEach(entry => {
+                    const [key, value] = entry;
+                    var val = value;
+                    if (value != null && value instanceof Array) {
+                        val = value.map(function (item) {
+                            return item.id ? item.id : item;
+                        })
+                    } else if (value != null && value instanceof Object) {
+                        val = value.id;
+                    }
+                    params[key] = val;
+                });
+            }
+            await this.datatable.fetchAll(this.store.apiRoute, params)
+                .then(() => {
+                    this.datatable.mapCsv(this.store.exportFields);
+                    setTimeout(function () {
+                        const elem = document.getElementById('download');
+                        elem.click();
+                    }, 100);
+                    this.$swal({
+                        icon: 'success',
+                        position: 'center',
+                        showConfirmButton: false,
+                        text: 'Data Successfully Downloaded!',
+                        timer: 1500,
+                        // toast: true,
+                    });
+                });
+        }
+    },
+    watch: {
+        'store.filter': {
+            handler(value) {
+                this.datatable.setFilter(this.store.apiRoute, value);
+                this.datatable.resetCsv();
+            },
+            deep: true
+        },
+        datatable: {
+            deep: true,
+            handler() {
+                var filter = this.filter(this.store.apiRoute);
+                if (filter)
+                    this.form = this.filter(this.store.apiRoute);
+            }
+        }
+    },
+}
+</script>
+
+<template>
+    <button type="button" class="uk-button uk-button-small uk-border-rounded uk-flex uk-flex-middle">
+        <FilterIcon /> <span class="uk-visible@m">Filter</span>
+    </button>
+    <div class="uk-width-xlarge width-release uk-text-left" uk-dropdown="mode: click;">
+        <div class="uk-card-body uk-padding-remove">
+            <div class="uk-text-bold true-black">{{ $t('Filter By') }} </div>
+            <div class="uk-grid-small" uk-grid>
+$FORM$
+            </div>
+        </div>
+        <div class="uk-card-footer uk-padding-small rounded uk-flex uk-flex-right uk-margin-small">
+            <template v-if="store.countFilter > 0">
+                <button type="button" @click="store.resetFilter()"
+                    class="uk-button uk-button-small uk-border-rounded uk-flex uk-flex-middle">
+                    <ReloadIcon /> <span class="uk-visible@m">Reset</span>
+                </button>
+                <download-csv id="download" v-if="datatable.csv" :data="datatable.csv"
+                    :name="`${store.moduleName}_${Date.now()}.csv`"
+                    class="uk-button uk-button-small uk-button-primary uk-border-rounded">
+                    <DownloadIcon />
+                    Re-Download ({{ datatable.csv.length }})
+                </download-csv>
+                <div v-else>
+                    <button @click="fetchCsv" class="uk-button uk-button-small uk-button-primary uk-border-rounded">
+                        <DownloadIcon />
+                        Download
+                    </button>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

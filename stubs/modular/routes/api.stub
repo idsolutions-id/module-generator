@@ -17,6 +17,7 @@ use $MODULE_NAMESPACE$\$STUDLY_NAME$\Controllers\$STUDLY_NAME$Controller;
 
 Route::prefix('v1')->middleware('jwt.verify')->group(function () {
     Route::prefix('$API_ROUTE$')->group(function(){
+        Route::get('export', [$STUDLY_NAME$Controller::class,'export'])->name('$API_ROUTE$.export');;
         //add more route here ...
         //add more queries here ...
     });

@@ -18,8 +18,18 @@ class $CLASS$ extends Controller
     protected $is_public = false;
     protected $need_permission = true;
     public $permission = 'module.$PERMISSION$';
+    public $mapRequest = []; //Array of Request
+    public $mapRelation = []; //Array of Relation, Key as Eloquent Relation, Value as Request
+    public $mapTimeframe = []; //Array of Request Aliased as Timeframe
 
     public function index(Request $request)
+    {
+        $model = $NAME$::query();
+        $data = $this->search($model, $request);
+        return $this->success($data);
+    }
+
+    public function export(Request $request)
     {
         $model = $NAME$::query();
         $data = $this->search($model, $request);
@@ -34,7 +44,7 @@ class $CLASS$ extends Controller
 
     public function show($NAME$ $$MODEL_VAR$, $code = 200, $message = null)
     {
-        //$$MODEL_VAR$->load();
+        //$$MODEL_VAR$->loadMissing();
         return $this->success($$MODEL_VAR$, $message, $code);
     }
 

@@ -70,7 +70,7 @@ export default {
             <div class="uk-grid-small uk-flex-middle" uk-grid>
                 <div class="uk-width-expand">
                     <h3 class="uk-card-title uk-text-truncate">
-                        {{ store.data && store.data.name ? store.data.name : store.moduleName }}
+                        {{ store.data && store.data.name ? store.data.name : $t(store.moduleName) }}
                     </h3>
                 </div>
                 <FormButtonTool :store="store" />
@@ -86,7 +86,7 @@ $FORM$
                     class=" uk-button uk-button-small uk-border-rounded uk-button-primary red uk-float-right">
                     <span class="material-icons uk-text-middle">
                         <DeviceFloppyIcon />
-                    </span> Submit</button>
+                    </span> {{ $t('Submit') }}</button>
 
                 <button @click="remove" :disabled="store.loading"
                     v-if="store.isEdit && can(`${store.permission}-delete`)"

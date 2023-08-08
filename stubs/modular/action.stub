@@ -2,7 +2,6 @@
 
 namespace $NAMESPACE$;
 
-use App\Helpers\Helper;
 use Lorisleiva\Actions\Concerns\AsAction;
 //use .. ;
 
