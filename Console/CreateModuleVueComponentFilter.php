@@ -217,6 +217,9 @@ final class CreateModuleVueComponentFilter extends GeneratorCommand
             'VAR_NAME'  => Str::camel($name),
             'MODULE'    => Str::of($this->getModuleName())->snake()->slug()->plural(),
             'ENDPOINT'    => Str::of($name)->snake()->slug()->plural(),
-        ]))->render())->replace('store.form', 'store.filter')->replace(':disabled="store.isView"', 'multiple');
+        ]))->render())
+            ->replace('store.form', 'store.filter')
+            ->replace(':disabled="store.isView"', 'multiple')
+            ->replace('class="uk-margin"', 'class="uk-width-1-1"');
     }
 }

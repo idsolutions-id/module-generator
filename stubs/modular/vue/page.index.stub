@@ -44,7 +44,7 @@ export default {
             </div>
             <div class="uk-width-auto">
                 <div class="uk-button-group rounded uk-box-shadow-small">
-                    <$MODULE$Filter />
+                    <$CLASS$Filter />
                     <RouterLink :to="`${store.route}/create`" v-if="can(`${store.permission}-create`) && !options.hideAction"
                         class="uk-button uk-button-small uk-border-rounded uk-button-primary red uk-flex uk-flex-middle" aria-expanded="false">
                         <PlusIcon />
