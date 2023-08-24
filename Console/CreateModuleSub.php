@@ -132,9 +132,9 @@ class CreateModuleSub extends Command
             $routeClass = "use " . config('modules.namespace') . "\\" . $this->module . "\\Controllers\\" . $this->name . "Controller;";
             $contains = Str::contains($routeApi, $routeClass);
             if (!$contains) $routeApi = str_replace('//add more class here ...', $routeClass . "\n//add more class here ...", $routeApi);
-            $routeText = "Route::apiResource('" . $this->pageUrl() . "', " . $this->name . "Controller::class, ['as' => '" . Str::of($this->module)->plural()->snake()->slug() . "']);";
+            $routeText = "Route::apiResource('" . $this->apiUrl() . "', " . $this->name . "Controller::class, ['as' => '" . Str::of($this->module)->plural()->snake()->slug() . "']);";
             $contains = Str::contains($routeApi, $routeText);
-            if (!$contains && $this->pageUrl() != '')
+            if (!$contains && $this->apiUrl() != '')
                 $routeApi = str_replace('//add more route here ...', "//add more route here ...\n\t\t" . $routeText, $routeApi);
             file_put_contents($routeApiFile, $routeApi);
 
@@ -202,6 +202,18 @@ class CreateModuleSub extends Command
     private function pageUrl()
     {
         $module = $this->argument('module') . '_' . $this->argument('name');
+        $tableNames = explode('_', $module);
+        $splitNames = [];
+        foreach ($tableNames as $tableName) {
+            $splitNames[] = Str::of($tableName)->snake()->slug()->plural()->toString();
+        }
+        $unique = array_unique($splitNames);
+        return implode('/', $unique);
+    }
+
+    private function apiUrl()
+    {
+        $module = $this->argument('name');
         $tableNames = explode('_', $module);
         $splitNames = [];
         foreach ($tableNames as $tableName) {
