@@ -87,8 +87,11 @@ final class CreateModuleVueStore extends GeneratorCommand
         if ($this->argument('name') == $this->argument('module')) {
             return Str::of($this->argument('module'))->headline()->plural()->slug();
         } else {
-            return Str::of($this->argument('module'))->headline()->plural()->slug() . '/' .
-                Str::of($this->argument('name'))->remove($this->argument('module'), false)->headline()->plural()->slug();
+            $module = Str::of($this->argument('module'))->headline()->plural()->slug()->toString();
+            $name = Str::of($this->argument('name'))->remove($this->argument('module'), false)->headline()->plural()->slug()->toString();
+            if (!empty($module)) $route[] = $module;
+            if (!empty($name)) $route[] = $name;
+            return implode('/', $route);
         }
     }
 
