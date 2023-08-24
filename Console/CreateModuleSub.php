@@ -134,7 +134,7 @@ class CreateModuleSub extends Command
             if (!$contains) $routeApi = str_replace('//add more class here ...', $routeClass . "\n//add more class here ...", $routeApi);
             $routeText = "Route::apiResource('" . $this->apiUrl() . "', " . $this->name . "Controller::class, ['as' => '" . Str::of($this->module)->plural()->snake()->slug() . "']);";
             $contains = Str::contains($routeApi, $routeText);
-            if (!$contains && $this->apiUrl() != '')
+            if (!$contains && $this->apiUrl() != '' && $this->apiUrl() != Str::lower($this->module))
                 $routeApi = str_replace('//add more route here ...', "//add more route here ...\n\t\t" . $routeText, $routeApi);
             file_put_contents($routeApiFile, $routeApi);
 
