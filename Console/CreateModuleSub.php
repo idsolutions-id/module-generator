@@ -201,16 +201,14 @@ class CreateModuleSub extends Command
 
     private function pageUrl()
     {
-        //$module = $this->argument('module') . '_' . $this->argument('name');
-        $module = $this->argument('name');
+        $module = $this->argument('module') . '_' . $this->argument('name');
         $tableNames = explode('_', $module);
         $splitNames = [];
         foreach ($tableNames as $tableName) {
-            $splitNames[] = Str::of($tableName)->snake()->slug()->plural();
+            $splitNames[] = Str::of($tableName)->snake()->slug()->plural()->toString();
         }
         $unique = array_unique($splitNames);
-        $url = implode('/', $unique);
-        return $url;
+        return implode('/', $unique);
     }
 
     private function getForeign()
