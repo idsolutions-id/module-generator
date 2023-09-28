@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'name' => 'Laravel Module Generator'
+    'name' => 'LaravelModuleGenerator',
 ];

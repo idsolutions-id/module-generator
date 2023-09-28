@@ -18,11 +18,9 @@
         "Generator"
     ],
     "require": {
-        "lorisleiva/laravel-actions": "^2.4",
-        "symfony/yaml": "^6.2"
-    },
-    "require-dev": {
-        "nwidart/laravel-modules": "^9.0"
+        "lorisleiva/laravel-actions": "^v2.7.1",
+        "symfony/yaml": "^v6.3.3",
+        "nwidart/laravel-modules": "v10.0.0"
     },
     "extra": {
         "laravel": {
@@ -30,7 +28,8 @@
                 "Vheins\\LaravelModuleGenerator\\Providers\\LaravelModuleGeneratorServiceProvider"
             ],
             "aliases": {
-                "ModuleGenerator": "Vheins\\LaravelModuleGenerator\\Facades\\LaravelModuleGenerator"
+                "ModuleGenerator": "Vheins\\LaravelModuleGenerator\\Facades\\LaravelModuleGenerator",
+                "LaravelModuleGenerator": "Vheins\\LaravelModuleGenerator\\Facades\\LaravelModuleGenerator"
             }
         }
     },
