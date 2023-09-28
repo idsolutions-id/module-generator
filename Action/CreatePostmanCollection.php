@@ -178,7 +178,7 @@ class CreatePostmanCollection
                                 'language' => 'json',
                             ],
                         ],
-                        //'raw' => json_encode($rules, JSON_PRETTY_PRINT),
+                        'raw' => json_encode($rules, JSON_PRETTY_PRINT),
                     ];
                     $data['request']['description'] = "```json\n".json_encode($rules)."\n```";
                 }
