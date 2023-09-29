@@ -3,12 +3,12 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Commands\GeneratorCommand;
-use Nwidart\Modules\Traits\ModuleCommandTrait;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
+use Nwidart\Modules\Support\Stub;
+use Nwidart\Modules\Traits\ModuleCommandTrait;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class CreateModuleModel extends GeneratorCommand
 {
@@ -53,6 +53,7 @@ class CreateModuleModel extends GeneratorCommand
      * Create a proper migration name:
      * ProductDetail: product_details
      * Product: products
+     *
      * @return string
      */
     private function createMigrationName()
@@ -62,7 +63,7 @@ class CreateModuleModel extends GeneratorCommand
         $string = '';
         foreach ($pieces as $i => $piece) {
             if ($i + 1 < count($pieces)) {
-                $string .= strtolower($piece) . '_';
+                $string .= strtolower($piece).'_';
             } else {
                 $string .= Str::plural(strtolower($piece));
             }
@@ -96,7 +97,7 @@ class CreateModuleModel extends GeneratorCommand
             ['migration', 'm', InputOption::VALUE_NONE, 'Flag to create associated migrations', null],
             ['controller', 'c', InputOption::VALUE_NONE, 'Flag to create associated controllers', null],
             ['seed', 's', InputOption::VALUE_NONE, 'Create a new seeder for the model', null],
-            ['request', 'r', InputOption::VALUE_NONE, 'Create a new request for the model', null]
+            ['request', 'r', InputOption::VALUE_NONE, 'Create a new request for the model', null],
         ];
     }
 
@@ -106,7 +107,7 @@ class CreateModuleModel extends GeneratorCommand
     private function handleOptionalMigrationOption()
     {
         if ($this->option('migration') === true) {
-            $tableNames = explode('_', Str::of($this->argument('module') . $this->argument('model'))->snake());
+            $tableNames = explode('_', Str::of($this->argument('module').$this->argument('model'))->snake());
             $splitNames = [];
             foreach ($tableNames as $tableName) {
                 $splitNames[] = $tableName != 'has' ? Str::of($tableName)->singular() : $tableName;
@@ -115,12 +116,12 @@ class CreateModuleModel extends GeneratorCommand
             $unique = implode('_', $unique);
             $tableName = Str::of($unique)->plural();
 
-            $migrationName = 'create_' . $tableName  . '_' . $this->createMigrationName() . '_table';
+            $migrationName = 'create_'.$tableName.'_'.$this->createMigrationName().'_table';
             $this->call('create:module:migration', [
                 'name' => $migrationName,
                 'module' => $this->argument('module'),
-                'basename' => $this->argument('module') . $this->argument('model'),
-                '--fields' => $this->option('fillable')
+                'basename' => $this->argument('module').$this->argument('model'),
+                '--fields' => $this->option('fillable'),
             ]);
         }
     }
@@ -152,7 +153,7 @@ class CreateModuleModel extends GeneratorCommand
 
             $this->call('module:make-seed', array_filter([
                 'name' => $seedName,
-                'module' => $this->argument('module')
+                'module' => $this->argument('module'),
             ]));
         }
     }
@@ -169,7 +170,7 @@ class CreateModuleModel extends GeneratorCommand
 
             $this->call('module:make-request', array_filter([
                 'name' => $requestName,
-                'module' => $this->argument('module')
+                'module' => $this->argument('module'),
             ]));
         }
     }
@@ -181,7 +182,7 @@ class CreateModuleModel extends GeneratorCommand
     {
         $module = $this->laravel['modules']->findOrFail($this->getModuleName());
 
-        $tableNames = explode('_', Str::of($this->getModuleName() . $this->getModelName())->snake()->plural());
+        $tableNames = explode('_', Str::of($this->getModuleName().$this->getModelName())->snake()->plural());
         $splitNames = [];
         foreach ($tableNames as $tableName) {
             $splitNames[] = $tableName != 'has' ? Str::of($tableName)->singular() : $tableName;
@@ -190,17 +191,16 @@ class CreateModuleModel extends GeneratorCommand
         $unique = implode('_', $unique);
         $tableName = Str::of($unique)->plural();
 
-
         return (new Stub('/model.stub', [
-            'NAME'              => $this->getModelName(),
-            'FILLABLE'          => $this->getFillable(),
-            'NAMESPACE'         => $this->getClassNamespace($module),
-            'CLASS'             => $this->getClass(),
-            'LOWER_NAME'        => $module->getLowerName(),
-            'MODULE'            => $this->getModuleName(),
-            'STUDLY_NAME'       => $module->getStudlyName(),
-            'MODULE_NAMESPACE'  => $this->laravel['modules']->config('namespace'),
-            'TABLE_NAME'        => $tableName
+            'NAME' => $this->getModelName(),
+            'FILLABLE' => $this->getFillable(),
+            'NAMESPACE' => $this->getClassNamespace($module),
+            'CLASS' => $this->getClass(),
+            'LOWER_NAME' => $module->getLowerName(),
+            'MODULE' => $this->getModuleName(),
+            'STUDLY_NAME' => $module->getStudlyName(),
+            'MODULE_NAMESPACE' => $this->laravel['modules']->config('namespace'),
+            'TABLE_NAME' => $tableName,
         ]))->render();
     }
 
@@ -213,7 +213,7 @@ class CreateModuleModel extends GeneratorCommand
 
         $modelPath = GenerateConfigReader::read('model');
 
-        return $path . $modelPath->getPath() . '/' . $this->getModelName() . '.php';
+        return $path.$modelPath->getPath().'/'.$this->getModelName().'.php';
     }
 
     /**
@@ -230,12 +230,13 @@ class CreateModuleModel extends GeneratorCommand
     private function getFillable()
     {
         $fillable = $this->option('fillable');
-        if (!is_null($fillable)) {
+        if (! is_null($fillable)) {
 
             foreach (explode(',', $fillable) as $var) {
-                $arrays[] = "'" . explode(':', $var)[0] . "'";
-            };
-            return '[' . implode(', ', $arrays) . ']';
+                $arrays[] = "'".explode(':', $var)[0]."'";
+            }
+
+            return '['.implode(', ', $arrays).']';
         }
 
         return '[]';
@@ -243,8 +244,6 @@ class CreateModuleModel extends GeneratorCommand
 
     /**
      * Get default namespace.
-     *
-     * @return string
      */
     public function getDefaultNamespace(): string
     {

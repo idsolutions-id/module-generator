@@ -3,12 +3,12 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Commands\GeneratorCommand;
-use Nwidart\Modules\Traits\ModuleCommandTrait;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
+use Nwidart\Modules\Support\Stub;
+use Nwidart\Modules\Traits\ModuleCommandTrait;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class CreateModuleController extends GeneratorCommand
 {
@@ -46,7 +46,7 @@ class CreateModuleController extends GeneratorCommand
 
         $controllerPath = GenerateConfigReader::read('controller');
 
-        return $path . $controllerPath->getPath() . '/' . $this->getControllerName() . '.php';
+        return $path.$controllerPath->getPath().'/'.$this->getControllerName().'.php';
     }
 
     /**
@@ -55,7 +55,7 @@ class CreateModuleController extends GeneratorCommand
     protected function getTemplateContents()
     {
         $module = $this->laravel['modules']->findOrFail($this->getModuleName());
-        $tableNames = explode('_', Str::of($this->getModuleName() . $this->getController())->snake());
+        $tableNames = explode('_', Str::of($this->getModuleName().$this->getController())->snake());
         $splitNames = [];
         foreach ($tableNames as $tableName) {
             $splitNames[] = Str::of($tableName)->singular();
@@ -65,18 +65,18 @@ class CreateModuleController extends GeneratorCommand
         $tableName = Str::of($unique);
 
         return (new Stub($this->getStubName(), [
-            'MODULENAME'        => $module->getStudlyName(),
-            'CONTROLLERNAME'    => $this->getControllerName(),
-            'NAMESPACE'         => $module->getStudlyName(),
-            'CLASS_NAMESPACE'   => $this->getClassNamespace($module),
-            'CLASS'             => $this->getControllerNameWithoutNamespace(),
-            'LOWER_NAME'        => $module->getLowerName(),
-            'MODULE'            => $this->getModuleName(),
-            'NAME'              => $this->getController(),
-            'STUDLY_NAME'       => $module->getStudlyName(),
-            'MODULE_NAMESPACE'  => $this->laravel['modules']->config('namespace'),
-            'MODEL_VAR'         => ($this->getModuleName() == $this->getController()) ? Str::of($this->getController())->camel() : Str::of($this->getController())->replace($this->getModuleName(), '')->camel(),
-            'PERMISSION'        => $tableName,
+            'MODULENAME' => $module->getStudlyName(),
+            'CONTROLLERNAME' => $this->getControllerName(),
+            'NAMESPACE' => $module->getStudlyName(),
+            'CLASS_NAMESPACE' => $this->getClassNamespace($module),
+            'CLASS' => $this->getControllerNameWithoutNamespace(),
+            'LOWER_NAME' => $module->getLowerName(),
+            'MODULE' => $this->getModuleName(),
+            'NAME' => $this->getController(),
+            'STUDLY_NAME' => $module->getStudlyName(),
+            'MODULE_NAMESPACE' => $this->laravel['modules']->config('namespace'),
+            'MODEL_VAR' => ($this->getModuleName() == $this->getController()) ? Str::of($this->getController())->camel() : Str::of($this->getController())->replace($this->getModuleName(), '')->camel(),
+            'PERMISSION' => $tableName,
         ]))->render();
     }
 
@@ -140,6 +140,7 @@ class CreateModuleController extends GeneratorCommand
 
     /**
      * Get the stub file name based on the options
+     *
      * @return string
      */
     protected function getStubName()

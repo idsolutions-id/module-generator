@@ -2,21 +2,19 @@
 
 namespace Vheins\LaravelModuleGenerator\Console;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
-use Symfony\Component\Yaml\Yaml;
+use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Yaml\Yaml;
 use Vheins\LaravelModuleGenerator\Action\CreateQuery;
 use Vheins\LaravelModuleGenerator\Action\CreateRelation;
 use Vheins\LaravelModuleGenerator\Action\FixQueryApi;
 
 class CreateModule extends Command
 {
-
     protected $signature = 'create:module {--blueprint=}';
-    protected $description = 'Create Module Scaffold';
 
+    protected $description = 'Create Module Scaffold';
 
     protected function getOptions()
     {
@@ -25,25 +23,28 @@ class CreateModule extends Command
         ];
     }
 
-
     public function handle()
     {
-        $blueprints = Yaml::parse(file_get_contents('.blueprint/' . $this->option('blueprint')));
+        $blueprints = Yaml::parse(file_get_contents('.blueprint/'.$this->option('blueprint')));
         foreach ($blueprints as $module => $subModules) {
             $query = [];
             foreach ($subModules as $subModule => $tables) {
                 $dbOnly = false;
-                if (isset($tables['CRUD'])) $dbOnly = false;
-                if (isset($tables['CRUD']) && $tables['CRUD'] == false) $dbOnly = true;
+                if (isset($tables['CRUD'])) {
+                    $dbOnly = false;
+                }
+                if (isset($tables['CRUD']) && $tables['CRUD'] == false) {
+                    $dbOnly = true;
+                }
                 //Fillable
                 $fillables = [];
                 foreach ($tables['Fillable'] as $k => $v) {
-                    $fillables[] = $k . ":" . $v;
+                    $fillables[] = $k.':'.$v;
                 }
                 $this->call('create:module:sub', [
                     'module' => $module,
                     'name' => $subModule,
-                    '--fillable' => implode(",", $fillables),
+                    '--fillable' => implode(',', $fillables),
                     '--db-only' => $dbOnly,
                 ]);
 
@@ -61,7 +62,7 @@ class CreateModule extends Command
                     CreateQuery::run($args);
                 }
 
-                $this->info('Module ' . $module . ' Submodule ' . $subModule . ' Created!');
+                $this->info('Module '.$module.' Submodule '.$subModule.' Created!');
                 sleep(1);
             }
 
@@ -71,6 +72,7 @@ class CreateModule extends Command
         $this->call('optimize:clear');
         $this->info('Generate Blueprint Successfull');
         $this->info('Please restart webserver / sail and vite');
+
         return true;
     }
 }

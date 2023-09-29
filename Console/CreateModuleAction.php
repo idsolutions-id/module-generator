@@ -3,11 +3,11 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Commands\GeneratorCommand;
+use Nwidart\Modules\Support\Config\GenerateConfigReader;
+use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Traits\ModuleCommandTrait;
 use Symfony\Component\Console\Input\InputArgument;
-use Nwidart\Modules\Support\Config\GenerateConfigReader;
 
 class CreateModuleAction extends GeneratorCommand
 {
@@ -64,7 +64,7 @@ class CreateModuleAction extends GeneratorCommand
 
         return (new Stub('/action.stub', [
             'NAMESPACE' => $namespace,
-            'CLASS'     => $this->getClass(),
+            'CLASS' => $this->getClass(),
         ]))->render();
     }
 
@@ -77,7 +77,7 @@ class CreateModuleAction extends GeneratorCommand
 
         $requestPath = GenerateConfigReader::read('action');
 
-        return $path . $requestPath->getPath() . '/' . $this->getFileName() . '.php';
+        return $path.$requestPath->getPath().'/'.$this->getFileName().'.php';
     }
 
     /**

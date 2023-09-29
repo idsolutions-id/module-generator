@@ -2,16 +2,15 @@
 
 namespace Vheins\LaravelModuleGenerator\Console;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Commands\GeneratorCommand;
-use Nwidart\Modules\Traits\ModuleCommandTrait;
-use Symfony\Component\Console\Input\InputOption;
-use Nwidart\Modules\Support\Migrations\NameParser;
-use Symfony\Component\Console\Input\InputArgument;
-use Nwidart\Modules\Support\Migrations\SchemaParser;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
+use Nwidart\Modules\Support\Migrations\NameParser;
+use Nwidart\Modules\Support\Migrations\SchemaParser;
+use Nwidart\Modules\Support\Stub;
+use Nwidart\Modules\Traits\ModuleCommandTrait;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class CreateModuleMigration extends GeneratorCommand
 {
@@ -69,9 +68,9 @@ class CreateModuleMigration extends GeneratorCommand
     }
 
     /**
-     * @throws \InvalidArgumentException
-     *
      * @return mixed
+     *
+     * @throws \InvalidArgumentException
      */
     protected function getTemplateContents()
     {
@@ -128,7 +127,7 @@ class CreateModuleMigration extends GeneratorCommand
 
         $generatorPath = GenerateConfigReader::read('migration');
 
-        return $path . $generatorPath->getPath() . '/' . $this->getFileName() . '.php';
+        return $path.$generatorPath->getPath().'/'.$this->getFileName().'.php';
     }
 
     /**
@@ -136,7 +135,7 @@ class CreateModuleMigration extends GeneratorCommand
      */
     private function getFileName()
     {
-        return date('Y_m_d_His_') . $this->getSchemaName();
+        return date('Y_m_d_His_').$this->getSchemaName();
     }
 
     /**
@@ -144,14 +143,15 @@ class CreateModuleMigration extends GeneratorCommand
      */
     private function getSchemaName()
     {
-        $fileNames = explode('_', Str::of($this->argument('basename') . $this->argument('module'))->snake());
+        $fileNames = explode('_', Str::of($this->argument('basename').$this->argument('module'))->snake());
         $splitNames = [];
         foreach ($fileNames as $fileName) {
             $splitNames[] = $fileName != 'has' ? Str::of($fileName)->singular() : $fileName;
         }
         $unique = array_unique($splitNames);
         $unique = implode('_', $unique);
-        $fileName = Str::of($unique)->plural() . '_table';
+        $fileName = Str::of($unique)->plural().'_table';
+
         return $fileName;
     }
 

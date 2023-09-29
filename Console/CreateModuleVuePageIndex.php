@@ -3,12 +3,12 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Commands\GeneratorCommand;
-use Nwidart\Modules\Traits\ModuleCommandTrait;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
+use Nwidart\Modules\Support\Stub;
+use Nwidart\Modules\Traits\ModuleCommandTrait;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 final class CreateModuleVuePageIndex extends GeneratorCommand
 {
@@ -42,7 +42,6 @@ final class CreateModuleVuePageIndex extends GeneratorCommand
         ];
     }
 
-
     public function getDefaultNamespace(): string
     {
         $module = $this->laravel['modules'];
@@ -68,13 +67,13 @@ final class CreateModuleVuePageIndex extends GeneratorCommand
         $classNames = Str::of($unique)->studly();
 
         return (new Stub('/vue/page.index.stub', [
-            'STUDLY_NAME'   => $module->getStudlyName(),
-            'API_ROUTE'     => $this->pageUrl($module->getStudlyName()),
-            'CLASS'         => $classNames,
-            'LOWER_NAME'    => $module->getLowerName(),
-            'MODULE'        => $this->getModuleName(),
-            'SEARCHABLE'    => $this->getSearchable(),
-            'HEADER'        => $this->getHeader(),
+            'STUDLY_NAME' => $module->getStudlyName(),
+            'API_ROUTE' => $this->pageUrl($module->getStudlyName()),
+            'CLASS' => $classNames,
+            'LOWER_NAME' => $module->getLowerName(),
+            'MODULE' => $this->getModuleName(),
+            'SEARCHABLE' => $this->getSearchable(),
+            'HEADER' => $this->getHeader(),
 
             // 'NAME'              => $this->getModelName(),
             // 'NAMESPACE'         => $this->getClassNamespace($module),
@@ -88,17 +87,20 @@ final class CreateModuleVuePageIndex extends GeneratorCommand
     private function getHeader()
     {
         $fillable = $this->option('fillable');
-        if (!is_null($fillable)) {
+        if (! is_null($fillable)) {
 
             foreach (explode(',', $fillable) as $var) {
                 $key = explode(':', $var)[1];
                 $val = explode(':', $var)[0];
                 if (in_array($key, [
                     'foreignId', 'foreignUuid', 'foreignUlid',
-                ])) $val = Str::of($val)->replace('_id', '')->toString() . '.name';
-                $arrays[] = "{ '" . Str::camel($val) . "': '" . Str::of($val)->replace('.', '_')->headline() . "' }";
-            };
-            return "[\n\t\t\t\t" . implode(", \n\t\t\t\t", $arrays) . "\n\t\t\t]";
+                ])) {
+                    $val = Str::of($val)->replace('_id', '')->toString().'.name';
+                }
+                $arrays[] = "{ '".Str::camel($val)."': '".Str::of($val)->replace('.', '_')->headline()."' }";
+            }
+
+            return "[\n\t\t\t\t".implode(", \n\t\t\t\t", $arrays)."\n\t\t\t]";
         }
 
         return '[]';
@@ -110,17 +112,20 @@ final class CreateModuleVuePageIndex extends GeneratorCommand
     private function getSearchable()
     {
         $fillable = $this->option('fillable');
-        if (!is_null($fillable)) {
+        if (! is_null($fillable)) {
 
             foreach (explode(',', $fillable) as $var) {
                 $key = explode(':', $var)[1];
                 $val = explode(':', $var)[0];
                 if (in_array($key, [
                     'foreignId', 'foreignUuid', 'foreignUlid',
-                ])) $val = Str::of($val)->replace('_id', '')->toString() . '.name';
-                $arrays[] = "'" . Str::camel($val) . "'";
-            };
-            return '[' . implode(', ', $arrays) . ']';
+                ])) {
+                    $val = Str::of($val)->replace('_id', '')->toString().'.name';
+                }
+                $arrays[] = "'".Str::camel($val)."'";
+            }
+
+            return '['.implode(', ', $arrays).']';
         }
 
         return '[]';
@@ -138,8 +143,7 @@ final class CreateModuleVuePageIndex extends GeneratorCommand
 
         $Path = GenerateConfigReader::read('vue-pages');
 
-
-        return $path . $Path->getPath() . '/dashboard/' . $this->pageUrl() . '/index.vue';
+        return $path.$Path->getPath().'/dashboard/'.$this->pageUrl().'/index.vue';
     }
 
     private function pageUrl()
@@ -147,7 +151,7 @@ final class CreateModuleVuePageIndex extends GeneratorCommand
         if ($this->argument('name') == $this->argument('module')) {
             return Str::of($this->argument('module'))->headline()->plural()->slug();
         } else {
-            return Str::of($this->argument('module'))->headline()->plural()->slug() . '/' .
+            return Str::of($this->argument('module'))->headline()->plural()->slug().'/'.
                 Str::of($this->argument('name'))->remove($this->argument('module'), false)->headline()->plural()->slug();
         }
     }

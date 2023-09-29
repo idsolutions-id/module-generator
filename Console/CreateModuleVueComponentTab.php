@@ -3,12 +3,12 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Commands\GeneratorCommand;
-use Nwidart\Modules\Traits\ModuleCommandTrait;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
+use Nwidart\Modules\Support\Stub;
+use Nwidart\Modules\Traits\ModuleCommandTrait;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 final class CreateModuleVueComponentTab extends GeneratorCommand
 {
@@ -42,7 +42,6 @@ final class CreateModuleVueComponentTab extends GeneratorCommand
         ];
     }
 
-
     public function getDefaultNamespace(): string
     {
         $module = $this->laravel['modules'];
@@ -69,14 +68,14 @@ final class CreateModuleVueComponentTab extends GeneratorCommand
         $permissions = Str::of($unique)->replace('-', '.');
 
         return (new Stub('/vue/component.icontab.stub', [
-            'STUDLY_NAME'       => $module->getStudlyName(),
-            'API_ROUTE'         => $this->pageUrl($module->getStudlyName()),
-            'CLASS'             => $this->getClass(),
-            'LOWER_NAME'        => $tableName,
-            'PERMISSIONS'       => $permissions,
-            'MODULE'            => $this->getModuleName(),
-            'FILLABLE'          => $this->getFillable(),
-            'NAME'              => Str::of($module->getStudlyName())->headline()
+            'STUDLY_NAME' => $module->getStudlyName(),
+            'API_ROUTE' => $this->pageUrl($module->getStudlyName()),
+            'CLASS' => $this->getClass(),
+            'LOWER_NAME' => $tableName,
+            'PERMISSIONS' => $permissions,
+            'MODULE' => $this->getModuleName(),
+            'FILLABLE' => $this->getFillable(),
+            'NAME' => Str::of($module->getStudlyName())->headline(),
 
             // 'NAME'              => $this->getModelName(),
             // 'NAMESPACE'         => $this->getClassNamespace($module),
@@ -95,12 +94,13 @@ final class CreateModuleVueComponentTab extends GeneratorCommand
     private function getFillable()
     {
         $fillable = $this->option('fillable');
-        if (!is_null($fillable)) {
+        if (! is_null($fillable)) {
 
             foreach (explode(',', $fillable) as $var) {
-                $arrays[] = explode(':', $var)[0] . ": null";
-            };
-            return "{\n\t" . implode(",\n\t", $arrays) . "\n}";
+                $arrays[] = explode(':', $var)[0].': null';
+            }
+
+            return "{\n\t".implode(",\n\t", $arrays)."\n}";
         }
 
         return '{}';
@@ -117,7 +117,7 @@ final class CreateModuleVueComponentTab extends GeneratorCommand
 
         $Path = GenerateConfigReader::read('vue-components');
 
-        return $path . $Path->getPath() . '/' . Str::of($this->getModuleName())->snake()->replace('_', '-') . '-icon-tab.vue';
+        return $path.$Path->getPath().'/'.Str::of($this->getModuleName())->snake()->replace('_', '-').'-icon-tab.vue';
     }
 
     /**

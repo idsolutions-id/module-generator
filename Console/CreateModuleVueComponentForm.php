@@ -3,12 +3,12 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Commands\GeneratorCommand;
-use Nwidart\Modules\Traits\ModuleCommandTrait;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
+use Nwidart\Modules\Support\Stub;
+use Nwidart\Modules\Traits\ModuleCommandTrait;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 final class CreateModuleVueComponentForm extends GeneratorCommand
 {
@@ -42,7 +42,6 @@ final class CreateModuleVueComponentForm extends GeneratorCommand
         ];
     }
 
-
     public function getDefaultNamespace(): string
     {
         $module = $this->laravel['modules'];
@@ -68,14 +67,14 @@ final class CreateModuleVueComponentForm extends GeneratorCommand
         $class = Str::of($unique)->title()->replace('_', '');
 
         return (new Stub('/vue/component.form.stub', [
-            'STUDLY_NAME'   => $module->getStudlyName(),
-            'API_ROUTE'     => $this->pageUrl($module->getStudlyName()),
-            'CLASS'         => $class,
-            'LOWER_NAME'    => $module->getLowerName(),
-            'MODULE'        => $this->getModuleName(),
-            'FILLABLE'      => $this->getFillable(),
-            'THIS_FORM'     => $this->getForm(),
-            'FORM'          => $this->getFormInput(),
+            'STUDLY_NAME' => $module->getStudlyName(),
+            'API_ROUTE' => $this->pageUrl($module->getStudlyName()),
+            'CLASS' => $class,
+            'LOWER_NAME' => $module->getLowerName(),
+            'MODULE' => $this->getModuleName(),
+            'FILLABLE' => $this->getFillable(),
+            'THIS_FORM' => $this->getForm(),
+            'FORM' => $this->getFormInput(),
 
             // 'NAME'              => $this->getModelName(),
             // 'NAMESPACE'         => $this->getClassNamespace($module),
@@ -94,12 +93,13 @@ final class CreateModuleVueComponentForm extends GeneratorCommand
     private function getFillable()
     {
         $fillable = $this->option('fillable');
-        if (!is_null($fillable)) {
+        if (! is_null($fillable)) {
 
             foreach (explode(',', $fillable) as $var) {
-                $arrays[] = Str::camel(explode(':', $var)[0]) . ": null";
-            };
-            return "{\n\t\t\t\t" . implode(",\n\t\t\t\t", $arrays) . "\n\t\t\t}";
+                $arrays[] = Str::camel(explode(':', $var)[0]).': null';
+            }
+
+            return "{\n\t\t\t\t".implode(",\n\t\t\t\t", $arrays)."\n\t\t\t}";
         }
 
         return '{}';
@@ -111,12 +111,13 @@ final class CreateModuleVueComponentForm extends GeneratorCommand
     private function getForm()
     {
         $fillable = $this->option('fillable');
-        if (!is_null($fillable)) {
+        if (! is_null($fillable)) {
 
             foreach (explode(',', $fillable) as $var) {
-                $arrays[] = "this.form." . Str::camel(explode(':', $var)[0]) . " = " . "value." . Str::camel(explode(':', $var)[0]);
-            };
-            return "{\n\t\t\t\t" . implode(";\n\t\t\t\t", $arrays) . "\n\t\t\t}";
+                $arrays[] = 'this.form.'.Str::camel(explode(':', $var)[0]).' = '.'value.'.Str::camel(explode(':', $var)[0]);
+            }
+
+            return "{\n\t\t\t\t".implode(";\n\t\t\t\t", $arrays)."\n\t\t\t}";
         }
 
         return '{}';
@@ -141,8 +142,7 @@ final class CreateModuleVueComponentForm extends GeneratorCommand
         $unique = implode('-', $unique);
         $fileName = Str::of($unique);
 
-
-        return $path . $Path->getPath() . '/' . $fileName . '-form.vue';
+        return $path.$Path->getPath().'/'.$fileName.'-form.vue';
     }
 
     /**
@@ -172,7 +172,8 @@ final class CreateModuleVueComponentForm extends GeneratorCommand
         foreach (explode(',', $fillable) as $var) {
             $keys = explode(':', $var);
             $form[] = $this->getInputTemplateContents($keys[0], $keys[1]);
-        };
+        }
+
         return implode("\n", $form);
     }
 
@@ -189,13 +190,17 @@ final class CreateModuleVueComponentForm extends GeneratorCommand
                 //Numerical
                 if (in_array($type, [
                     'bigInteger', 'mediumInteger', 'smallInteger', 'tinyInteger', 'integer', 'decimal', 'double', 'float',
-                    'unsignedBigInteger', 'unsignedMediumInteger', 'unsignedSmallInteger', 'unsignedTinyInteger', 'unsignedInteger', 'unsignedDecimal', 'unsignedDouble', 'unsignedFloat'
-                ])) $pathStub = '/vue/component.form.number.stub';
+                    'unsignedBigInteger', 'unsignedMediumInteger', 'unsignedSmallInteger', 'unsignedTinyInteger', 'unsignedInteger', 'unsignedDecimal', 'unsignedDouble', 'unsignedFloat',
+                ])) {
+                    $pathStub = '/vue/component.form.number.stub';
+                }
 
                 //Textarea
                 if (in_array($type, [
-                    'text', 'mediumText', 'longText', 'tinyText'
-                ])) $pathStub = '/vue/component.form.textarea.stub';
+                    'text', 'mediumText', 'longText', 'tinyText',
+                ])) {
+                    $pathStub = '/vue/component.form.textarea.stub';
+                }
 
                 //Foreign Keys
                 if (in_array($type, [
@@ -207,11 +212,12 @@ final class CreateModuleVueComponentForm extends GeneratorCommand
 
                 break;
         }
+
         return (new Stub($pathStub, [
-            'TITLE'     => Str::replace("_", " ", Str::title($name)),
-            'VAR_NAME'  => Str::camel($name),
-            'MODULE'    => Str::of($this->getModuleName())->snake()->slug()->plural(),
-            'ENDPOINT'    => Str::of($name)->snake()->slug()->plural(),
+            'TITLE' => Str::replace('_', ' ', Str::title($name)),
+            'VAR_NAME' => Str::camel($name),
+            'MODULE' => Str::of($this->getModuleName())->snake()->slug()->plural(),
+            'ENDPOINT' => Str::of($name)->snake()->slug()->plural(),
         ]))->render();
     }
 }

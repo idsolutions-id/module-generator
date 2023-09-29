@@ -3,12 +3,12 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Commands\GeneratorCommand;
-use Nwidart\Modules\Traits\ModuleCommandTrait;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
+use Nwidart\Modules\Support\Stub;
+use Nwidart\Modules\Traits\ModuleCommandTrait;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 final class CreateModuleVuePageCreate extends GeneratorCommand
 {
@@ -42,7 +42,6 @@ final class CreateModuleVuePageCreate extends GeneratorCommand
         ];
     }
 
-
     public function getDefaultNamespace(): string
     {
         $module = $this->laravel['modules'];
@@ -69,13 +68,13 @@ final class CreateModuleVuePageCreate extends GeneratorCommand
         $classNames = Str::of($unique)->studly();
 
         return (new Stub('/vue/page.create.stub', [
-            'STUDLY_NAME'   => $module->getStudlyName(),
-            'API_ROUTE'     => $this->pageUrl($module->getStudlyName()),
-            'CLASS'         => $classNames,
-            'LOWER_NAME'    => $module->getLowerName(),
-            'MODULE'        => $this->getModuleName(),
-            'SEARCHABLE'    => $this->getSearchable(),
-            'HEADER'        => $this->getHeader(),
+            'STUDLY_NAME' => $module->getStudlyName(),
+            'API_ROUTE' => $this->pageUrl($module->getStudlyName()),
+            'CLASS' => $classNames,
+            'LOWER_NAME' => $module->getLowerName(),
+            'MODULE' => $this->getModuleName(),
+            'SEARCHABLE' => $this->getSearchable(),
+            'HEADER' => $this->getHeader(),
 
             // 'NAME'              => $this->getModelName(),
             // 'NAMESPACE'         => $this->getClassNamespace($module),
@@ -89,13 +88,14 @@ final class CreateModuleVuePageCreate extends GeneratorCommand
     private function getHeader()
     {
         $fillable = $this->option('fillable');
-        if (!is_null($fillable)) {
+        if (! is_null($fillable)) {
 
             foreach (explode(',', $fillable) as $var) {
                 $val = explode(':', $var)[0];
-                $arrays[] = "{'" . $val . "': '" . Str::title($val) . "'}";
-            };
-            return "[\n\t\t\t\t" . implode(",\n\t\t\t\t", $arrays) . "\n\t\t\t]";
+                $arrays[] = "{'".$val."': '".Str::title($val)."'}";
+            }
+
+            return "[\n\t\t\t\t".implode(",\n\t\t\t\t", $arrays)."\n\t\t\t]";
         }
 
         return '[]';
@@ -107,12 +107,13 @@ final class CreateModuleVuePageCreate extends GeneratorCommand
     private function getSearchable()
     {
         $fillable = $this->option('fillable');
-        if (!is_null($fillable)) {
+        if (! is_null($fillable)) {
 
             foreach (explode(',', $fillable) as $var) {
-                $arrays[] = "'" . explode(':', $var)[0] . "'";
-            };
-            return '[' . implode(', ', $arrays) . ']';
+                $arrays[] = "'".explode(':', $var)[0]."'";
+            }
+
+            return '['.implode(', ', $arrays).']';
         }
 
         return '[]';
@@ -130,7 +131,7 @@ final class CreateModuleVuePageCreate extends GeneratorCommand
 
         $Path = GenerateConfigReader::read('vue-pages');
 
-        return $path . $Path->getPath() . '/dashboard/' . $this->pageUrl() . '/create.vue';
+        return $path.$Path->getPath().'/dashboard/'.$this->pageUrl().'/create.vue';
     }
 
     private function pageUrl()
@@ -138,7 +139,7 @@ final class CreateModuleVuePageCreate extends GeneratorCommand
         if ($this->argument('name') == $this->argument('module')) {
             return Str::of($this->argument('module'))->headline()->plural()->slug();
         } else {
-            return Str::of($this->argument('module'))->headline()->plural()->slug() . '/' .
+            return Str::of($this->argument('module'))->headline()->plural()->slug().'/'.
                 Str::of($this->argument('name'))->remove($this->argument('module'), false)->headline()->plural()->slug();
         }
     }

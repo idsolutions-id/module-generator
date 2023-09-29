@@ -2,36 +2,42 @@
 
 namespace Vheins\LaravelModuleGenerator\Action;
 
-use Illuminate\Support\Arr;
-use Lorisleiva\Actions\Concerns\AsAction;
 use Illuminate\Support\Str;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class CreateQuery
 {
     use AsAction;
-    public $module, $name, $fileStub, $filePath;
+
+    public $module;
+
+    public $name;
+
+    public $fileStub;
+
+    public $filePath;
 
     public function handle($args)
     {
         $this->module = $args['module'];
         $this->name = $args['name'];
-        $this->fileStub = base_path() . "/stubs/controller.query.stub";
-        $this->filePath = base_path() . "/modules/" . $this->module . "/Controllers/QueryController.php";
+        $this->fileStub = base_path().'/stubs/controller.query.stub';
+        $this->filePath = base_path().'/modules/'.$this->module.'/Controllers/QueryController.php';
 
         $this->checkController();
 
-
         $text = file_get_contents($this->filePath);
-        $modelName = "use " . config('modules.namespace') . "\\" . $this->module . "\Models\\" . $this->name . ";";
+        $modelName = 'use '.config('modules.namespace').'\\'.$this->module."\Models\\".$this->name.';';
         $contains = Str::contains($text, $modelName);
-        if (!$contains)
-            $text = str_replace("//Class Refferences", "//Class Refferences\n" . $modelName, $text);
+        if (! $contains) {
+            $text = str_replace('//Class Refferences', "//Class Refferences\n".$modelName, $text);
+        }
 
-        $query = "public function " . Str::of($this->name)->camel()->plural() . '(Request $request)';
+        $query = 'public function '.Str::of($this->name)->camel()->plural().'(Request $request)';
         $contains = Str::contains($text, $query);
-        if (!$contains) {
-            $function = "public function " . Str::of($this->name)->camel()->plural() . '(Request $request)' . "\n\t{\n\t\t" . '$model = ' . $this->name . "::active()->select('id', 'name');\n\t\t" . '$data = $this->search($model, $request);' . "\n\t\t" . 'return $this->success($data);' . "\n\t}\n";
-            $text = str_replace("//Query Select2", "//Query Select2\n\t" . $function, $text);
+        if (! $contains) {
+            $function = 'public function '.Str::of($this->name)->camel()->plural().'(Request $request)'."\n\t{\n\t\t".'$model = '.$this->name."::active()->select('id', 'name');\n\t\t".'$data = $this->search($model, $request);'."\n\t\t".'return $this->success($data);'."\n\t}\n";
+            $text = str_replace('//Query Select2', "//Query Select2\n\t".$function, $text);
         }
 
         file_put_contents($this->filePath, $text);
@@ -40,7 +46,7 @@ class CreateQuery
     private function checkController()
     {
 
-        if (!file_exists($this->filePath)) {
+        if (! file_exists($this->filePath)) {
             $moduleName = $this->module;
             $permissions = explode('_', Str::of($moduleName)->snake());
             $splitNames = [];
@@ -51,7 +57,7 @@ class CreateQuery
             $unique = implode('.', $unique);
             $permission = Str::of($unique);
 
-            $namespace = "IDS\\" . $this->module . "\Controllers";
+            $namespace = 'IDS\\'.$this->module."\Controllers";
 
             $model = file_get_contents($this->fileStub);
             $model = str_replace('$PERMISSION$', $permission, $model);
