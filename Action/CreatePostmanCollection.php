@@ -142,6 +142,9 @@ class CreatePostmanCollection
         }
         $data = [
             'name' => $name,
+            'description' => [
+                'content' => $name,
+            ],
             'request' => [
                 'method' => strtoupper($method),
                 'header' => $this->getHeader(),
@@ -164,8 +167,34 @@ class CreatePostmanCollection
 
         foreach ($parameters as $parameter) {
             $class = $parameter->getType()?->getName();
-            if ($reflection && $reflection->getName() == 'index' && $class == Request::class) {
+            if ($reflection && (($reflection->getName() == 'index' && $class == Request::class) || $this->isQueryController($parsedAction[0]))) {
                 $data['request']['url']['query'] = $this->getQueryDefault();
+                $request = new Request(['per_page' => 1]);
+                try {
+                    $getData = (new $parsedAction[0])->{$reflection->getName()}($request);
+                    foreach ($getData->getData()->data as $result) {
+                        if ($result) {
+                            foreach ($result as $k => $v) {
+                                $collect = collect($data['request']['url']['query']);
+                                $key = Str::camel($k);
+                                $check = $collect->where('key', $key)->first();
+                                if (! $check && ! is_array($v) && ! is_object($v)) {
+                                    $data['request']['url']['query'][] = [
+                                        'key' => $key,
+                                        'value' => $v,
+                                        'description' => 'Nullable|Filter data by '.$key,
+                                        'disabled' => true,
+                                    ];
+                                }
+                            }
+
+                            $data['request']['description'] = "<h1>Response Example</h1>\n\n```json\n".json_encode($getData->getData(), JSON_PRETTY_PRINT)."\n```";
+
+                        }
+                    }
+                } catch (\Throwable $th) {
+                    // return $th;
+                }
             }
             if (is_subclass_of($class, FormRequest::class)) {
                 $rules = (new $class)->rules();
@@ -178,14 +207,18 @@ class CreatePostmanCollection
                                 'language' => 'json',
                             ],
                         ],
-                        'raw' => json_encode($rules, JSON_PRETTY_PRINT),
                     ];
-                    $data['request']['description'] = "```json\n".json_encode($rules)."\n```";
+                    $data['request']['description'] = "<h1>Request & Validation Rules</h1>\n\n```json\n".json_encode($rules, JSON_PRETTY_PRINT)."\n```";
                 }
             }
         }
 
         return $data;
+    }
+
+    private function isQueryController($payload)
+    {
+        return Str::of($payload)->contains('QueryController');
     }
 
     private function getQueryDefault()
@@ -195,46 +228,55 @@ class CreatePostmanCollection
                 'key' => 'skipPagination',
                 'value' => 'false',
                 'description' => 'Nullable|Boolean|Default:false|Skip Pagination to Fetch All Data',
+                'disabled' => true,
             ],
             [
                 'key' => 'skipOrder',
                 'value' => 'false',
                 'description' => 'Nullable|Boolean|Default:false|Skip Ordering',
+                'disabled' => true,
             ],
             [
                 'key' => 'status',
                 'value' => 'all',
                 'description' => 'Nullable|Boolean|String:all|Default:all|Fetch data by Status',
+                'disabled' => true,
             ],
             [
                 'key' => 'search',
                 'value' => null,
                 'description' => 'Nullable|String|Default:null|Keyword for Search',
+                'disabled' => true,
             ],
             [
                 'key' => 'searchType',
                 'value' => 'name',
                 'description' => 'Nullable|String|Default:name|Search Key for custom search',
+                'disabled' => true,
             ],
             [
                 'key' => 'sortBy',
                 'value' => 'createdAt',
                 'description' => 'Nullable|String|Default:createdAt|Sort By',
+                'disabled' => true,
             ],
             [
                 'key' => 'sortKey',
                 'value' => 'desc',
                 'description' => 'Nullable|String:asc,desc|Default:desc|Sort Key',
+                'disabled' => true,
             ],
             [
                 'key' => 'perPage',
                 'value' => '10',
                 'description' => 'Nullable|Integer|Default:10|Items Per Page',
+                'disabled' => true,
             ],
             [
                 'key' => 'page',
                 'value' => '1',
                 'description' => 'Nullable|Integer|Page Number|Default:1',
+                'disabled' => true,
             ],
         ];
     }
