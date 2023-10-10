@@ -5,8 +5,7 @@ namespace {{ namespace }};
 use {{ namespacedModel }};
 use {{ rootNamespace }}Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use {{ rootNamespace }}{{ customNamespaceStoreRequest }};
-use {{ rootNamespace }}{{ customNamespaceUpdateRequest }};
+use {{ rootNamespace }}{{ customNamespaceRequest }};
 
 
 class {{ class }} extends Controller
@@ -30,10 +29,10 @@ class {{ class }} extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \{{ customNamespaceStoreRequest }}  $request
+     * @param  \{{ customNamespaceRequest }}  $request
      * @return \Illuminate\Http\Response
      */
-    public function store({{ customStoreRequest }} $request)
+    public function store({{ customRequest }} $request)
     {
         $created = {{ model }}::create($request->validated());
         return $this->success($created);
@@ -54,11 +53,11 @@ class {{ class }} extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \{{ customNamespaceUpdateRequest }}  $request
+     * @param  \{{ customNamespaceRequest }}  $request
      * @param  \{{ namespacedModel }}  ${{ modelVariable }}
      * @return \Illuminate\Http\Response
      */
-    public function update({{ customUpdateRequest }} $request, {{ model }} ${{ modelVariable }})
+    public function update({{ customRequest }} $request, {{ model }} ${{ modelVariable }})
     {
         ${{ modelVariable }}->update($request->validated());
         return $this->success(${{ modelVariable }});

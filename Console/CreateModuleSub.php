@@ -96,15 +96,9 @@ class CreateModuleSub extends Command
                 '--api' => true,
             ]);
 
-            //Generate Create Request
+            //Generate Validation Request
             $this->call('create:module:request', [
-                'name' => $this->name.'StoreRequest',
-                'module' => $this->module,
-                '--fillable' => $this->fields,
-            ]);
-            //Generate Update Request
-            $this->call('create:module:request', [
-                'name' => $this->name.'UpdateRequest',
+                'name' => $this->name.'Request',
                 'module' => $this->module,
                 '--fillable' => $this->fields,
             ]);
@@ -258,8 +252,8 @@ class CreateModuleSub extends Command
         //Create Store Action
         $storeActionFile = base_path().'/modules/'.$this->module.'/Actions/'.$this->name.'/Store.php';
         $storeAction = file_get_contents($storeActionFile);
-        $storeAction = str_replace('//use .. ;', 'use '.config('modules.namespace').'\\'.$this->module.'\\Models\\'.$this->name.";\nuse ".config('modules.namespace')."\\$this->module\\Requests\\".$this->name.'StoreRequest;', $storeAction);
-        $storeAction = str_replace('public function handle($handle)', 'public function handle('.$this->name.'StoreRequest $request)', $storeAction);
+        $storeAction = str_replace('//use .. ;', 'use '.config('modules.namespace').'\\'.$this->module.'\\Models\\'.$this->name.";\nuse ".config('modules.namespace')."\\$this->module\\Requests\\".$this->name.'Request;', $storeAction);
+        $storeAction = str_replace('public function handle($handle)', 'public function handle('.$this->name.'Request $request)', $storeAction);
         if (count($foreign) > 0) {
             $storeAction = str_replace('// ..', '$request = Helper::mergeRequest('.json_encode($foreign).', $request);'."\n\t\t// ..", $storeAction);
         }
@@ -276,8 +270,8 @@ class CreateModuleSub extends Command
         //Create Update Action
         $updateActionFile = base_path().'/modules/'.$this->module.'/Actions/'.$this->name.'/Update.php';
         $updateAction = file_get_contents($updateActionFile);
-        $updateAction = str_replace('//use .. ;', 'use '.config('modules.namespace').'\\'.$this->module.'\\Models\\'.$this->name.";\nuse ".config('modules.namespace')."\\$this->module\\Requests\\".$this->name.'UpdateRequest;', $updateAction);
-        $updateAction = str_replace('public function handle($handle)', 'public function handle('.$this->name.'UpdateRequest $request, '.$this->name.' $'.Str::camel($this->name).')', $updateAction);
+        $updateAction = str_replace('//use .. ;', 'use '.config('modules.namespace').'\\'.$this->module.'\\Models\\'.$this->name.";\nuse ".config('modules.namespace')."\\$this->module\\Requests\\".$this->name.'Request;', $updateAction);
+        $updateAction = str_replace('public function handle($handle)', 'public function handle('.$this->name.'Request $request, '.$this->name.' $'.Str::camel($this->name).')', $updateAction);
         $updateAction = str_replace('// ..', '$fillable = app('.$this->name.'::class)->getFillable();'."\n\t\t".'$'.Str::camel($this->name).'->update($request->only($fillable));', $updateAction);
         $updateAction = str_replace('return $handle;', 'return $'.Str::camel($this->name).';', $updateAction);
         file_put_contents($updateActionFile, $updateAction);

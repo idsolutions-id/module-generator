@@ -64,11 +64,11 @@ class {{ class }} extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \{{ namespacedUpdateRequest }}  $request
+     * @param  \{{ namespacedStoreRequest }}  $request
      * @param  \{{ namespacedModel }}  ${{ modelVariable }}
      * @return \Illuminate\Http\Response
      */
-    public function update({{ updateRequest }} $request, {{ model }} ${{ modelVariable }})
+    public function update({{ storeRequest }} $request, {{ model }} ${{ modelVariable }})
     {
         //
     }

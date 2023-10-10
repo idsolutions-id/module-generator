@@ -21,9 +21,7 @@ class CreateApiCrud extends Command
      */
     protected $description = 'Make API Resource';
 
-    private $customStoreRequest = 'StoreRequest';
-
-    private $customUpdateRequest = 'UpdateRequest';
+    private $customRequest = 'Request';
 
     private $storeAction = 'Store';
 
@@ -54,7 +52,7 @@ class CreateApiCrud extends Command
 
         //Generate Form Store Request & Action
         $this->call('make:request', [
-            'name' => $name.'/'.$this->customStoreRequest,
+            'name' => $name.'/'.$this->customRequest,
         ]);
         if ($action) {
             $this->call('make:action', [
@@ -67,7 +65,7 @@ class CreateApiCrud extends Command
 
         //Generate Form Update Request & Action
         $this->call('make:request', [
-            'name' => $name.'/'.$this->customUpdateRequest,
+            'name' => $name.'/'.$this->customRequest,
         ]);
         if ($action) {
             $this->call('make:action', [
@@ -92,8 +90,8 @@ class CreateApiCrud extends Command
 
     public function updateController($name)
     {
-        $customNamespaceStoreRequest = 'Http\\Requests\\'.str_replace('/', '\\', $name).'\\'.$this->customStoreRequest;
-        $customNamespaceUpdateRequest = 'Http\\Requests\\'.str_replace('/', '\\', $name).'\\'.$this->customUpdateRequest;
+        $customNamespaceRequest = 'Http\\Requests\\'.str_replace('/', '\\', $name).'\\'.$this->customRequest;
+        $customNamespaceRequest = 'Http\\Requests\\'.str_replace('/', '\\', $name).'\\'.$this->customRequest;
 
         $namespaceStoreAction = 'Actions\\'.str_replace('/', '\\', $name).'\\'.$this->storeAction;
         $namespaceUpdateAction = 'Actions\\'.str_replace('/', '\\', $name).'\\'.$this->updateAction;
@@ -106,11 +104,11 @@ class CreateApiCrud extends Command
         $str = str_replace('{{ namespaceUpdateAction }}', $namespaceUpdateAction, $str);
         $str = str_replace('{{ namespaceDeleteAction }}', $namespaceDeleteAction, $str);
 
-        $str = str_replace('{{ customNamespaceStoreRequest }}', $customNamespaceStoreRequest, $str);
-        $str = str_replace('{{ customNamespaceUpdateRequest }}', $customNamespaceUpdateRequest, $str);
+        $str = str_replace('{{ customNamespaceRequest }}', $customNamespaceRequest, $str);
+        $str = str_replace('{{ customNamespaceRequest }}', $customNamespaceRequest, $str);
 
-        $str = str_replace('{{ customStoreRequest }}', $this->customStoreRequest, $str);
-        $str = str_replace('{{ customUpdateRequest }}', $this->customUpdateRequest, $str);
+        $str = str_replace('{{ customRequest }}', $this->customRequest, $str);
+        $str = str_replace('{{ customRequest }}', $this->customRequest, $str);
 
         $str = str_replace('{{ storeAction }}', $this->storeAction, $str);
         $str = str_replace('{{ updateAction }}', $this->updateAction, $str);
