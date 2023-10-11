@@ -2,9 +2,9 @@
 
 namespace Vheins\LaravelModuleGenerator\Action;
 
+use App\Http\Requests\FormRequest;
 use Closure;
 use Illuminate\Console\Command;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;

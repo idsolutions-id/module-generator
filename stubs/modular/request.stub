@@ -2,7 +2,7 @@
 
 namespace $NAMESPACE$;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\FormRequest;
 
 class $CLASS$ extends FormRequest
 {
