@@ -18,7 +18,7 @@ export default {
                     this.store.setView();
                     var message = '$MODULE$ has been saved!';
                     if (this.method == "POST") {
-                        this.$router.push(res.data.id);
+                        this.$router.replace(res.data.id.toString());
                         message = '$MODULE$ has been created!';
                     }
                     this.$swal({
