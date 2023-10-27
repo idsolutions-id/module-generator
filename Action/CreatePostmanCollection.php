@@ -166,49 +166,53 @@ class CreatePostmanCollection
         $parameters = $reflector->getParameters();
 
         foreach ($parameters as $parameter) {
-            $class = $parameter->getType()?->getName();
-            if ($reflection && (($reflection->getName() == 'index' && $class == Request::class) || $this->isQueryController($parsedAction[0]))) {
-                $data['request']['url']['query'] = $this->getQueryDefault();
-                $request = new Request(['per_page' => 1]);
-                try {
-                    $getData = (new $parsedAction[0])->{$reflection->getName()}($request);
-                    foreach ($getData->getData()->data as $result) {
-                        if ($result) {
-                            foreach ($result as $k => $v) {
-                                $collect = collect($data['request']['url']['query']);
-                                $key = Str::camel($k);
-                                $check = $collect->where('key', $key)->first();
-                                if (! $check && ! is_array($v) && ! is_object($v)) {
-                                    $data['request']['url']['query'][] = [
-                                        'key' => $key,
-                                        'value' => $v,
-                                        'description' => 'Nullable|Filter data by '.$key,
-                                        'disabled' => true,
-                                    ];
+            $classes = explode('|', $parameter->getType());
+            foreach ($classes as $class) {
+                // code...
+                // $class = $parameter->getType()?->getName();
+                if ($reflection && (($reflection->getName() == 'index' && $class == Request::class) || $this->isQueryController($parsedAction[0]))) {
+                    $data['request']['url']['query'] = $this->getQueryDefault();
+                    $request = new Request(['per_page' => 1]);
+                    try {
+                        $getData = (new $parsedAction[0])->{$reflection->getName()}($request);
+                        foreach ($getData->getData()->data as $result) {
+                            if ($result) {
+                                foreach ($result as $k => $v) {
+                                    $collect = collect($data['request']['url']['query']);
+                                    $key = Str::camel($k);
+                                    $check = $collect->where('key', $key)->first();
+                                    if (! $check && ! is_array($v) && ! is_object($v)) {
+                                        $data['request']['url']['query'][] = [
+                                            'key' => $key,
+                                            'value' => $v,
+                                            'description' => 'Nullable|Filter data by '.$key,
+                                            'disabled' => true,
+                                        ];
+                                    }
                                 }
+
+                                $data['request']['description'] = "<h1>Response Example</h1>\n\n```json\n".json_encode($getData->getData(), JSON_PRETTY_PRINT)."\n```";
+
                             }
-
-                            $data['request']['description'] = "<h1>Response Example</h1>\n\n```json\n".json_encode($getData->getData(), JSON_PRETTY_PRINT)."\n```";
-
                         }
+                    } catch (\Throwable $th) {
+                        // return $th;
                     }
-                } catch (\Throwable $th) {
-                    // return $th;
                 }
-            }
-            if (is_subclass_of($class, FormRequest::class)) {
-                $rules = (new $class)->rules();
-                if (count($rules) > 0) {
-                    $rules = $this->convert('camel', Arr::undot($rules));
-                    $data['request']['body'] = [
-                        'mode' => 'raw',
-                        'options' => [
-                            'raw' => [
-                                'language' => 'json',
+                if (is_subclass_of($class, FormRequest::class)) {
+                    $rules = (new $class)->rules();
+                    if (count($rules) > 0) {
+                        $rules = $this->convert('camel', Arr::undot($rules));
+                        $data['request']['body'] = [
+                            'mode' => 'raw',
+                            'options' => [
+                                'raw' => [
+                                    'language' => 'json',
+                                ],
                             ],
-                        ],
-                    ];
-                    $data['request']['description'] = "<h1>Request & Validation Rules</h1>\n\n```json\n".json_encode($rules, JSON_PRETTY_PRINT)."\n```";
+                        ];
+                        $data['request']['description'] = "<h1>Request & Validation Rules</h1>\n\n```json\n".json_encode($rules, JSON_PRETTY_PRINT)."\n```";
+                    }
                 }
             }
         }
