@@ -37,7 +37,7 @@ class CreatePostmanCollection
         $this->setInfo();
         foreach (collect(app('router')->getRoutes()) as $route) {
             $uri = $route->uri();
-            if (! Str::contains($uri, 'api/v1/')) {
+            if (!Str::contains($uri, 'api/v1/')) {
                 continue;
             }
 
@@ -49,16 +49,16 @@ class CreatePostmanCollection
             }
 
             $routeNames = array_filter($routeNames, function ($value) {
-                return ! is_null($value) && $value !== '' && $value !== 'Api';
+                return !is_null($value) && $value !== '' && $value !== 'Api';
             });
 
             $request = $this->makeRequest($route, $route->methods()[0]);
             $this->buildTree($this->collection, $routeNames, $request);
         }
 
-        Storage::put($exportName = 'postman/'.config('app.name').'.json', json_encode($this->collection, JSON_PRETTY_PRINT));
+        Storage::put($exportName = 'postman/' . config('app.name') . '.json', json_encode($this->collection, JSON_PRETTY_PRINT));
 
-        return 'Postman Collection Exported: '.storage_path('app/'.$exportName);
+        return 'Postman Collection Exported: ' . storage_path('app/' . $exportName);
     }
 
     protected function buildTree(array &$routes, array $segments, array $request): void
@@ -80,7 +80,7 @@ class CreatePostmanCollection
 
             unset($item);
 
-            if (! $matched) {
+            if (!$matched) {
                 $item = [
                     'name' => $segment,
                     'item' => $segment === $destination ? [$request] : [],
@@ -96,7 +96,7 @@ class CreatePostmanCollection
 
     private function getTextMethod($payload)
     {
-        if (! $payload) {
+        if (!$payload) {
             return '';
         }
         $payload = $payload->getName();
@@ -132,14 +132,15 @@ class CreatePostmanCollection
 
         if (Str::of($route->uri())->contains('{')) {
             $name = $name->replaceMatches('/{([[:alnum:]]+)}/', '$1')->singular();
-            $name = $this->getTextMethod($reflection).$name->toString();
+            $name = $this->getTextMethod($reflection) . $name->toString();
         } else {
-            if (! empty($this->getTextMethod($reflection))) {
-                $name = $this->getTextMethod($reflection).$name->singular()->toString();
+            if (!empty($this->getTextMethod($reflection))) {
+                $name = $this->getTextMethod($reflection) . $name->singular()->toString();
             } else {
                 $name = $name->toString();
             }
         }
+
         $data = [
             'name' => $name,
             'description' => [
@@ -149,7 +150,7 @@ class CreatePostmanCollection
                 'method' => strtoupper($method),
                 'header' => $this->getHeader(),
                 'url' => [
-                    'raw' => '{{url}}/'.$uri,
+                    'raw' => '{{url}}/' . $uri,
                     'host' => ['{{url}}'],
                     'path' => $uri->explode('/')->filter(),
                     'variable' => $variables->transform(function ($variable) {
@@ -181,18 +182,17 @@ class CreatePostmanCollection
                                     $collect = collect($data['request']['url']['query']);
                                     $key = Str::camel($k);
                                     $check = $collect->where('key', $key)->first();
-                                    if (! $check && ! is_array($v) && ! is_object($v)) {
+                                    if (!$check && !is_array($v) && !is_object($v)) {
                                         $data['request']['url']['query'][] = [
                                             'key' => $key,
                                             'value' => $v,
-                                            'description' => 'Nullable|Filter data by '.$key,
+                                            'description' => 'Nullable|Filter data by ' . $key,
                                             'disabled' => true,
                                         ];
                                     }
                                 }
 
-                                $data['request']['description'] = "<h1>Response Example</h1>\n\n```json\n".json_encode($getData->getData(), JSON_PRETTY_PRINT)."\n```";
-
+                                $data['request']['description'] = "<h1>Response Example</h1>\n\n```json\n" . json_encode($getData->getData(), JSON_PRETTY_PRINT) . "\n```";
                             }
                         }
                     } catch (\Throwable $th) {
@@ -200,6 +200,14 @@ class CreatePostmanCollection
                     }
                 }
                 if (is_subclass_of($class, FormRequest::class)) {
+                    $json_data = "";
+                    if ($reflection->getName() == "store") {
+                        $controller = new $parsedAction[0];
+                        $model = property_exists($controller, 'model') ? $controller->model : null;
+                        if ($model) {
+                            $json_data = json_encode($model::factory()->make(), JSON_PRETTY_PRINT);
+                        }
+                    }
                     $rules = (new $class)->rules();
                     if (count($rules) > 0) {
                         $rules = $this->convert('camel', Arr::undot($rules));
@@ -210,8 +218,9 @@ class CreatePostmanCollection
                                     'language' => 'json',
                                 ],
                             ],
+                            'raw' => $json_data
                         ];
-                        $data['request']['description'] = "<h1>Request & Validation Rules</h1>\n\n```json\n".json_encode($rules, JSON_PRETTY_PRINT)."\n```";
+                        $data['request']['description'] = "<h1>Request & Validation Rules</h1>\n\n```json\n" . json_encode($rules, JSON_PRETTY_PRINT) . "\n```";
                     }
                 }
             }
@@ -300,7 +309,7 @@ class CreatePostmanCollection
         $this->collection['item'] = [];
         $this->collection['info'] = [
             'name' => config('app.name'),
-            'description' => 'Generated by IDS Stater Kit on '.date('Y-m-d H:i:s'),
+            'description' => 'Generated by IDS Stater Kit on ' . date('Y-m-d H:i:s'),
             'schema' => 'https://schema.getpostman.com/json/collection/v2.0.0/collection.json',
         ];
         $this->collection['auth'] = [
@@ -366,7 +375,7 @@ class CreatePostmanCollection
         $routeData = explode('@', $routeAction['uses']);
         $reflection = new ReflectionClass($routeData[0]);
 
-        if (! $reflection->hasMethod($routeData[1])) {
+        if (!$reflection->hasMethod($routeData[1])) {
             return null;
         }
 
@@ -384,11 +393,11 @@ class CreatePostmanCollection
 
     private function convert(string $case, $data)
     {
-        if (! in_array($case, ['camel', 'snake'])) {
+        if (!in_array($case, ['camel', 'snake'])) {
             throw new InvalidArgumentException('Case must be either snake or camel');
         }
 
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             return $data;
         }
 
