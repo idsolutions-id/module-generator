@@ -9,9 +9,11 @@ use Vheins\LaravelModuleGenerator\Console\CreateApiCrud;
 use Vheins\LaravelModuleGenerator\Console\CreateModule;
 use Vheins\LaravelModuleGenerator\Console\CreateModuleAction;
 use Vheins\LaravelModuleGenerator\Console\CreateModuleController;
+use Vheins\LaravelModuleGenerator\Console\CreateModuleFactory;
 use Vheins\LaravelModuleGenerator\Console\CreateModuleMigration;
 use Vheins\LaravelModuleGenerator\Console\CreateModuleModel;
 use Vheins\LaravelModuleGenerator\Console\CreateModuleRequest;
+use Vheins\LaravelModuleGenerator\Console\CreateModuleSeeder;
 use Vheins\LaravelModuleGenerator\Console\CreateModuleSub;
 use Vheins\LaravelModuleGenerator\Console\CreateModuleVueComponentFilter;
 use Vheins\LaravelModuleGenerator\Console\CreateModuleVueComponentForm;
@@ -67,6 +69,7 @@ class LaravelModuleGeneratorServiceProvider extends ServiceProvider
             CreateModuleController::class,
             CreateModuleMigration::class,
             CreateModuleModel::class,
+            CreateModuleFactory::class,
             CreateModuleRequest::class,
             CreateModuleSub::class,
             CreateModuleVueComponentFilter::class,
@@ -77,6 +80,7 @@ class LaravelModuleGeneratorServiceProvider extends ServiceProvider
             CreateModuleVuePageIndex::class,
             CreateModuleVuePageView::class,
             CreateModuleVueStore::class,
+            CreateModuleSeeder::class,
         ]);
 
         $actions = [

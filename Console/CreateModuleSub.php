@@ -55,7 +55,6 @@ class CreateModuleSub extends Command
         $this->db_only = $this->option('db-only');
 
         //Check if module exists
-        //if ($this->name == 'Transaction') dd($this->db_only);
         if (! Module::collections()->has($this->module)) {
             //Generate Module
             $this->call('module:make', [
@@ -86,6 +85,19 @@ class CreateModuleSub extends Command
             'module' => $this->module,
             '--fillable' => $this->fields,
             '--migration' => true,
+        ]);
+
+        //Generate Factory
+        $this->call('create:module:factory', [
+            'name' => $this->name,
+            'module' => $this->module,
+            '--fillable' => $this->fields,
+        ]);
+
+        //Generate seeder
+        $this->call('create:module:seeder', [
+            'name' => $this->name,
+            'module' => $this->module,
         ]);
 
         if (! $this->db_only) {
