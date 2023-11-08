@@ -194,6 +194,7 @@ class CreateModuleModel extends GeneratorCommand
         return (new Stub('/model.stub', [
             'NAME' => $this->getModelName(),
             'FILLABLE' => $this->getFillable(),
+            'RULE' => $this->getRules(),
             'NAMESPACE' => $this->getClassNamespace($module),
             'CLASS' => $this->getClass(),
             'LOWER_NAME' => $module->getLowerName(),
@@ -202,6 +203,26 @@ class CreateModuleModel extends GeneratorCommand
             'MODULE_NAMESPACE' => $this->laravel['modules']->config('namespace'),
             'TABLE_NAME' => $tableName,
         ]))->render();
+    }
+
+/**
+     * @return string
+     */
+    private function getRules()
+    {
+        $tabs = "\n\t\t\t";
+        $fillable = $this->option('fillable');
+        if (! is_null($fillable)) {
+            foreach (explode(',', $fillable) as $var) {
+                $textVar = explode(':', $var)[0];
+                $array = "'".$textVar."' => 'required'";
+                $arrays[] = $array;
+            }
+
+            return '['.$tabs.implode(','.$tabs, $arrays)."\n\t\t]";
+        }
+
+        return '[]';
     }
 
     /**

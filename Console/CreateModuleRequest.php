@@ -78,6 +78,9 @@ class CreateModuleRequest extends GeneratorCommand
             'FILLABLE' => $this->getFillable(),
             'NAMESPACE' => $this->getClassNamespace($module),
             'CLASS' => $this->getClass(),
+            'MODULE' => $this->getModuleName(),
+            'MODULE_NAMESPACE' => $this->laravel['modules']->config('namespace'),
+            'MODEL' => $this->getModuleName(),
         ]))->render();
     }
 
