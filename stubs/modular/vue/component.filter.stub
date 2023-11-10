@@ -13,7 +13,7 @@ export default {
     },
     methods: {
         async fetchCsv() {
-            var filter = this.datatable.getFilter(this.store.apiRoute);
+            let filter = this.datatable.getFilter(this.store.apiRoute);
             var params = {
                 'skipPagination': true,
             };
@@ -60,7 +60,7 @@ export default {
         datatable: {
             deep: true,
             handler() {
-                var filter = this.filter(this.store.apiRoute);
+                let filter = this.filter(this.store.apiRoute);
                 if (filter)
                     this.form = this.filter(this.store.apiRoute);
             }
@@ -71,7 +71,7 @@ export default {
 
 <template>
     <button type="button" class="uk-button uk-button-small uk-border-rounded uk-flex uk-flex-middle">
-        <FilterIcon /> <span class="uk-visible@m">Filter</span>
+        <FilterIcon /> <span class="uk-visible@m">{{ $t('Filter') }}</span>
     </button>
     <div class="uk-width-xlarge width-release uk-text-left" uk-dropdown="mode: click;">
         <div class="uk-card-body uk-padding-remove">
