@@ -58,6 +58,10 @@ class CreateModule extends Command
                 }
 
                 if (isset($tables['Query']) && $tables['Query'] == true) {
+                    $args = [
+                        'module' => $module,
+                        'name' => $subModule,
+                    ];
                     $query[] = Str::of($subModule)->snake()->plural()->slug();
                     CreateQuery::run($args);
                 }
