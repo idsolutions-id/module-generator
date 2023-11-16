@@ -205,7 +205,7 @@ class CreateModuleModel extends GeneratorCommand
         ]))->render();
     }
 
-/**
+    /**
      * @return string
      */
     private function getRules()
