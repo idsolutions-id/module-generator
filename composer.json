@@ -20,7 +20,7 @@
     "require": {
         "lorisleiva/laravel-actions": "^v2.7.1",
         "symfony/yaml": "^v6.3.3",
-        "nwidart/laravel-modules": "v10.0.0"
+        "nwidart/laravel-modules": "^v10.0.0"
     },
     "extra": {
         "laravel": {
