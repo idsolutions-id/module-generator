@@ -205,7 +205,11 @@ class CreatePostmanCollection
                         $controller = new $parsedAction[0];
                         $model = property_exists($controller, 'model') ? $controller->model : null;
                         if ($model) {
-                            $json_data = json_encode($model::factory()->make(), JSON_PRETTY_PRINT);
+                            try {
+                                $json_data = json_encode($model::factory()->make(), JSON_PRETTY_PRINT);
+                            } catch (\Throwable $th) {
+                                $json_data = '';
+                            }
                         }
                     }
                     $rules = (new $class)->rules();
