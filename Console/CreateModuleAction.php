@@ -3,7 +3,7 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Commands\GeneratorCommand;
+use Nwidart\Modules\Commands\Make\GeneratorCommand;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
 use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Traits\ModuleCommandTrait;
@@ -77,7 +77,7 @@ class CreateModuleAction extends GeneratorCommand
 
         $requestPath = GenerateConfigReader::read('action');
 
-        return $path.$requestPath->getPath().'/'.$this->getFileName().'.php';
+        return $path . $requestPath->getPath() . '/' . $this->getFileName() . '.php';
     }
 
     /**

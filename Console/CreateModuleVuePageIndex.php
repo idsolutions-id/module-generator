@@ -3,7 +3,7 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Commands\GeneratorCommand;
+use Nwidart\Modules\Commands\Make\GeneratorCommand;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
 use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Traits\ModuleCommandTrait;
@@ -95,12 +95,12 @@ final class CreateModuleVuePageIndex extends GeneratorCommand
                 if (in_array($key, [
                     'foreignId', 'foreignUuid', 'foreignUlid',
                 ])) {
-                    $val = Str::of($val)->replace('_id', '')->toString().'.name';
+                    $val = Str::of($val)->replace('_id', '')->toString() . '.name';
                 }
-                $arrays[] = "{ '".Str::camel($val)."': '".Str::of($val)->replace('.', '_')->headline()."' }";
+                $arrays[] = "{ '" . Str::camel($val) . "': '" . Str::of($val)->replace('.', '_')->headline() . "' }";
             }
 
-            return "[\n\t\t\t\t".implode(", \n\t\t\t\t", $arrays)."\n\t\t\t]";
+            return "[\n\t\t\t\t" . implode(", \n\t\t\t\t", $arrays) . "\n\t\t\t]";
         }
 
         return '[]';
@@ -120,12 +120,12 @@ final class CreateModuleVuePageIndex extends GeneratorCommand
                 if (in_array($key, [
                     'foreignId', 'foreignUuid', 'foreignUlid',
                 ])) {
-                    $val = Str::of($val)->replace('_id', '')->toString().'.name';
+                    $val = Str::of($val)->replace('_id', '')->toString() . '.name';
                 }
-                $arrays[] = "'".Str::camel($val)."'";
+                $arrays[] = "'" . Str::camel($val) . "'";
             }
 
-            return '['.implode(', ', $arrays).']';
+            return '[' . implode(', ', $arrays) . ']';
         }
 
         return '[]';
@@ -143,7 +143,7 @@ final class CreateModuleVuePageIndex extends GeneratorCommand
 
         $Path = GenerateConfigReader::read('vue-pages');
 
-        return $path.$Path->getPath().'/dashboard/'.$this->pageUrl().'/index.vue';
+        return $path . $Path->getPath() . '/dashboard/' . $this->pageUrl() . '/index.vue';
     }
 
     private function pageUrl()
@@ -151,7 +151,7 @@ final class CreateModuleVuePageIndex extends GeneratorCommand
         if ($this->argument('name') == $this->argument('module')) {
             return Str::of($this->argument('module'))->headline()->plural()->slug();
         } else {
-            return Str::of($this->argument('module'))->headline()->plural()->slug().'/'.
+            return Str::of($this->argument('module'))->headline()->plural()->slug() . '/' .
                 Str::of($this->argument('name'))->remove($this->argument('module'), false)->headline()->plural()->slug();
         }
     }

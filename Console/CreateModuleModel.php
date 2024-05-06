@@ -3,7 +3,7 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Commands\GeneratorCommand;
+use Nwidart\Modules\Commands\Make\GeneratorCommand;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
 use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Traits\ModuleCommandTrait;
@@ -63,7 +63,7 @@ class CreateModuleModel extends GeneratorCommand
         $string = '';
         foreach ($pieces as $i => $piece) {
             if ($i + 1 < count($pieces)) {
-                $string .= strtolower($piece).'_';
+                $string .= strtolower($piece) . '_';
             } else {
                 $string .= Str::plural(strtolower($piece));
             }
@@ -107,7 +107,7 @@ class CreateModuleModel extends GeneratorCommand
     private function handleOptionalMigrationOption()
     {
         if ($this->option('migration') === true) {
-            $tableNames = explode('_', Str::of($this->argument('module').$this->argument('model'))->snake());
+            $tableNames = explode('_', Str::of($this->argument('module') . $this->argument('model'))->snake());
             $splitNames = [];
             foreach ($tableNames as $tableName) {
                 $splitNames[] = $tableName != 'has' ? Str::of($tableName)->singular() : $tableName;
@@ -116,11 +116,11 @@ class CreateModuleModel extends GeneratorCommand
             $unique = implode('_', $unique);
             $tableName = Str::of($unique)->plural();
 
-            $migrationName = 'create_'.$tableName.'_'.$this->createMigrationName().'_table';
+            $migrationName = 'create_' . $tableName . '_' . $this->createMigrationName() . '_table';
             $this->call('create:module:migration', [
                 'name' => $migrationName,
                 'module' => $this->argument('module'),
-                'basename' => $this->argument('module').$this->argument('model'),
+                'basename' => $this->argument('module') . $this->argument('model'),
                 '--fields' => $this->option('fillable'),
             ]);
         }
@@ -182,7 +182,7 @@ class CreateModuleModel extends GeneratorCommand
     {
         $module = $this->laravel['modules']->findOrFail($this->getModuleName());
 
-        $tableNames = explode('_', Str::of($this->getModuleName().$this->getModelName())->snake()->plural());
+        $tableNames = explode('_', Str::of($this->getModuleName() . $this->getModelName())->snake()->plural());
         $splitNames = [];
         foreach ($tableNames as $tableName) {
             $splitNames[] = $tableName != 'has' ? Str::of($tableName)->singular() : $tableName;
@@ -215,11 +215,11 @@ class CreateModuleModel extends GeneratorCommand
         if (! is_null($fillable)) {
             foreach (explode(',', $fillable) as $var) {
                 $textVar = explode(':', $var)[0];
-                $array = "'".$textVar."' => 'required'";
+                $array = "'" . $textVar . "' => 'required'";
                 $arrays[] = $array;
             }
 
-            return '['.$tabs.implode(','.$tabs, $arrays)."\n\t\t]";
+            return '[' . $tabs . implode(',' . $tabs, $arrays) . "\n\t\t]";
         }
 
         return '[]';
@@ -234,7 +234,7 @@ class CreateModuleModel extends GeneratorCommand
 
         $modelPath = GenerateConfigReader::read('model');
 
-        return $path.$modelPath->getPath().'/'.$this->getModelName().'.php';
+        return $path . $modelPath->getPath() . '/' . $this->getModelName() . '.php';
     }
 
     /**
@@ -254,10 +254,10 @@ class CreateModuleModel extends GeneratorCommand
         if (! is_null($fillable)) {
 
             foreach (explode(',', $fillable) as $var) {
-                $arrays[] = "'".explode(':', $var)[0]."'";
+                $arrays[] = "'" . explode(':', $var)[0] . "'";
             }
 
-            return '['.implode(', ', $arrays).']';
+            return '[' . implode(', ', $arrays) . ']';
         }
 
         return '[]';

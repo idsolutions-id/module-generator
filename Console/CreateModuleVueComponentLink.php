@@ -3,7 +3,7 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Commands\GeneratorCommand;
+use Nwidart\Modules\Commands\Make\GeneratorCommand;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
 use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Traits\ModuleCommandTrait;
@@ -106,10 +106,10 @@ final class CreateModuleVueComponentLink extends GeneratorCommand
         if (! is_null($fillable)) {
 
             foreach (explode(',', $fillable) as $var) {
-                $arrays[] = explode(':', $var)[0].': null';
+                $arrays[] = explode(':', $var)[0] . ': null';
             }
 
-            return "{\n\t".implode(",\n\t", $arrays)."\n}";
+            return "{\n\t" . implode(",\n\t", $arrays) . "\n}";
         }
 
         return '{}';
@@ -126,7 +126,7 @@ final class CreateModuleVueComponentLink extends GeneratorCommand
 
         $Path = GenerateConfigReader::read('vue-components');
 
-        return $path.$Path->getPath().'/'.Str::of($this->getModuleName())->snake()->replace('_', '-').'-dashboard-link.vue';
+        return $path . $Path->getPath() . '/' . Str::of($this->getModuleName())->snake()->replace('_', '-') . '-dashboard-link.vue';
     }
 
     /**

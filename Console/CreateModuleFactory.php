@@ -3,7 +3,7 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Commands\GeneratorCommand;
+use Nwidart\Modules\Commands\Make\GeneratorCommand;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
 use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Traits\ModuleCommandTrait;
@@ -85,25 +85,25 @@ class CreateModuleFactory extends GeneratorCommand
                 $type = explode(':', $var)[1];
 
                 if ($textVar == 'company_id') {
-                    $array = "'company' => ".'$this->company ? [\'id\' => $this->company->id] : null';
+                    $array = "'company' => " . '$this->company ? [\'id\' => $this->company->id] : null';
                 } else {
 
                     switch ($type) {
                         case 'boolean':
-                            $array = "'".$textVar."' => ".'$this->faker->boolean()';
+                            $array = "'" . $textVar . "' => " . '$this->faker->boolean()';
                             break;
                         case 'float':
-                            $array = "'".$textVar."' => ".'$this->faker->randomFloat(2, 1, 100)';
+                            $array = "'" . $textVar . "' => " . '$this->faker->randomFloat(2, 1, 100)';
                             break;
                         case 'text':
-                            $array = "'".$textVar."' => ".'$this->faker->paragraph()';
+                            $array = "'" . $textVar . "' => " . '$this->faker->paragraph()';
                             break;
                         case 'foreignUuid':
-                            $array = "'".$textVar."' => ".'$this->faker->uuid()';
+                            $array = "'" . $textVar . "' => " . '$this->faker->uuid()';
                             break;
 
                         default:
-                            $array = "'".$textVar."' => ".'$this->faker->word()';
+                            $array = "'" . $textVar . "' => " . '$this->faker->word()';
                             break;
                     }
                 }
@@ -111,7 +111,7 @@ class CreateModuleFactory extends GeneratorCommand
                 $arrays[] = $array;
             }
 
-            return '['.$tabs.implode(','.$tabs, $arrays)."\n\t\t]";
+            return '[' . $tabs . implode(',' . $tabs, $arrays) . "\n\t\t]";
         }
 
         return '[]';
@@ -125,7 +125,7 @@ class CreateModuleFactory extends GeneratorCommand
         $path = $this->laravel['modules']->getModulePath($this->getModuleName());
         $factoryPath = GenerateConfigReader::read('factory');
 
-        return $path.$factoryPath->getPath().'/'.$this->getFileName();
+        return $path . $factoryPath->getPath() . '/' . $this->getFileName();
     }
 
     /**
@@ -133,7 +133,7 @@ class CreateModuleFactory extends GeneratorCommand
      */
     private function getFileName()
     {
-        return Str::studly($this->argument('name')).'Factory.php';
+        return Str::studly($this->argument('name')) . 'Factory.php';
     }
 
     /**
@@ -162,6 +162,6 @@ class CreateModuleFactory extends GeneratorCommand
         $path = $this->laravel['modules']->config('paths.generator.model.path', 'Entities');
         $path = str_replace('/', '\\', $path);
 
-        return $this->laravel['modules']->config('namespace').'\\'.$this->laravel['modules']->findOrFail($this->getModuleName()).'\\'.$path;
+        return $this->laravel['modules']->config('namespace') . '\\' . $this->laravel['modules']->findOrFail($this->getModuleName()) . '\\' . $path;
     }
 }

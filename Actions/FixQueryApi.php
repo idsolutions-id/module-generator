@@ -1,6 +1,6 @@
 <?php
 
-namespace Vheins\LaravelModuleGenerator\Action;
+namespace Vheins\LaravelModuleGenerator\Actions;
 
 use Illuminate\Support\Str;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -21,13 +21,13 @@ class FixQueryApi
     {
         $this->module = $module;
         $this->query = $query;
-        $this->filePath = base_path().'/modules/'.$this->module.'/api.php';
+        $this->filePath = base_path() . '/modules/' . $this->module . '/api.php';
 
         $textApi = file_get_contents($this->filePath);
-        $routeClass = 'use '.config('modules.namespace').'\\'.$this->module.'\\Controllers\\QueryController;';
+        $routeClass = 'use ' . config('modules.namespace') . '\\' . $this->module . '\\Controllers\\QueryController;';
         $contains = Str::contains($textApi, $routeClass);
         if (! $contains) {
-            $textApi = str_replace('//add more class here ...', $routeClass."\n//add more class here ...", $textApi);
+            $textApi = str_replace('//add more class here ...', $routeClass . "\n//add more class here ...", $textApi);
         }
 
         $contains = Str::contains($textApi, '//Route Queries');
@@ -39,10 +39,10 @@ class FixQueryApi
         foreach ($this->query as $val) {
             $v = Str::slug($val->toString());
             $cv = Str::camel($v);
-            $routeText = "Route::get('".$v."', '".$cv."')->name('".Str::of($this->module)->plural()->snake()->slug().'.'.Str::of($cv)->snake()->slug().".query');";
+            $routeText = "Route::get('" . $v . "', '" . $cv . "')->name('" . Str::of($this->module)->plural()->snake()->slug() . '.' . Str::of($cv)->snake()->slug() . ".query');";
             $contains = Str::contains($textApi, $routeText);
             if (! $contains) {
-                $textApi = str_replace('//add more queries here ...', "//add more queries here ...\n\t\t\t".$routeText, $textApi);
+                $textApi = str_replace('//add more queries here ...', "//add more queries here ...\n\t\t\t" . $routeText, $textApi);
             }
         }
 

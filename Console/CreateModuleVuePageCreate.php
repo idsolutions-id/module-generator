@@ -3,7 +3,7 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Commands\GeneratorCommand;
+use Nwidart\Modules\Commands\Make\GeneratorCommand;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
 use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Traits\ModuleCommandTrait;
@@ -92,10 +92,10 @@ final class CreateModuleVuePageCreate extends GeneratorCommand
 
             foreach (explode(',', $fillable) as $var) {
                 $val = explode(':', $var)[0];
-                $arrays[] = "{'".$val."': '".Str::title($val)."'}";
+                $arrays[] = "{'" . $val . "': '" . Str::title($val) . "'}";
             }
 
-            return "[\n\t\t\t\t".implode(",\n\t\t\t\t", $arrays)."\n\t\t\t]";
+            return "[\n\t\t\t\t" . implode(",\n\t\t\t\t", $arrays) . "\n\t\t\t]";
         }
 
         return '[]';
@@ -110,10 +110,10 @@ final class CreateModuleVuePageCreate extends GeneratorCommand
         if (! is_null($fillable)) {
 
             foreach (explode(',', $fillable) as $var) {
-                $arrays[] = "'".explode(':', $var)[0]."'";
+                $arrays[] = "'" . explode(':', $var)[0] . "'";
             }
 
-            return '['.implode(', ', $arrays).']';
+            return '[' . implode(', ', $arrays) . ']';
         }
 
         return '[]';
@@ -131,7 +131,7 @@ final class CreateModuleVuePageCreate extends GeneratorCommand
 
         $Path = GenerateConfigReader::read('vue-pages');
 
-        return $path.$Path->getPath().'/dashboard/'.$this->pageUrl().'/create.vue';
+        return $path . $Path->getPath() . '/dashboard/' . $this->pageUrl() . '/create.vue';
     }
 
     private function pageUrl()
@@ -139,7 +139,7 @@ final class CreateModuleVuePageCreate extends GeneratorCommand
         if ($this->argument('name') == $this->argument('module')) {
             return Str::of($this->argument('module'))->headline()->plural()->slug();
         } else {
-            return Str::of($this->argument('module'))->headline()->plural()->slug().'/'.
+            return Str::of($this->argument('module'))->headline()->plural()->slug() . '/' .
                 Str::of($this->argument('name'))->remove($this->argument('module'), false)->headline()->plural()->slug();
         }
     }

@@ -3,7 +3,7 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Commands\GeneratorCommand;
+use Nwidart\Modules\Commands\Make\GeneratorCommand;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
 use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Traits\ModuleCommandTrait;
@@ -96,10 +96,10 @@ final class CreateModuleVueComponentFilter extends GeneratorCommand
         if (! is_null($fillable)) {
 
             foreach (explode(',', $fillable) as $var) {
-                $arrays[] = Str::camel(explode(':', $var)[0]).': null';
+                $arrays[] = Str::camel(explode(':', $var)[0]) . ': null';
             }
 
-            return "{\n\t\t\t\t".implode(",\n\t\t\t\t", $arrays)."\n\t\t\t}";
+            return "{\n\t\t\t\t" . implode(",\n\t\t\t\t", $arrays) . "\n\t\t\t}";
         }
 
         return '{}';
@@ -114,10 +114,10 @@ final class CreateModuleVueComponentFilter extends GeneratorCommand
         if (! is_null($fillable)) {
 
             foreach (explode(',', $fillable) as $var) {
-                $arrays[] = 'this.form.'.Str::camel(explode(':', $var)[0]).' = '.'value.'.Str::camel(explode(':', $var)[0]);
+                $arrays[] = 'this.form.' . Str::camel(explode(':', $var)[0]) . ' = ' . 'value.' . Str::camel(explode(':', $var)[0]);
             }
 
-            return "{\n\t\t\t\t".implode(";\n\t\t\t\t", $arrays)."\n\t\t\t}";
+            return "{\n\t\t\t\t" . implode(";\n\t\t\t\t", $arrays) . "\n\t\t\t}";
         }
 
         return '{}';
@@ -142,7 +142,7 @@ final class CreateModuleVueComponentFilter extends GeneratorCommand
         $unique = implode('-', $unique);
         $fileName = Str::of($unique);
 
-        return $path.$Path->getPath().'/'.$fileName.'-filter.vue';
+        return $path . $Path->getPath() . '/' . $fileName . '-filter.vue';
     }
 
     /**

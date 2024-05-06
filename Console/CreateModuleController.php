@@ -3,7 +3,7 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Commands\GeneratorCommand;
+use Nwidart\Modules\Commands\Make\GeneratorCommand;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
 use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Traits\ModuleCommandTrait;
@@ -46,7 +46,7 @@ class CreateModuleController extends GeneratorCommand
 
         $controllerPath = GenerateConfigReader::read('controller');
 
-        return $path.$controllerPath->getPath().'/'.$this->getControllerName().'.php';
+        return $path . $controllerPath->getPath() . '/' . $this->getControllerName() . '.php';
     }
 
     /**
@@ -55,7 +55,7 @@ class CreateModuleController extends GeneratorCommand
     protected function getTemplateContents()
     {
         $module = $this->laravel['modules']->findOrFail($this->getModuleName());
-        $tableNames = explode('_', Str::of($this->getModuleName().$this->getController())->snake());
+        $tableNames = explode('_', Str::of($this->getModuleName() . $this->getController())->snake());
         $splitNames = [];
         foreach ($tableNames as $tableName) {
             $splitNames[] = Str::of($tableName)->singular();

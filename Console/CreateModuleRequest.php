@@ -3,7 +3,7 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Commands\GeneratorCommand;
+use Nwidart\Modules\Commands\Make\GeneratorCommand;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
 use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Traits\ModuleCommandTrait;
@@ -96,13 +96,13 @@ class CreateModuleRequest extends GeneratorCommand
                 $textVar = explode(':', $var)[0];
                 $isForeign = Str::of($textVar)->contains('_id');
                 if ($isForeign) {
-                    $arrays[] = "'".Str::of($textVar)->replace('_id', '')."' => 'required|array'";
+                    $arrays[] = "'" . Str::of($textVar)->replace('_id', '') . "' => 'required|array'";
                 }
-                $array = "'".Str::of($textVar)->replace('_id', '.id')."' => 'required'";
+                $array = "'" . Str::of($textVar)->replace('_id', '.id') . "' => 'required'";
                 $arrays[] = $array;
             }
 
-            return '['.$tabs.implode(','.$tabs, $arrays)."\n\t\t]";
+            return '[' . $tabs . implode(',' . $tabs, $arrays) . "\n\t\t]";
         }
 
         return '[]';
@@ -117,7 +117,7 @@ class CreateModuleRequest extends GeneratorCommand
 
         $requestPath = GenerateConfigReader::read('request');
 
-        return $path.$requestPath->getPath().'/'.$this->getFileName().'.php';
+        return $path . $requestPath->getPath() . '/' . $this->getFileName() . '.php';
     }
 
     /**

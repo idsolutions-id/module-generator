@@ -3,7 +3,7 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Commands\GeneratorCommand;
+use Nwidart\Modules\Commands\Make\GeneratorCommand;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
 use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Traits\CanClearModulesCache;
@@ -62,7 +62,7 @@ class CreateModuleSeeder extends GeneratorCommand
             'NAME' => $this->getSeederName(),
             'MODEL' => $this->argument('name'),
             'MODULE' => $this->getModuleName(),
-            'MODULE_NAMESPACE' => $this->laravel['modules']->config('namespace').'\\'.$this->getModuleName(),
+            'MODULE_NAMESPACE' => $this->laravel['modules']->config('namespace') . '\\' . $this->getModuleName(),
             'NAMESPACE' => $this->getClassNamespace($module),
 
         ]))->render();
@@ -76,7 +76,7 @@ class CreateModuleSeeder extends GeneratorCommand
 
         $seederPath = GenerateConfigReader::read('seeder');
 
-        return $path.$seederPath->getPath().'/'.$this->getSeederName().'.php';
+        return $path . $seederPath->getPath() . '/' . $this->getSeederName() . '.php';
     }
 
     /**

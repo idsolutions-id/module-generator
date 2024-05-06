@@ -4,7 +4,6 @@ namespace Vheins\LaravelModuleGenerator\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Lorisleiva\Actions\Facades\Actions;
-use Vheins\LaravelModuleGenerator\Action\CreatePostmanCollection;
 use Vheins\LaravelModuleGenerator\Console\CreateApiCrud;
 use Vheins\LaravelModuleGenerator\Console\CreateModule;
 use Vheins\LaravelModuleGenerator\Console\CreateModuleAction;
@@ -36,6 +35,27 @@ class LaravelModuleGeneratorServiceProvider extends ServiceProvider
      */
     protected $moduleNameLower = 'laravel-module-generator';
 
+    public $actions = [
+        CreateApiCrud::class,
+        CreateModule::class,
+        CreateModuleAction::class,
+        CreateModuleController::class,
+        CreateModuleMigration::class,
+        CreateModuleModel::class,
+        CreateModuleFactory::class,
+        CreateModuleRequest::class,
+        CreateModuleSub::class,
+        CreateModuleVueComponentFilter::class,
+        CreateModuleVueComponentForm::class,
+        CreateModuleVueComponentLink::class,
+        CreateModuleVueComponentTab::class,
+        CreateModuleVuePageCreate::class,
+        CreateModuleVuePageIndex::class,
+        CreateModuleVuePageView::class,
+        CreateModuleVueStore::class,
+        CreateModuleSeeder::class,
+    ];
+
     /**
      * Boot the application events.
      *
@@ -44,7 +64,11 @@ class LaravelModuleGeneratorServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerConfig();
-        $this->configureCommands();
+        if ($this->app->runningInConsole()) {
+            foreach ($this->actions as $class) {
+                Actions::registerCommandsForAction($class);
+            }
+        }
     }
 
     /**
@@ -56,43 +80,6 @@ class LaravelModuleGeneratorServiceProvider extends ServiceProvider
     {
     }
 
-    public function configureCommands()
-    {
-        if (! $this->app->runningInConsole()) {
-            return;
-        }
-
-        $this->commands([
-            CreateApiCrud::class,
-            CreateModule::class,
-            CreateModuleAction::class,
-            CreateModuleController::class,
-            CreateModuleMigration::class,
-            CreateModuleModel::class,
-            CreateModuleFactory::class,
-            CreateModuleRequest::class,
-            CreateModuleSub::class,
-            CreateModuleVueComponentFilter::class,
-            CreateModuleVueComponentForm::class,
-            CreateModuleVueComponentLink::class,
-            CreateModuleVueComponentTab::class,
-            CreateModuleVuePageCreate::class,
-            CreateModuleVuePageIndex::class,
-            CreateModuleVuePageView::class,
-            CreateModuleVueStore::class,
-            CreateModuleSeeder::class,
-        ]);
-
-        $actions = [
-            CreatePostmanCollection::class,
-        ];
-        if ($this->app->runningInConsole()) {
-            foreach ($actions as $class) {
-                Actions::registerCommandsForAction($class);
-            }
-        }
-    }
-
     /**
      * Register config.
      *
@@ -100,14 +87,14 @@ class LaravelModuleGeneratorServiceProvider extends ServiceProvider
      */
     protected function registerConfig()
     {
-        $this->publishes([__DIR__.'/../laravel-module-generator.php' => config_path('laravel-module-generator.php')], 'config');
-        $this->mergeConfigFrom(__DIR__.'/../laravel-module-generator.php', 'laravel-module-generator');
+        $this->publishes([__DIR__ . '/../laravel-module-generator.php' => config_path('laravel-module-generator.php')], 'config');
+        $this->mergeConfigFrom(__DIR__ . '/../laravel-module-generator.php', 'laravel-module-generator');
 
-        $this->publishes([__DIR__.'/../modules.php' => config_path('modules.php')], 'config');
-        $this->mergeConfigFrom(__DIR__.'/../modules.php', 'modules');
+        $this->publishes([__DIR__ . '/../modules.php' => config_path('modules.php')], 'config');
+        $this->mergeConfigFrom(__DIR__ . '/../modules.php', 'modules');
 
         $this->publishes([
-            __DIR__.'/../stubs' => base_path('stubs'),
+            __DIR__ . '/../stubs' => base_path('stubs'),
         ], 'stubs');
     }
 

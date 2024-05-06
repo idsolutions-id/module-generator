@@ -3,7 +3,7 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
-use Nwidart\Modules\Commands\GeneratorCommand;
+use Nwidart\Modules\Commands\Make\GeneratorCommand;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
 use Nwidart\Modules\Support\Stub;
 use Nwidart\Modules\Traits\ModuleCommandTrait;
@@ -110,12 +110,12 @@ final class CreateModuleVueStore extends GeneratorCommand
                 if (in_array($key, [
                     'foreignId', 'foreignUuid', 'foreignUlid',
                 ])) {
-                    $val = Str::of($val)->replace('_id', '')->toString().'.name';
+                    $val = Str::of($val)->replace('_id', '')->toString() . '.name';
                 }
-                $arrays[] = "{ '".Str::camel($val)."': '".Str::of($val)->replace('.', '_')->headline()."' }";
+                $arrays[] = "{ '" . Str::camel($val) . "': '" . Str::of($val)->replace('.', '_')->headline() . "' }";
             }
 
-            return "[\n\t\t\t".implode(", \n\t\t\t", $arrays)."\n\t\t]";
+            return "[\n\t\t\t" . implode(", \n\t\t\t", $arrays) . "\n\t\t]";
         }
 
         return '[]';
@@ -131,10 +131,10 @@ final class CreateModuleVueStore extends GeneratorCommand
 
             foreach (explode(',', $fillable) as $var) {
                 $key = explode(':', $var)[0];
-                $arrays[] = Str::of($key)->replace('_id', '')->camel().': null';
+                $arrays[] = Str::of($key)->replace('_id', '')->camel() . ': null';
             }
 
-            return "{\n\t".implode(",\n\t", $arrays)."\n}";
+            return "{\n\t" . implode(",\n\t", $arrays) . "\n}";
         }
 
         return '{}';
@@ -154,11 +154,11 @@ final class CreateModuleVueStore extends GeneratorCommand
                 if (in_array($key, [
                     'foreignId', 'foreignUuid', 'foreignUlid',
                 ])) {
-                    $arrays[] = Str::of($val)->replace('_id', '')->camel().': null';
+                    $arrays[] = Str::of($val)->replace('_id', '')->camel() . ': null';
                 }
             }
 
-            return "{\n\t\t\t".implode(",\n\t\t\t", $arrays)."\n\t\t}";
+            return "{\n\t\t\t" . implode(",\n\t\t\t", $arrays) . "\n\t\t}";
         }
 
         return '{}';
@@ -184,7 +184,7 @@ final class CreateModuleVueStore extends GeneratorCommand
         $unique = implode('-', $unique);
         $fileName = Str::of($unique);
 
-        return $path.$Path->getPath().'/'.$fileName.'.js';
+        return $path . $Path->getPath() . '/' . $fileName . '.js';
     }
 
     /**
