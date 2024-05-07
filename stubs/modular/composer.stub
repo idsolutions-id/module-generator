@@ -1,6 +1,7 @@
 {
     "name": "$VENDOR$/$LOWER_NAME$",
     "description": "",
+    "icon": "BrandLaravelIcon",
     "authors": [
         {
             "name": "$AUTHOR_NAME$",

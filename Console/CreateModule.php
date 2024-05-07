@@ -3,6 +3,7 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Yaml\Yaml;
@@ -18,6 +19,8 @@ class CreateModule extends Command
 
     private $query = [];
 
+    private $blueprint = null;
+
     protected function getOptions()
     {
         return [
@@ -32,7 +35,11 @@ class CreateModule extends Command
      */
     public function handle()
     {
-        $blueprints = Yaml::parse(file_get_contents('.blueprint/' . $this->argument('blueprint')));
+        if (! $this->validateFile()) {
+            return true;
+        }
+
+        $blueprints = Yaml::parse(file_get_contents('.blueprint/' . $this->blueprint));
         foreach ($blueprints as $module => $subModules) {
             foreach ($subModules as $subModule => $tables) {
                 $dbOnly = false;
@@ -60,7 +67,34 @@ class CreateModule extends Command
         }
         $this->call('optimize:clear');
         $this->info('Generate Blueprint Successfull');
+        $this->info('Running Laravel Pint, Please Wait...');
+        Process::run('./vendor/bin/pint');
         $this->info('Please restart webserver / sail and vite');
+
+        return true;
+    }
+
+    /**
+     * Validates the file specified as a command argument.
+     *
+     * This function checks if the file specified as a command argument has a '.yml' extension.
+     * If it doesn't, the '.yml' extension is appended to the file name.
+     * Then, it checks if the file exists in the '.blueprint/' directory.
+     * If the file doesn't exist, an error message is displayed and the function returns false.
+     *
+     * @return bool Returns false if the file is not found, otherwise returns nothing.
+     */
+    private function validateFile()
+    {
+        $this->blueprint = $this->argument('blueprint');
+        if (! Str::of($this->blueprint)->endsWith('.yml')) {
+            $this->blueprint .= '.yml';
+        }
+        if (! file_exists('.blueprint/' . $this->blueprint)) {
+            $this->error('Blueprint not found');
+
+            return false;
+        }
 
         return true;
     }
@@ -68,10 +102,10 @@ class CreateModule extends Command
     /**
      * Calls the 'create:module:sub' command with the provided module, submodule, fillables, and dbOnly options.
      *
-     * @param mixed $module The name of the module.
-     * @param mixed $subModule The name of the submodule.
-     * @param array $fillables An array of fillable columns.
-     * @param bool $dbOnly Flag to indicate if only database operations should be performed.
+     * @param  mixed  $module  The name of the module.
+     * @param  mixed  $subModule  The name of the submodule.
+     * @param  array  $fillables  An array of fillable columns.
+     * @param  bool  $dbOnly  Flag to indicate if only database operations should be performed.
      */
     private function createSub($module, $subModule, $fillables, $dbOnly)
     {
@@ -86,9 +120,9 @@ class CreateModule extends Command
     /**
      * Create relation for the given module and submodule if the 'Relation' key is set in the $tables array.
      *
-     * @param mixed $module The name of the module.
-     * @param mixed $subModule The name of the submodule.
-     * @param array $tables An associative array containing the table configuration.
+     * @param  mixed  $module  The name of the module.
+     * @param  mixed  $subModule  The name of the submodule.
+     * @param  array  $tables  An associative array containing the table configuration.
      * @return void
      */
     private function createRelation($module, $subModule, $tables)
@@ -106,9 +140,9 @@ class CreateModule extends Command
     /**
      * Creates a query for the given module and submodule if the 'Query' key is set to true in the $tables array.
      *
-     * @param string $module The name of the module.
-     * @param string $subModule The name of the submodule.
-     * @param array $tables An associative array containing the table configuration.
+     * @param  string  $module  The name of the module.
+     * @param  string  $subModule  The name of the submodule.
+     * @param  array  $tables  An associative array containing the table configuration.
      * @return void
      */
     private function createQuery($module, $subModule, $tables)

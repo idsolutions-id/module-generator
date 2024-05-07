@@ -2,16 +2,31 @@
 
 namespace $NAMESPACE$;
 
-use App\Http\Requests\FormRequest;
+
+use IDS\Framework\Facades\Helper;
+use IDS\Framework\Requests\FormRequest;
+use IDS\Framework\Traits\ValidationAttribute;
+use Illuminate\Support\Facades\Auth;
+use $MODULE_NAMESPACE$\$MODULE$\Models\$MODEL$;
 
 class $CLASS$ extends FormRequest
 {
+    use ValidationAttribute;
+
+    public function authorize()
+    {
+        return Auth::check();
+    }
 
     public function rules()
     {
-        return $FILLABLE$;
+        $rules = array_merge(app($MODEL$::class)->formRules(),[
+            //Add Custom or Overide Validation Rules Here
+        ]);
+
+        return $rules;
     }
 
-
+    $PREPARE$
 
 }

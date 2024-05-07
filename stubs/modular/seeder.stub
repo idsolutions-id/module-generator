@@ -4,18 +4,26 @@ namespace $NAMESPACE$;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
+use $MODULE_NAMESPACE$\Actions\$MODEL$\Store;
+use $MODULE_NAMESPACE$\Models\$MODEL$;
+use $MODULE_NAMESPACE$\Requests\$MODEL$Request;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class $NAME$ extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        Model::unguard();
-
-        // $this->call("OthersTableSeeder");
+        $MODEL$::truncate();
+        $limit = env('SEED_ROW', 30);
+        $progressBar = new ProgressBar($this->command->getOutput(), $limit);
+        $progressBar->start();
+        for ($i = 0; $i < $limit; $i++) {
+            $progressBar->advance();
+            $factory = $MODEL$::factory()->make();
+            $request = new $MODEL$Request($factory->toArray());
+            Store::run($request);
+        }
+        $progressBar->finish();
+        $this->command->info(' Finished');
     }
 }

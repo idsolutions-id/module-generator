@@ -2,6 +2,7 @@
 
 namespace $NAMESPACE$;
 
+use IDS\Framework\Facades\Helper;
 use Lorisleiva\Actions\Concerns\AsAction;
 //use .. ;
 

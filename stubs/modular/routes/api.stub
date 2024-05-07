@@ -1,5 +1,6 @@
 <?php
 
+use IDS\Framework\Facades\Helper;
 use Illuminate\Support\Facades\Route;
 use $MODULE_NAMESPACE$\$STUDLY_NAME$\Controllers\$STUDLY_NAME$Controller;
 //add more class here ...
@@ -15,11 +16,15 @@ use $MODULE_NAMESPACE$\$STUDLY_NAME$\Controllers\$STUDLY_NAME$Controller;
 |
 */
 
-Route::prefix('v1')->middleware('jwt.verify')->group(function () {
+Route::prefix('v1')->group(function () {
     Route::prefix('$API_ROUTE$')->group(function(){
         Route::get('export', [$STUDLY_NAME$Controller::class,'export'])->name('$API_ROUTE$.export');;
         //add more route here ...
-        //add more queries here ...
+        
+        //Route Queries
+        Route::prefix('queries')->controller(QueryController::class)->group(function () {
+            Helper::generateQueryRouter(QueryController::class, '$API_ROUTE$');
+        });
     });
     Route::apiResource('$API_ROUTE$', $STUDLY_NAME$Controller::class);
 });

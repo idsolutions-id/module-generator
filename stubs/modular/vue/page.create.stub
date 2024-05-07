@@ -23,7 +23,7 @@ export default {
                     <strong class="text-color-primary">
                         {{ $t(store.moduleName) }}
                     </strong>
-                    <DashboardsBreadcrumb showDisabled="true" />
+                    <DashboardBreadcrumb showDisabled="true" />
                 </div>
                 <div class="uk-width-auto">
                     <div class="uk-button-group rounded uk-box-shadow-small">

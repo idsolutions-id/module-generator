@@ -80,8 +80,32 @@ class CreateModuleRequest extends GeneratorCommand
             'CLASS' => $this->getClass(),
             'MODULE' => $this->getModuleName(),
             'MODULE_NAMESPACE' => $this->laravel['modules']->config('namespace'),
-            'MODEL' => $this->getModuleName(),
+            'MODEL' => $this->getModelName(),
+            'PREPARE' => $this->getPrepareValidation(),
         ]))->render();
+    }
+
+    private function getPrepareValidation()
+    {
+        $fillables = [];
+        $fillable = explode(',', $this->option('fillable'));
+        foreach ($fillable as $var) {
+            $key = explode(':', $var)[0];
+            if (Str::contains($key, '_id')) {
+                $fillables[] = Str::of($key)->replace('_id', '')->toString();
+            }
+        }
+
+        $string = null;
+        if (! empty($fillables)) {
+            $string = 'public function prepareForValidation()' . "\n";
+            $string .= "\t{\n";
+            $string .= "\t\t" . '$data = Helper::mergeRequest([' . "'" . implode("','", $fillables) . "'" . '], $this);' . "\n";
+            $string .= "\t\t" . '$this->replace($data->all());' . "\n";
+            $string .= "\t}\n";
+        }
+
+        return $string;
     }
 
     /**
@@ -126,5 +150,10 @@ class CreateModuleRequest extends GeneratorCommand
     private function getFileName()
     {
         return Str::studly($this->argument('name'));
+    }
+
+    private function getModelName()
+    {
+        return Str::of($this->argument('name'))->studly()->replace('Request', '')->toString();
     }
 }

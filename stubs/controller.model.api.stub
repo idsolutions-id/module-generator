@@ -10,8 +10,8 @@ use {{ rootNamespace }}{{ customNamespaceRequest }};
 
 class {{ class }} extends Controller
 {
-    protected $is_public = false;
-    protected $need_permission = true;
+    protected $isPublic = false;
+    protected $needPermission = true;
 
 
     /**

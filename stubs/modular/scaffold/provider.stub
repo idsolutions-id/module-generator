@@ -4,54 +4,38 @@ namespace $NAMESPACE$;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Lorisleiva\Actions\Facades\Actions;
 
 class $CLASS$ extends ServiceProvider
 {
-    /**
-     * @var string $moduleName
-     */
+
     protected $moduleName = '$MODULE$';
 
-    /**
-     * @var string $moduleNameLower
-     */
     protected $moduleNameLower = '$LOWER_NAME$';
 
-    /**
-     * Boot the application events.
-     *
-     * @return void
-     */
+    protected $command = [
+        //Enter Class Name Here . . .
+    ];
+
     public function boot()
     {
         $this->registerConfig();
         $this->loadMigrationsFrom(module_path($this->moduleName, '$MIGRATIONS_PATH$'));
 
-        $actions = [
-            //Enter Class Name Here . . .
-        ];
-        if ($this->app->runningInConsole()) {
-            foreach ($actions as $class) {
+        if (!empty($this->command) && $this->app->runningInConsole()) {
+            foreach ($this->commands as $class) {
                 Actions::registerCommandsForAction($class);
             }
         }
     }
 
-    /**
-     * Register the service provider.
-     *
-     * @return void
-     */
+
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
     }
 
-    /**
-     * Register config.
-     *
-     * @return void
-     */
+
     protected function registerConfig()
     {
         $this->publishes([
@@ -80,11 +64,7 @@ class $CLASS$ extends ServiceProvider
         }
     }
 
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
+
     public function provides()
     {
         return [];

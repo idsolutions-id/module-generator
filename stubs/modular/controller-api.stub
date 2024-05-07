@@ -3,7 +3,7 @@
 namespace $CLASS_NAMESPACE$;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use IDS\Framework\Controllers\Controller;
 
 use $MODULE_NAMESPACE$\$MODULE$\Models\$NAME$;
 use $MODULE_NAMESPACE$\$MODULE$\Actions\$NAME$\Store;
@@ -14,31 +14,40 @@ use $MODULE_NAMESPACE$\$MODULE$\Requests\$NAME$Request;
 
 class $CLASS$ extends Controller
 {
-    protected $is_public = false;
-    protected $need_permission = true;
+    protected $isPublic = false;
+
+    protected $needPermission = true;
+
     public $permission = 'module.$PERMISSION$';
-    public $mapRequest = []; //Array of Request
-    public $mapRelation = []; //Array of Relation, Key as Eloquent Relation, Value as Request
-    public $mapTimeframe = []; //Array of Request Aliased as Timeframe
+
+    //Mapping Array of Request, Key as Request, Value as Model Attributes
+    public $mapRequest = [];
+
+    //Mapping Array of Request into Eloquent Relation, Key as Eloquent Relation, Value as Request
+    public $mapRelation = [];
+
+    //Array of Request Aliased as Timeframe
+    public $mapTimeframe = [];
+
+    public $model = $NAME$::class;
 
     public function index(Request $request)
     {
-        $model = $NAME$::query();
+        $model = $this->model::query();
         $data = $this->search($model, $request);
         return $this->success($data);
     }
 
     public function export(Request $request)
     {
-        $model = $NAME$::query();
-        $data = $this->search($model, $request);
+        $data = $this->index($request);
         return $this->success($data);
     }
 
     public function store($NAME$Request $request)
     {
-        $store = Store::run($request);
-        return $this->show($store, 201, '$NAME$ created');
+        $handle = Store::run($request);
+        return $this->show($handle, 201, __('$NAME$').' '.__('Successfully').' '.__('Created'));
     }
 
     public function show($NAME$ $$MODEL_VAR$, $code = 200, $message = null)
@@ -49,14 +58,14 @@ class $CLASS$ extends Controller
 
     public function update($NAME$Request $request, $NAME$ $$MODEL_VAR$)
     {
-        $update = Update::run($request,$$MODEL_VAR$);
-        return $this->show($update, 200, '$NAME$ updated');
+        $handle = Update::run($request,$$MODEL_VAR$);
+        return $this->show($handle, 200, __('$NAME$').' '.__('Successfully').' '.__('Updated'));
     }
 
 
     public function destroy($NAME$ $$MODEL_VAR$)
     {
-        $delete = Delete::run($$MODEL_VAR$);
-        return $this->success($delete, '$NAME$ delete successfully', 204);
+        Delete::run($$MODEL_VAR$);
+        return response()->noContent();
     }
 }

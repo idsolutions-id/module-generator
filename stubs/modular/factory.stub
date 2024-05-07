@@ -2,27 +2,41 @@
 
 namespace $NAMESPACE$;
 
+use Exception;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use $MODEL_NAMESPACE$\$NAME$;
+use Nwidart\Modules\Facades\Module;
 
 class $NAME$Factory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = \$MODEL_NAMESPACE$\$NAME$::class;
+    protected $model = $NAME$::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array
-     */
+    private $company;
+
     public function definition()
     {
-        return [
-            //
-        ];
+        $this->company = $this->resolveCompany();
+        $data = $FACTORY$;
+
+        return $data;
+    }
+
+    private function resolveCompany()
+    {
+        $this->company = $this->attributes['company'] ?? null;
+
+        if (Module::has('Company')) {
+            $company = \IDS\Company\Models\Company::class;
+            if ($this->company === null) {
+                $this->company = $company::inRandomOrder()->first();
+            } elseif (is_array($this->company) && isset($this->company['id'])) {
+                $this->company = $company::find($this->company['id']);
+            }
+
+
+        }
+
+        return $this->company;
     }
 }
 

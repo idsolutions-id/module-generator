@@ -1,22 +1,20 @@
 <script>
 export default {
+    setup() {
+        const store = useNavigationStore();
+        return { store };
+    },
     props: {
         type: String,
     },
-    setup() {
-        const { t } = useI18n();
-        return { t };
-    },
-    data() {
-        return {
-            tabs: [
-                //add tabs here ...
-            ]
+    computed: {
+        tabs() {
+            return this.store.getTabs('module.$PERMISSIONS$');
         }
     }
 }
 </script>
 
 <template>
-    <PartialsIconTab :tabs="tabs" :type="type" />
+    <PartialIconTab :tabs="tabs" :type="type" />
 </template>

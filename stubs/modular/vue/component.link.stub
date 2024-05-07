@@ -3,17 +3,11 @@ export default {
     props: {
         type: String,
     },
-    setup() {
-        const { t } = useI18n();
-        const auth = useAuthStore();
-        const can = auth.can;
-        return { can, t };
-    },
     data() {
         return {
             navigations: [
                 {
-                    title: $NAME$,
+                    title: '$NAME$',
                     permission: 'module.$PERMISSIONS$',
                     children: [
                         //add link here ...
@@ -27,20 +21,5 @@ export default {
 </script>
 
 <template>
-    <template v-for="(tab,index) in navigations" :key="index">
-        <li v-if="can(`${tab.permission}-index`)" class="uk-nav-header uk-margin-remove-top">
-            <span class="navigation-side-label"><b>{{ $t(tab.title) }}</b></span>
-        </li>
-        <template v-for="tab in tab.children" :key="tab.link">
-            <li v-if="can(`${tab.permission}-index`)" class="link"
-                :class="{ 'active': $route.path == tab.link}">
-                <RouterLink :to="tab.link">
-                    <span class="uk-padding-small uk-padding-remove-horizontal uk-flex uk-flex-middle">
-                        <component v-bind:is="tab.icon" />
-                    </span>
-                    <span class="navigation-side-label">{{ $t(tab.title) }}</span>
-                </RouterLink>
-            </li>
-        </template>
-    </template>
+    <PartialDashboardLink :navigations="navigations" :type="type" />
 </template>

@@ -29,12 +29,13 @@ export const useModule$CLASS$Store = defineStore('module.$PERMISSION$', {
                         this.list = res.data.data;
                         response.clearErrors();
                     }
-                    resolve(res.data)
+                    this.loading = false;
+                    resolve(res.data);
                 }).catch(err => {
+                    this.loading = false;
                     reject(err);
-                })
-                this.loading = false;
-            })
+                });
+            });
         },
         fetchData(payload) {
             this.loading = true;
@@ -45,12 +46,13 @@ export const useModule$CLASS$Store = defineStore('module.$PERMISSION$', {
                     this.data = res.data.data;
                     this.form = res.data.data;
                     response.clearErrors();
-                    resolve(res.data)
+                    this.loading = false;
+                    resolve(res.data);
                 }).catch(err => {
+                    this.loading = false;
                     reject(err);
-                })
-                this.loading = false;
-            })
+                });
+            });
         },
         submitForm(method, payload) {
             this.loading = true;
@@ -62,25 +64,28 @@ export const useModule$CLASS$Store = defineStore('module.$PERMISSION$', {
                     data: payload,
                 }).then(res => {
                     this.data = res.data.data;
-                    resolve(res.data)
+                    this.loading = false;
                     response.clearErrors();
+                    resolve(res.data);
                 }).catch(err => {
+                    this.loading = false;
                     reject(err);
-                })
-                this.loading = false;
-            })
+                });
+            });
         },
         remove(payload) {
             const response = useResponseStore();
             return new Promise((resolve, reject) => {
                 $axios.delete(this.apiRoute + '/' + payload).then(res => {
                     this.data = null;
-                    resolve(res.data)
+                    this.loading = false;
                     response.clearErrors();
+                    resolve(res.data)
                 }).catch(err => {
+                    this.loading = false;
                     reject(err);
-                })
-            })
+                });
+            });
         },
         rollBack() {
             this.fetchData(this.data.id);
@@ -116,8 +121,10 @@ export const useModule$CLASS$Store = defineStore('module.$PERMISSION$', {
     },
 
     getters: {
-        countFilter() {
-            return Object.values(this.filter).filter(val => val != null).length
+       countFilter() {
+            if (this.filter != null)
+                return Object.values(this.filter).filter(val => val != null).length
+            return 0;
         },
         isCreate() {
             return this.create ? true : false;
@@ -133,7 +140,6 @@ export const useModule$CLASS$Store = defineStore('module.$PERMISSION$', {
 });
 
 
-// make sure to pass the right store definition, `useModule$CLASS$Store` in this case.
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useModule$CLASS$Store, import.meta.hot))
 }

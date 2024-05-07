@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Nwidart\Modules\Facades\Module;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Vheins\LaravelModuleGenerator\Actions\CreateNavigation;
 
 class CreateModuleSub extends Command
 {
@@ -116,7 +117,7 @@ class CreateModuleSub extends Command
                         {
                             title: '" . Str::headline($this->name) . "',
                             link: '/dashboard/" . $this->pageUrl() . "',
-                            icon: 'AppsIcon',
+                            icon: 'BrandLaravelIcon',
                             permission: 'module." . $permissions . "',
                         },
                         //add link here ...
@@ -131,7 +132,7 @@ class CreateModuleSub extends Command
                 {
                     title: '" . Str::headline($this->name) . "',
                     link: '/dashboard/" . $this->pageUrl() . "',
-                    icon: 'AppsIcon',
+                    icon: 'BrandLaravelIcon',
                     permission: 'module." . $permissions . "',
                 },
                 //add tabs here ...
@@ -265,7 +266,7 @@ class CreateModuleSub extends Command
             //Generate Vue
             $commands = [
                 'create:module:vue:component:tab',
-                'create:module:vue:component:link',
+                // 'create:module:vue:component:link',
             ];
             foreach ($commands as $command) {
                 $this->call($command, [
@@ -274,6 +275,9 @@ class CreateModuleSub extends Command
                     '--fillable' => $this->fields,
                 ]);
             }
+
+            CreateNavigation::run($this->module, $this->name);
+
             //Fix Route File
             $routeApiFile = base_path() . '/modules/' . $this->module . '/api.php';
             $routeApi = file_get_contents($routeApiFile);
@@ -292,7 +296,7 @@ class CreateModuleSub extends Command
             'create:module:vue:component:form',
             'create:module:vue:component:filter',
         ];
-        
+
         foreach ($commands as $command) {
             $this->call($command, [
                 'name' => $this->module . $this->name,

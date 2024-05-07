@@ -9,10 +9,12 @@ export default {
     data() {
         return {
             downloadLink: null,
+            isDownloading: false
         }
     },
     methods: {
         async fetchCsv() {
+            this.isDownloading = true;
             let filter = this.datatable.getFilter(this.store.apiRoute);
             var params = {
                 'skipPagination': true,
@@ -38,13 +40,14 @@ export default {
                         const elem = document.getElementById('download');
                         elem.click();
                     }, 100);
+                    this.isDownloading = false;
                     this.$swal({
                         icon: 'success',
                         position: 'center',
                         showConfirmButton: false,
                         text: 'Data Successfully Downloaded!',
                         timer: 1500,
-                        // toast: true,
+
                     });
                 });
         }
@@ -76,7 +79,7 @@ export default {
     <div class="uk-width-xlarge width-release uk-text-left" uk-dropdown="mode: click;">
         <div class="uk-card-body uk-padding-remove">
             <div class="uk-text-bold true-black">{{ $t('Filter By') }} </div>
-            <div class="uk-grid-small" uk-grid>
+            <div class="uk-grid-small uk-margin-small" uk-grid>
 $FORM$
             </div>
         </div>
@@ -84,18 +87,20 @@ $FORM$
             <template v-if="store.countFilter > 0">
                 <button type="button" @click="store.resetFilter()"
                     class="uk-button uk-button-small uk-border-rounded uk-flex uk-flex-middle">
-                    <ReloadIcon /> <span class="uk-visible@m">Reset</span>
+                    <ReloadIcon /> <span class="uk-visible@m">{{ $t('Reset') }}</span>
                 </button>
                 <download-csv id="download" v-if="datatable.csv" :data="datatable.csv"
                     :name="`${store.moduleName}_${Date.now()}.csv`"
                     class="uk-button uk-button-small uk-button-primary uk-border-rounded">
                     <DownloadIcon />
-                    Re-Download ({{ datatable.csv.length }})
+                    {{ $t('Re-Download') }} ({{ datatable.csv.length }})
                 </download-csv>
                 <div v-else>
-                    <button @click="fetchCsv" class="uk-button uk-button-small uk-button-primary uk-border-rounded">
-                        <DownloadIcon />
-                        Download
+                    <button :disabled="isDownloading" @click="fetchCsv"
+                        class="uk-button uk-button-small uk-button-primary uk-border-rounded">
+                        <DownloadIcon v-if="!isDownloading" />
+                        <div v-else uk-spinner />
+                        {{ $t('Download') }}
                     </button>
                 </div>
             </template>

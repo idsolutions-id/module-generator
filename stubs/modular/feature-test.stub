@@ -8,15 +8,19 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class $CLASS$ extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function testExample()
+    public $httpHeader = [
+        'I-See-Everything' => 'LLAKCOLNU',
+    ];
+
+    public $apiUrl = '/api/v1/$PLURAL_NAME$';
+
+    public function testIndex()
     {
-        $response = $this->get('/');
+        $response = $this->get($this->apiUrl);
 
         $response->assertStatus(200);
     }
+
+
+    //Query Test
 }

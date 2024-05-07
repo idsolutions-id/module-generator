@@ -2,7 +2,7 @@
 
 namespace {{ namespace }};
 
-use App\Http\Requests\FormRequest;
+use IDS\Framework\Requests\FormRequest;
 
 class {{ class }} extends FormRequest
 {

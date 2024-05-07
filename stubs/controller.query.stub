@@ -4,13 +4,20 @@ namespace {{ namespace }};
 
 //Class Refferences
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use IDS\Framework\Controllers\Controller;
 
 class QueryController extends Controller
 {
-    protected $is_public = false;
-    protected $need_permission = true;
+    protected $isPublic = false;
+    protected $needPermission = true;
     public $permission = 'module.$PERMISSION$';
+    public $scopeActive = true;
+    //Mapping Array of Request, Key as Request, Value as Model Attributes
+    public $mapRequest = [];
+    //Mapping Array of Request into Eloquent Relation, Key as Eloquent Relation, Value as Request
+    public $mapRelation = [];
+    //Array of Request Aliased as Timeframe
+    public $mapTimeframe = [];
 
     //Query Select2
 }

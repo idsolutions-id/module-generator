@@ -18,14 +18,10 @@ return new class extends Migration
             $table->uuid('id')->primary();
 
 $FIELDS$
-            $table->datetimes();
-            $table->softDeletesDatetime();
-            $table->foreignUuid('created_by')->after('created_at')->nullable()->constrained('users')->onUpdate('cascade');
-            $table->foreignUuid('updated_by')->after('updated_at')->nullable()->constrained('users')->onUpdate('cascade');
-            $table->foreignUuid('deleted_by')->after('deleted_at')->nullable()->constrained('users')->onUpdate('cascade');
+            $table->auditLog();
         });
 
-        Artisan::call('create:permission', ['name' => 'module.$PERMISSION$']);
+        Artisan::call('framework:create-permission', ['name' => 'module.$PERMISSION$']);
     }
 
     /**

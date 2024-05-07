@@ -9,7 +9,35 @@ class $CLASS$ extends Model
 {
 
     protected $table = '$TABLE_NAME$';
-    protected $fillable = $FILLABLE$;
+    protected $cascadeDeletes = []; //cascadeDeletes
+
+    //Model Validation Rules
+    public function beforeValidation()
+    {
+        // Some code goes here..
+    }
+
+    public function validationRules()
+    {
+        $rules = $RULE$;
+        return $rules;
+    }
+
+    public function afterValidation()
+    {
+        // Some code goes here..
+    }
+
+    //Model Scope
+
+
+    //Model Mutator / Getter Attribute
+
+
+    //Model Mutator / Setter Attribute
+
 
     //Model Relationship
+
+
 }

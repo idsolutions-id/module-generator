@@ -13,15 +13,10 @@ use {{ rootNamespace }}{{ namespaceDeleteAction }};
 
 class {{ class }} extends Controller
 {
-    protected $is_public = false;
-    protected $need_permission = true;
+    protected $isPublic = false;
+    protected $needPermission = true;
 
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         $model = {{ model }}::query();
@@ -29,52 +24,27 @@ class {{ class }} extends Controller
         return $this->success($data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \{{ customNamespaceRequest }}  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store({{ customRequest }} $request)
     {
         $store = {{ storeAction }}::run($request->validated());
         return $this->success($store);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \{{ namespacedModel }}  ${{ modelVariable }}
-     * @return \Illuminate\Http\Response
-     */
     public function show({{ model }} ${{ modelVariable }})
     {
         //${{ modelVariable }}->loadMissing();
         return $this->success(${{ modelVariable }});
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \{{ customNamespaceRequest }}  $request
-     * @param  \{{ namespacedModel }}  ${{ modelVariable }}
-     * @return \Illuminate\Http\Response
-     */
     public function update({{ customRequest }} $request, {{ model }} ${{ modelVariable }})
     {
         $update = {{ updateAction }}::run(${{ modelVariable }},$request->validated());
         return $this->success($update);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \{{ namespacedModel }}  ${{ modelVariable }}
-     * @return \Illuminate\Http\Response
-     */
     public function destroy({{ model }} ${{ modelVariable }})
     {
         $delete = {{ deleteAction }}::run(${{ modelVariable }});
-        return $this->success($delete);
+        return response()->noContent();
     }
 }
