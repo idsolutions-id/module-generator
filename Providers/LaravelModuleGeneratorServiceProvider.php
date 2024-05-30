@@ -4,6 +4,7 @@ namespace Vheins\LaravelModuleGenerator\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Lorisleiva\Actions\Facades\Actions;
+use Vheins\LaravelModuleGenerator\Actions\CreatePostmanCollection;
 use Vheins\LaravelModuleGenerator\Console\CreateApiCrud;
 use Vheins\LaravelModuleGenerator\Console\CreateModule;
 use Vheins\LaravelModuleGenerator\Console\CreateModuleAction;
@@ -54,6 +55,7 @@ class LaravelModuleGeneratorServiceProvider extends ServiceProvider
         CreateModuleVuePageView::class,
         CreateModuleVueStore::class,
         CreateModuleSeeder::class,
+        CreatePostmanCollection::class,
     ];
 
     /**

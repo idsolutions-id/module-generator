@@ -19,25 +19,25 @@ class CreatePostmanCollection
 {
     use AsAction;
 
-    public string $commandSignature = 'create:postman-collection {module?}';
+    public string $commandSignature = 'create:postman-collection {version?}';
 
-    private $module;
+    private $version;
 
     private $collection;
 
     public function asCommand(Command $command): void
     {
-        $this->module = $command->argument('module');
-        $command->info(self::run($this->module));
+        $this->version = $command->argument('version') ?? 'v1';
+        $command->info(self::run($this->version));
     }
 
-    public function handle($module = null)
+    public function handle($version = 'v1')
     {
-        $this->module = $module;
+        $this->version = $version;
         $this->setInfo();
         foreach (collect(app('router')->getRoutes()) as $route) {
             $uri = $route->uri();
-            if (! Str::contains($uri, 'api/v1/')) {
+            if (! Str::contains($uri, 'api/'.$this->version.'/')) {
                 continue;
             }
 
@@ -103,16 +103,12 @@ class CreatePostmanCollection
         switch ($payload) {
             case 'show':
                 return 'Detail ';
-                break;
             case 'store':
                 return 'Create ';
-                break;
             case 'update':
                 return 'Update ';
-                break;
             case 'destroy':
                 return 'Delete ';
-                break;
 
             default:
                 return '';
