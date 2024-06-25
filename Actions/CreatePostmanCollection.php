@@ -2,7 +2,6 @@
 
 namespace Vheins\LaravelModuleGenerator\Actions;
 
-use App\Http\Requests\FormRequest;
 use Closure;
 use Illuminate\Console\Command;
 use Illuminate\Http\Request;
@@ -37,7 +36,7 @@ class CreatePostmanCollection
         $this->setInfo();
         foreach (collect(app('router')->getRoutes()) as $route) {
             $uri = $route->uri();
-            if (! Str::contains($uri, 'api/'.$this->version.'/')) {
+            if (! Str::contains($uri, 'api/' . $this->version . '/')) {
                 continue;
             }
 
@@ -112,7 +111,6 @@ class CreatePostmanCollection
 
             default:
                 return '';
-                break;
         }
     }
 
@@ -167,6 +165,7 @@ class CreatePostmanCollection
             foreach ($classes as $class) {
                 // code...
                 // $class = $parameter->getType()?->getName();
+                // // echo 'Class: ' . $class . PHP_EOL;
                 if ($reflection && (($reflection->getName() == 'index' && $class == Request::class) || $this->isQueryController($parsedAction[0]))) {
                     $data['request']['url']['query'] = $this->getQueryDefault();
                     $request = new Request(['per_page' => 1]);
@@ -177,6 +176,7 @@ class CreatePostmanCollection
                                 foreach ($result as $k => $v) {
                                     $collect = collect($data['request']['url']['query']);
                                     $key = Str::camel($k);
+                                    // echo 'Key: ' . $key . PHP_EOL;
                                     $check = $collect->where('key', $key)->first();
                                     if (! $check && ! is_array($v) && ! is_object($v)) {
                                         $data['request']['url']['query'][] = [
@@ -195,20 +195,40 @@ class CreatePostmanCollection
                         // return $th;
                     }
                 }
-                if (is_subclass_of($class, FormRequest::class)) {
+
+                if (is_subclass_of($class, \App\Http\Requests\FormRequest::class) || is_subclass_of($class, \IDS\Base\Requests\FormRequest::class)) {
                     $json_data = '';
                     if (in_array($reflection->getName(), ['store', 'update'])) {
                         $controller = new $parsedAction[0];
-                        $model = property_exists($controller, 'model') ? $controller->model : null;
-                        if ($model) {
+                        if (empty($json_data)) {
+                            $request = new Request(['per_page' => 1]);
                             try {
-                                $json_data = json_encode($model::factory()->make(), JSON_PRETTY_PRINT);
+                                $getData = (new $parsedAction[0])->index($request);
+                                $requestedData = collect($getData->getData()->data);
+                                if ($requestedData->count() > 0) {
+                                    $json_data = json_encode($requestedData->first(), JSON_PRETTY_PRINT);
+                                }
                             } catch (\Throwable $th) {
+                                $getData = null;
                                 $json_data = '';
+                            }
+
+                        }
+
+                        if (empty($json_data)) {
+                            $model = property_exists($controller, 'model') ? $controller->model : null;
+                            if ($model) {
+                                try {
+                                    $json_data = json_encode($model::factory()->make(), JSON_PRETTY_PRINT);
+                                } catch (\Throwable $th) {
+                                    $json_data = '';
+                                }
                             }
                         }
                     }
+
                     $rules = (new $class)->rules();
+
                     if (count($rules) > 0) {
                         $rules = $this->convert('camel', Arr::undot($rules));
                         $data['request']['body'] = [
