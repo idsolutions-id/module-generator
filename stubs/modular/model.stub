@@ -12,18 +12,18 @@ class $CLASS$ extends Model
     protected $cascadeDeletes = []; //cascadeDeletes
 
     //Model Validation Rules
-    public function beforeValidation()
+    public function beforeValidation(): void
     {
         // Some code goes here..
     }
 
-    public function validationRules()
+    public function validationRules(): array
     {
-        $rules = $RULE$;
+        $rules = [];
         return $rules;
     }
 
-    public function afterValidation()
+    public function afterValidation(): void
     {
         // Some code goes here..
     }

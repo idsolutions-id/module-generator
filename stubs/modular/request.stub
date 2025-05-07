@@ -3,22 +3,32 @@
 namespace $NAMESPACE$;
 
 
-use IDS\Framework\Facades\Helper;
-use IDS\Framework\Requests\FormRequest;
-use IDS\Framework\Traits\ValidationAttribute;
+use IDS\Common\Facades\Helper;
+use IDS\Common\Requests\FormRequest;
+use IDS\Common\Traits\ValidationAttribute;
 use Illuminate\Support\Facades\Auth;
 use $MODULE_NAMESPACE$\$MODULE$\Models\$MODEL$;
 
 class $CLASS$ extends FormRequest
 {
-    use ValidationAttribute;
+    public string $model = $MODEL$::class;
 
-    public function authorize()
+    public function authorize(): bool
     {
         return Auth::check();
     }
 
-    public function rules()
+    protected function passedValidation(): void
+    {
+        $this->setRelation();
+    }
+
+    protected function prepareForValidation(): void
+    {
+        // add custom prepare validation here
+    }
+
+    public function rules(): array
     {
         $rules = array_merge(app($MODEL$::class)->formRules(),[
             //Add Custom or Overide Validation Rules Here
@@ -26,7 +36,4 @@ class $CLASS$ extends FormRequest
 
         return $rules;
     }
-
-    $PREPARE$
-
 }

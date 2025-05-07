@@ -2,18 +2,20 @@
 
 namespace $NAMESPACE$;
 
-use IDS\Framework\Facades\Helper;
+use IDS\Common\Facades\Helper;
 use Lorisleiva\Actions\Concerns\AsAction;
+use Illuminate\Support\Facades\DB;
 //use .. ;
 
 class $CLASS$
 {
     use AsAction;
-    public $fillable;
 
     public function handle($handle)
     {
-        // ..
-        return $handle;
+        return DB::transaction(function () use ($request) {
+            // ..
+            return $handle;
+        });
     }
 }

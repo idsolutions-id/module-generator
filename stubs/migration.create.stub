@@ -12,15 +12,15 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('{{ table }}', function (Blueprint $table) {
+        Schema::create('{{ table }}', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->auditLog();
         });
 
-        Artisan::call('framework:create-permission', ['name' => '{{ table }}']);
+        Artisan::call('base:create-permission', ['name' => '{{ table }}']);
     }
 
     /**
@@ -28,7 +28,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('{{ table }}');
     }

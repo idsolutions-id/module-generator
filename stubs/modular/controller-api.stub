@@ -3,7 +3,9 @@
 namespace $CLASS_NAMESPACE$;
 
 use Illuminate\Http\Request;
-use IDS\Framework\Controllers\Controller;
+use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use IDS\Common\Controllers\Controller;
 
 use $MODULE_NAMESPACE$\$MODULE$\Models\$NAME$;
 use $MODULE_NAMESPACE$\$MODULE$\Actions\$NAME$\Store;
@@ -31,39 +33,44 @@ class $CLASS$ extends Controller
 
     public $model = $NAME$::class;
 
-    public function index(Request $request)
+    public function __construct()
+    {
+        parent::__construct();
+        $this->setPermission();
+    }
+
+    public function index(Request $request): JsonResponse
     {
         $model = $this->model::query();
         $data = $this->search($model, $request);
         return $this->success($data);
     }
 
-    public function export(Request $request)
+    public function export(Request $request): JsonResponse
     {
-        $data = $this->index($request);
-        return $this->success($data);
+        return $this->index($request);
     }
 
-    public function store($NAME$Request $request)
+    public function store($NAME$Request $request): JsonResponse
     {
         $handle = Store::run($request);
         return $this->show($handle, 201, __('$NAME$').' '.__('Successfully').' '.__('Created'));
     }
 
-    public function show($NAME$ $$MODEL_VAR$, $code = 200, $message = null)
+    public function show($NAME$ $$MODEL_VAR$, $code = 200, $message = null): JsonResponse
     {
         //$$MODEL_VAR$->loadMissing();
         return $this->success($$MODEL_VAR$, $message, $code);
     }
 
-    public function update($NAME$Request $request, $NAME$ $$MODEL_VAR$)
+    public function update($NAME$Request $request, $NAME$ $$MODEL_VAR$): JsonResponse
     {
         $handle = Update::run($request,$$MODEL_VAR$);
         return $this->show($handle, 200, __('$NAME$').' '.__('Successfully').' '.__('Updated'));
     }
 
 
-    public function destroy($NAME$ $$MODEL_VAR$)
+    public function destroy($NAME$ $$MODEL_VAR$): Response
     {
         Delete::run($$MODEL_VAR$);
         return response()->noContent();

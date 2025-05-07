@@ -2,7 +2,7 @@
 
 namespace {{ namespace }};
 
-use IDS\Framework\Traits\WithReplyTo;
+use IDS\Common\Traits\WithReplyTo;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;

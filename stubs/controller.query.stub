@@ -4,7 +4,8 @@ namespace {{ namespace }};
 
 //Class Refferences
 use Illuminate\Http\Request;
-use IDS\Framework\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use IDS\Common\Controllers\Controller;
 
 class QueryController extends Controller
 {

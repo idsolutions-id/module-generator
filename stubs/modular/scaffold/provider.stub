@@ -13,11 +13,11 @@ class $CLASS$ extends ServiceProvider
 
     protected $moduleNameLower = '$LOWER_NAME$';
 
-    protected $command = [
+    protected $commands = [
         //Enter Class Name Here . . .
     ];
 
-    public function boot()
+    public function boot(): void
     {
         $this->registerConfig();
         $this->loadMigrationsFrom(module_path($this->moduleName, '$MIGRATIONS_PATH$'));
@@ -30,13 +30,13 @@ class $CLASS$ extends ServiceProvider
     }
 
 
-    public function register()
+    public function register(): void
     {
         $this->app->register(RouteServiceProvider::class);
     }
 
 
-    protected function registerConfig()
+    protected function registerConfig(): void
     {
         $this->publishes([
             module_path($this->moduleName, '$PATH_CONFIG$/config.php') => config_path($this->moduleNameLower . '.php'),
@@ -51,7 +51,7 @@ class $CLASS$ extends ServiceProvider
      *
      * @return void
      */
-    public function registerTranslations()
+    public function registerTranslations(): void
     {
         $langPath = resource_path('lang/modules/' . $this->moduleNameLower);
 
@@ -65,7 +65,7 @@ class $CLASS$ extends ServiceProvider
     }
 
 
-    public function provides()
+    public function provides(): array
     {
         return [];
     }

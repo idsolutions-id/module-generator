@@ -12,16 +12,16 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('$TABLE$', function (Blueprint $table) {
+        Schema::create('$TABLE$', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
 $FIELDS$
             $table->auditLog();
         });
 
-        Artisan::call('framework:create-permission', ['name' => 'module.$PERMISSION$']);
+        Artisan::call('base:create-permission', ['name' => 'module.$PERMISSION$']);
     }
 
     /**
@@ -29,7 +29,7 @@ $FIELDS$
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('$TABLE$');
     }

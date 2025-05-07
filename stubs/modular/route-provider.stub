@@ -11,19 +11,19 @@ class $CLASS$ extends ServiceProvider
     protected $moduleNamespace = '$MODULE_NAMESPACE$\$MODULE$\$CONTROLLER_NAMESPACE$';
 
 
-    public function boot()
+    public function boot(): void
     {
         parent::boot();
     }
 
 
-    public function map()
+    public function map(): void
     {
         $this->mapApiRoutes();
     }
 
 
-    //protected function mapWebRoutes()
+    //protected function mapWebRoutes(): void
     //{
     //    Route::middleware('web')
     //        ->namespace($this->moduleNamespace)
@@ -31,7 +31,7 @@ class $CLASS$ extends ServiceProvider
     //}
 
 
-    protected function mapApiRoutes()
+    protected function mapApiRoutes(): void
     {
         Route::prefix('api')
             ->middleware('api')

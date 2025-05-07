@@ -11,9 +11,9 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('$TABLE$', function (Blueprint $table) {
+        Schema::table('$TABLE$', function (Blueprint $table): void {
 $FIELDS_UP$
         });
     }
@@ -23,9 +23,9 @@ $FIELDS_UP$
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::table('$TABLE$', function (Blueprint $table) {
+        Schema::table('$TABLE$', function (Blueprint $table): void {
 $FIELDS_DOWN$
         });
     }

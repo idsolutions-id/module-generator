@@ -2,7 +2,7 @@
 
 namespace $NAMESPACE$;
 
-use IDS\Framework\Traits\WithReplyTo;
+use IDS\Common\Traits\WithReplyTo;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
