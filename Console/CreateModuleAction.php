@@ -46,7 +46,7 @@ class CreateModuleAction extends GeneratorCommand
      *
      * @return array
      */
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [
             ['name', InputArgument::REQUIRED, 'The name of the form request class.'],
@@ -57,7 +57,7 @@ class CreateModuleAction extends GeneratorCommand
     /**
      * @return mixed
      */
-    protected function getTemplateContents()
+    protected function getTemplateContents(): mixed
     {
         $module = $this->laravel['modules']->findOrFail($this->getModuleName());
         $namespace = $this->getClassNamespace($module);
@@ -71,7 +71,7 @@ class CreateModuleAction extends GeneratorCommand
     /**
      * @return mixed
      */
-    protected function getDestinationFilePath()
+    protected function getDestinationFilePath(): string
     {
         $path = $this->laravel['modules']->getModulePath($this->getModuleName());
 
@@ -83,7 +83,7 @@ class CreateModuleAction extends GeneratorCommand
     /**
      * @return string
      */
-    private function getFileName()
+    private function getFileName(): mixed
     {
         return Str::studly($this->argument('name'));
     }

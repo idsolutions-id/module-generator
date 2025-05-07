@@ -33,10 +33,10 @@ class CreateQuery
             $text = str_replace('//Class Refferences', "//Class Refferences\n" . $modelName, $text);
         }
 
-        $query = 'public function ' . Str::of($this->name)->camel()->plural() . '(Request $request)';
+        $query = 'public function ' . Str::of($this->name)->camel()->plural() . '(Request $request): JsonResponse';
         $contains = Str::contains($text, $query);
         if (! $contains) {
-            $function = 'public function ' . Str::of($this->name)->camel()->plural() . '(Request $request)' . "\n\t{\n\t\t" . '$model = ' . $this->name . "::query()->active()->select('id', 'name');\n\t\t" . '$data = $this->search($model, $request);' . "\n\t\t" . 'return $this->success($data);' . "\n\t}\n";
+            $function = 'public function ' . Str::of($this->name)->camel()->plural() . '(Request $request): JsonResponse' . "\n\t{\n\t\t" . '$model = ' . $this->name . "::query()->active()->select('id', 'name');\n\t\t" . '$data = $this->search($model, $request);' . "\n\t\t" . 'return $this->success($data);' . "\n\t}\n";
             $text = str_replace('//Query Select2', "//Query Select2\n\t" . $function, $text);
         }
 

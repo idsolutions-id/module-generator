@@ -28,6 +28,12 @@ class CreateNavigation
         $this->path = base_path() . '/modules/' . $module . '/navigation.json';
         $this->moduleId = 'module.' . Str::of($module)->slug('.')->toString();
         $this->childPermission = $this->moduleId . '.' . Str::lower($this->name);
+
+        $parts = explode('.', $this->childPermission);
+        $uniqueParts = array_unique($parts);
+        $uniqueParts = array_values($uniqueParts);
+        $this->childPermission = implode('.', $uniqueParts);
+
         $this->loadData();
 
         $data = $this->data;
@@ -81,10 +87,14 @@ class CreateNavigation
     {
         $module = Str::of($this->module)->lower()->plural()->toString();
         $name = Str::of($this->name)->lower()->plural()->toString();
+        $parts = ['dashboard', $module, $name];
+        $uniqueParts = array_unique($parts);
+        $uniqueParts = array_values($uniqueParts);
+        $link = '/' . implode('/', $uniqueParts);
 
         return [
             'title' => $this->name,
-            'link' => '/dashboard/' . $module . '/' . $name,
+            'link' => $link,
             'icon' => 'BrandLaravelIcon',
             'permission' => [$this->childPermission],
         ];

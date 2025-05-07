@@ -5,6 +5,7 @@ namespace Vheins\LaravelModuleGenerator\Actions;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Lorisleiva\Actions\Concerns\AsAction;
+use Illuminate\Support\Facades\DB;
 
 class CreateRelation
 {
@@ -18,14 +19,82 @@ class CreateRelation
 
     public $modelFile;
 
+    public function getDataType($v){
+        return match ($v) {
+            'bigIncrements' => 'integer',
+            'bigInteger' => 'integer',
+            'boolean' => 'boolean',
+            'char' => 'string',
+            'date' => 'date',
+            'dateTime' => 'date',
+            'dateTimeTz' => 'date',
+            'decimal' => 'numeric',
+            'double' => 'numeric',
+            'enum' => 'string',
+            'float' => 'numeric',
+            'id' => 'integer',
+            'increments' => 'integer',
+            'integer' => 'integer',
+            'ipAddress' => 'string',
+            'json' => 'array',
+            'jsonb' => 'array',
+            'longText' => 'string',
+            'macAddress' => 'string',
+            'mediumIncrements' => 'integer',
+            'mediumInteger' => 'integer',
+            'mediumText' => 'string',
+            'nullableUlidMorphs' => 'string',
+            'nullableUuidMorphs' => 'string',
+            'rememberToken' => 'string',
+            'set' => 'string',
+            'smallIncrements' => 'integer',
+            'smallInteger' => 'integer',
+            'softDeletes' => 'date',
+            'softDeletesTz' => 'date',
+            'string' => 'string',
+            'text' => 'string',
+            'time' => 'date',
+            'timeTz' => 'date',
+            'timestamp' => 'date',
+            'timestamps' => 'date',
+            'timestampsTz' => 'date',
+            'tinyIncrements' => 'integer',
+            'tinyInteger' => 'integer',
+            'tinyText' => 'string',
+            'ulid' => 'string',
+            'ulidMorphs' => 'string',
+            'unsignedBigInteger' => 'integer',
+            'unsignedInteger' => 'integer',
+            'unsignedMediumInteger' => 'integer',
+            'unsignedSmallInteger' => 'integer',
+            'unsignedTinyInteger' => 'integer',
+            'uuid' => 'string',
+            'foreignId' => 'integer',
+            'foreignUuid' => 'uuid',
+            'foreignUlid' => 'ulid',
+            'uuidMorphs' => 'string',
+            'vector' => 'string',
+            'year' => 'integer',
+            default => $v
+        };
+    }
+
     public function handle($args)
     {
+        $rules = [];
+        $cascadeDeletes = [];
+        foreach ($args['fillable'] as $k => $v) {
+            $dataType = $this->getDataType($v);
+            $rules[$k] = ['required', $dataType];
+        }
+
         $this->module = $args['module'];
         $this->name = $args['name'];
         $this->relations = $args['relations'];
         $this->modelFile = base_path() . '/modules/' . $this->module . '/Models/' . Str::studly($this->name) . '.php';
 
         foreach ($this->relations as $k => $v) {
+
             //Check if relation references exist
             $reff = "use Illuminate\Database\Eloquent\Relations\\" . $k . ';';
             $model = file_get_contents($this->modelFile);
@@ -37,6 +106,11 @@ class CreateRelation
 
             switch ($k) {
                 case 'BelongsTo':
+                    foreach($v as $relation){
+                        $rule = 'exists:' . config('modules.namespace') . '\\' . $this->module . '\\Models\\' . Str::studly($relation) . ',id';
+                        $column = Str::snake($relation).'_id';
+                        $rules[$column][] = $rule;
+                    }
                     $this->belongsTo($k, $v);
                     break;
                 case 'HasOne':
@@ -46,6 +120,9 @@ class CreateRelation
                     $this->hasManyThrough($k, $v);
                     break;
                 case 'HasMany':
+                    foreach($v as $relation){
+                        $cascadeDeletes[] = "'".Str::of($relation)->camel()->plural()->toString()."'";
+                    }
                     $this->hasMany($k, $v);
                     break;
                 case 'HasManyThrough':
@@ -61,6 +138,23 @@ class CreateRelation
                     $this->morphTo($k, $v);
                     break;
             }
+        }
+
+        if($rules != []){
+            $stringRules = '';
+            foreach($rules as $k => $v){
+                $stringRules .= "'" . $k . "' => '" . implode('|', $v) . "',\n";
+            }
+            $stringRules = "[\n" . $stringRules . "];";
+            $model = file_get_contents($this->modelFile);
+            $model = str_replace('$rules = [];', '$rules = ' . $stringRules, $model);
+            file_put_contents($this->modelFile, $model);
+        }
+
+        if($cascadeDeletes != []){
+            $model = file_get_contents($this->modelFile);
+            $model = str_replace('$cascadeDeletes = [];', '$cascadeDeletes = [' . implode(',',$cascadeDeletes) . '];', $model);
+            file_put_contents($this->modelFile, $model);
         }
     }
 

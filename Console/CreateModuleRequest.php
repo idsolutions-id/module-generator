@@ -81,7 +81,7 @@ class CreateModuleRequest extends GeneratorCommand
             'MODULE' => $this->getModuleName(),
             'MODULE_NAMESPACE' => $this->laravel['modules']->config('namespace'),
             'MODEL' => $this->getModelName(),
-            'PREPARE' => $this->getPrepareValidation(),
+            // 'PREPARE' => $this->getPrepareValidation(),
         ]))->render();
     }
 

@@ -21,7 +21,7 @@ class CreateModule extends Command
 
     private $blueprint = null;
 
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['blueprint', null, InputOption::VALUE_REQUIRED, 'The specified blueprint file.'],
@@ -33,7 +33,7 @@ class CreateModule extends Command
      *
      * @return bool Returns true if the function executes successfully.
      */
-    public function handle()
+    public function handle(): bool
     {
         if (! $this->validateFile()) {
             return true;
@@ -55,7 +55,7 @@ class CreateModule extends Command
                     $fillables[] = $k . ':' . $v;
                 }
                 $this->createSub($module, $subModule, $fillables, $dbOnly);
-                $this->createRelation($module, $subModule, $tables);
+                $this->createRelation($module, $subModule, $tables,$fillables);
                 $this->createQuery($module, $subModule, $tables);
 
                 $this->info('Module ' . $module . ' Submodule ' . $subModule . ' Created!');
@@ -84,7 +84,7 @@ class CreateModule extends Command
      *
      * @return bool Returns false if the file is not found, otherwise returns nothing.
      */
-    private function validateFile()
+    private function validateFile(): bool
     {
         $this->blueprint = $this->argument('blueprint');
         if (! Str::of($this->blueprint)->endsWith('.yml')) {
@@ -107,7 +107,7 @@ class CreateModule extends Command
      * @param  array  $fillables  An array of fillable columns.
      * @param  bool  $dbOnly  Flag to indicate if only database operations should be performed.
      */
-    private function createSub($module, $subModule, $fillables, $dbOnly)
+    private function createSub($module, $subModule, $fillables, $dbOnly): void
     {
         $this->call('create:module:sub', [
             'module' => $module,
@@ -125,13 +125,14 @@ class CreateModule extends Command
      * @param  array  $tables  An associative array containing the table configuration.
      * @return void
      */
-    private function createRelation($module, $subModule, $tables)
+    private function createRelation($module, $subModule, $tables): void
     {
         if (isset($tables['Relation'])) {
             $args = [
                 'module' => $module,
                 'name' => $subModule,
                 'relations' => $tables['Relation'],
+                'fillable' => $tables['Fillable'],
             ];
             CreateRelation::run($args);
         }
@@ -145,7 +146,7 @@ class CreateModule extends Command
      * @param  array  $tables  An associative array containing the table configuration.
      * @return void
      */
-    private function createQuery($module, $subModule, $tables)
+    private function createQuery($module, $subModule, $tables): void
     {
         if (isset($tables['Query']) && $tables['Query'] == true) {
             $args = [

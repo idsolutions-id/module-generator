@@ -194,7 +194,7 @@ class CreateModuleModel extends GeneratorCommand
         return (new Stub('/model.stub', [
             'NAME' => $this->getModelName(),
             'FILLABLE' => $this->getFillable(),
-            'RULE' => $this->getRules(),
+            // 'RULE' => $this->getRules(),
             'NAMESPACE' => $this->getClassNamespace($module),
             'CLASS' => $this->getClass(),
             'LOWER_NAME' => $module->getLowerName(),

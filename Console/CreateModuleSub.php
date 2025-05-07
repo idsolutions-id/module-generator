@@ -205,16 +205,17 @@ class CreateModuleSub extends Command
             'module' => $this->module,
         ]);
 
-        $foreign = $this->getForeign();
+        // $foreign = $this->getForeign();
         //Create Store Action
         $storeActionFile = base_path() . '/modules/' . $this->module . '/Actions/' . $this->name . '/Store.php';
         $storeAction = file_get_contents($storeActionFile);
         $storeAction = str_replace('//use .. ;', 'use ' . config('modules.namespace') . '\\' . $this->module . '\\Models\\' . $this->name . ";\nuse " . config('modules.namespace') . "\\$this->module\\Requests\\" . $this->name . 'Request;', $storeAction);
-        $storeAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . 'Request $request)', $storeAction);
-        if (count($foreign) > 0) {
-            $storeAction = str_replace('// ..', '$request = Helper::mergeRequest(' . json_encode($foreign) . ', $request);' . "\n\t\t// ..", $storeAction);
-        }
+        $storeAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . 'Request $request): ' . $this->name, $storeAction);
+        // if (count($foreign) > 0) {
+        //     $storeAction = str_replace('// ..', '$request = Helper::mergeRequest(' . json_encode($foreign) . ', $request);' . "\n\t\t// ..", $storeAction);
+        // }
         $storeAction = str_replace('// ..', '$fillable = app(' . $this->name . '::class)->getFillable();' . "\n\t\t" . '$handle = ' . $this->name . '::create($request->only($fillable));', $storeAction);
+        $storeAction = str_replace('function () use ($request)', 'function () use ($request): ' . $this->name, $storeAction);
         file_put_contents($storeActionFile, $storeAction);
     }
 
@@ -228,9 +229,10 @@ class CreateModuleSub extends Command
         $updateActionFile = base_path() . '/modules/' . $this->module . '/Actions/' . $this->name . '/Update.php';
         $updateAction = file_get_contents($updateActionFile);
         $updateAction = str_replace('//use .. ;', 'use ' . config('modules.namespace') . '\\' . $this->module . '\\Models\\' . $this->name . ";\nuse " . config('modules.namespace') . "\\$this->module\\Requests\\" . $this->name . 'Request;', $updateAction);
-        $updateAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . 'Request $request, ' . $this->name . ' $' . Str::camel($this->name) . ')', $updateAction);
+        $updateAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . 'Request $request, ' . $this->name . ' $' . Str::camel($this->name) . '): ' . $this->name, $updateAction);
         $updateAction = str_replace('// ..', '$fillable = app(' . $this->name . '::class)->getFillable();' . "\n\t\t" . '$' . Str::camel($this->name) . '->update($request->only($fillable));', $updateAction);
         $updateAction = str_replace('return $handle;', 'return $' . Str::camel($this->name) . ';', $updateAction);
+        $updateAction = str_replace('function () use ($request)', 'function () use ($request, $' . Str::camel($this->name) . '): ' . $this->name, $updateAction);
         file_put_contents($updateActionFile, $updateAction);
     }
 
@@ -243,8 +245,9 @@ class CreateModuleSub extends Command
         $deleteActionFile = base_path() . '/modules/' . $this->module . '/Actions/' . $this->name . '/Delete.php';
         $deleteAction = file_get_contents($deleteActionFile);
         $deleteAction = str_replace('//use .. ;', 'use ' . config('modules.namespace') . '\\' . $this->module . '\\Models\\' . $this->name . ';', $deleteAction);
-        $deleteAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . ' $' . Str::camel($this->name) . ')', $deleteAction);
-        $deleteAction = str_replace('// ..', '$handle = collect($' . Str::camel($this->name) . '->delete());', $deleteAction);
+        $deleteAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . ' $' . Str::camel($this->name) . '): ?bool', $deleteAction);
+        $deleteAction = str_replace('// ..', '$handle = $' . Str::camel($this->name) . '->delete();', $deleteAction);
+        $deleteAction = str_replace('function () use ($request)', 'function () use ($' . Str::camel($this->name) . '): ?bool', $deleteAction);
         file_put_contents($deleteActionFile, $deleteAction);
     }
 
@@ -306,7 +309,7 @@ class CreateModuleSub extends Command
         }
     }
 
-    private function createModelFactorySeeder()
+    private function createModelFactorySeeder(): void
     {
         //Generate Model
         $this->call('create:module:model', [
