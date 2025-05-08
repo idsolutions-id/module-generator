@@ -79,10 +79,11 @@ class CreateRelation
         };
     }
 
-    public function handle($args)
+    public function handle($args): void
     {
         $rules = [];
         $controllerRelations = [];
+        $controllerMapRequests = [];
         $cascadeDeletes = [];
         foreach ($args['fillable'] as $k => $v) {
             $dataType = $this->getDataType($v);
@@ -111,13 +112,18 @@ class CreateRelation
                     foreach($v as $relation){
                         $rule = 'exists:' . config('modules.namespace') . '\\' . $this->module . '\\Models\\' . Str::studly($relation) . ',id';
                         $column = Str::snake($relation).'_id';
+                        $relationName = Str::of($relation)->camel()->toString();
                         $rules[$column][] = $rule;
+                        $controllerMapRequests[$relationName] = $column;
                         $controllerRelations[] = "'".Str::of($relation)->camel()->toString().":id,name'";
                     }
                     $this->belongsTo($k, $v);
                     break;
                 case 'HasOne':
                     foreach($v as $relation){
+                        $relationName = Str::of($relation)->camel()->toString();
+                        $column = Str::snake($relation).'_id';
+                        $controllerMapRequests[$relation] = $column;
                         $controllerRelations[] = "'".Str::of($relation)->camel()->toString().":id,name'";
                     }
                     $this->hasOne($k, $v);
@@ -151,6 +157,17 @@ class CreateRelation
             $controller = file_get_contents($this->controllerFile);
             $controller = str_replace('private $relation = [];', 'private $relation = ' . $stringRelations, $controller);
             file_put_contents($this->controllerFile, $controller);
+        }
+
+        if($controllerMapRequests != []){
+            $stringMaps = '';
+            foreach($controllerMapRequests as $k => $v){
+                $stringMaps .= "'" . $k . "' => '" .  $v . "',\n";
+            }
+            $stringMaps = "[\n" . $stringMaps . "];";
+            $model = file_get_contents($this->controllerFile);
+            $model = str_replace('$mapRequest = [];', '$mapRequest = ' . $stringMaps, $model);
+            file_put_contents($this->controllerFile, $model);
         }
 
         if($rules != []){
