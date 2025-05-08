@@ -52,9 +52,11 @@ class CreateModule extends Command
                 //Fillable
                 $fillables = [];
                 foreach ($tables['Fillable'] as $k => $v) {
-                    $fillables[] = $k . ':' . $v;
+                    $fillables[] = "{$k}:{$v}";
                 }
-                $this->createSub($module, $subModule, $fillables, $tables['Relation'], $dbOnly);
+
+                $relation = $tables['Relation'] ?? [];
+                $this->createSub($module, $subModule, $fillables, $relation, $dbOnly);
                 $this->createRelation($module, $subModule, $tables);
                 $this->createQuery($module, $subModule, $tables);
 
