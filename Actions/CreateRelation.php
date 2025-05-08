@@ -82,6 +82,7 @@ class CreateRelation
     public function handle($args)
     {
         $rules = [];
+        $controllerRelations = [];
         $cascadeDeletes = [];
         foreach ($args['fillable'] as $k => $v) {
             $dataType = $this->getDataType($v);
@@ -92,6 +93,7 @@ class CreateRelation
         $this->name = $args['name'];
         $this->relations = $args['relations'];
         $this->modelFile = base_path() . '/modules/' . $this->module . '/Models/' . Str::studly($this->name) . '.php';
+        $this->controllerFile = base_path() . '/modules/' . $this->module . '/Controllers/' . Str::studly($this->name) . 'Controller.php';
 
         foreach ($this->relations as $k => $v) {
 
@@ -110,10 +112,14 @@ class CreateRelation
                         $rule = 'exists:' . config('modules.namespace') . '\\' . $this->module . '\\Models\\' . Str::studly($relation) . ',id';
                         $column = Str::snake($relation).'_id';
                         $rules[$column][] = $rule;
+                        $controllerRelations[] = "'".Str::of($relation)->camel()->toString().":id,name'";
                     }
                     $this->belongsTo($k, $v);
                     break;
                 case 'HasOne':
+                    foreach($v as $relation){
+                        $controllerRelations[] = "'".Str::of($relation)->camel()->toString().":id,name'";
+                    }
                     $this->hasOne($k, $v);
                     break;
                 case 'HasOneThrough':
@@ -138,6 +144,13 @@ class CreateRelation
                     $this->morphTo($k, $v);
                     break;
             }
+        }
+
+        if($controllerRelations != []){
+            $stringRelations = "[\n" . implode(",\n", $controllerRelations) . "\n];";
+            $controller = file_get_contents($this->controllerFile);
+            $controller = str_replace('private $relation = [];', 'private $relation = ' . $stringRelations, $controller);
+            file_put_contents($this->controllerFile, $controller);
         }
 
         if($rules != []){

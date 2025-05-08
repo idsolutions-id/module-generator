@@ -22,13 +22,16 @@ class $CLASS$ extends Controller
 
     public $permission = 'module.$PERMISSION$';
 
-    //Mapping Array of Request, Key as Request, Value as Model Attributes
+    // Array of Eloquent Relation
+    private $relation = [];
+
+    // Mapping Array of Request, Key as Request, Value as Model Attributes
     public $mapRequest = [];
 
-    //Mapping Array of Request into Eloquent Relation, Key as Eloquent Relation, Value as Request
+    // Mapping Array of Request into Eloquent Relation, Key as Eloquent Relation, Value as Request
     public $mapRelation = [];
 
-    //Array of Request Aliased as Timeframe
+    // Array of Request Aliased as Timeframe
     public $mapTimeframe = [];
 
     public $model = $NAME$::class;
@@ -41,7 +44,9 @@ class $CLASS$ extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $model = $this->model::query();
+        $model = $this->model::query()
+                ->with($this->relation);
+
         $data = $this->search($model, $request);
         return $this->success($data);
     }
@@ -59,7 +64,7 @@ class $CLASS$ extends Controller
 
     public function show($NAME$ $$MODEL_VAR$, $code = 200, $message = null): JsonResponse
     {
-        //$$MODEL_VAR$->loadMissing();
+        $$MODEL_VAR$->load($this->relation);
         return $this->success($$MODEL_VAR$, $message, $code);
     }
 

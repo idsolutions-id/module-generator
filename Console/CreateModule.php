@@ -54,8 +54,8 @@ class CreateModule extends Command
                 foreach ($tables['Fillable'] as $k => $v) {
                     $fillables[] = $k . ':' . $v;
                 }
-                $this->createSub($module, $subModule, $fillables, $dbOnly);
-                $this->createRelation($module, $subModule, $tables,$fillables);
+                $this->createSub($module, $subModule, $fillables, $tables['Relation'], $dbOnly);
+                $this->createRelation($module, $subModule, $tables);
                 $this->createQuery($module, $subModule, $tables);
 
                 $this->info('Module ' . $module . ' Submodule ' . $subModule . ' Created!');
@@ -107,12 +107,13 @@ class CreateModule extends Command
      * @param  array  $fillables  An array of fillable columns.
      * @param  bool  $dbOnly  Flag to indicate if only database operations should be performed.
      */
-    private function createSub($module, $subModule, $fillables, $dbOnly): void
+    private function createSub($module, $subModule, $fillables, $relation, $dbOnly): void
     {
         $this->call('create:module:sub', [
             'module' => $module,
             'name' => $subModule,
             '--fillable' => implode(',', $fillables),
+            '--relation' => $relation,
             '--db-only' => $dbOnly,
         ]);
     }

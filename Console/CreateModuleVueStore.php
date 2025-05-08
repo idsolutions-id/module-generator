@@ -3,6 +3,7 @@
 namespace Vheins\LaravelModuleGenerator\Console;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use Nwidart\Modules\Commands\Make\GeneratorCommand;
 use Nwidart\Modules\Support\Config\GenerateConfigReader;
 use Nwidart\Modules\Support\Stub;
@@ -66,7 +67,9 @@ final class CreateModuleVueStore extends GeneratorCommand
         $unique = implode('_', $unique);
         $permission = Str::of($unique)->title()->replace('_', '.')->lower();
         $class = Str::of($unique)->title()->replace('_', '');
-
+        $filterName = explode('/', $this->pageUrl());
+        $filterName = Arr::last($filterName);
+        $filterName = Str::of($filterName)->singular();
         return (new Stub('/vue/store.pinia.stub', [
             'STUDLY_NAME' => $module->getStudlyName(),
             'API_ROUTE' => $this->pageUrl(),
@@ -77,6 +80,7 @@ final class CreateModuleVueStore extends GeneratorCommand
             'FILTER' => $this->getFilter(),
             'HEADER' => $this->getHeader(),
             'NAME' => Str::of(Str::studly($this->argument('name')))->headline(),
+            'FILTER_NAME' => $filterName,
             'PERMISSION' => $permission,
         ]))->render();
     }

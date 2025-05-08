@@ -16,9 +16,11 @@ class CreateModuleSub extends Command
 
     public $fields;
 
+    public $relation;
+
     public $db_only;
 
-    protected $signature = 'create:module:sub {module} {name} {--fillable=} {--db-only}';
+    protected $signature = 'create:module:sub {module} {name} {--fillable=} {--db-only} {--relation=}';
 
     protected $description = 'Create Module Scaffold';
 
@@ -40,6 +42,7 @@ class CreateModuleSub extends Command
         return [
             ['fillable', null, InputOption::VALUE_REQUIRED, 'The specified fields table.'],
             ['db-only', null, InputOption::VALUE_OPTIONAL, 'If true does not create form.'],
+            ['relation', null, InputOption::VALUE_OPTIONAL, 'If true does not create form.'],
         ];
     }
 
@@ -54,6 +57,7 @@ class CreateModuleSub extends Command
         $this->name = Str::studly($this->argument('name'));
         $this->fields = $this->option('fillable');
         $this->db_only = $this->option('db-only');
+        $this->relation = $this->option('relation');
 
         $this->createModule();
         $this->createMenu();
@@ -110,35 +114,35 @@ class CreateModuleSub extends Command
             file_put_contents($routeApiFile, $routeApi);
 
             //Add Dashboard Link
-            $dashboardLinkFile = base_path() . '/modules/' . $this->module . '/Vue/components/' . Str::of($this->module)->snake()->replace('_', '-') . '-dashboard-link.vue';
-            if (File::exists($dashboardLinkFile)) {
-                $dashboardLink = file_get_contents($dashboardLinkFile);
-                $dashboardLink = str_replace('//add link here ...', "
-                        {
-                            title: '" . Str::headline($this->name) . "',
-                            link: '/dashboard/" . $this->pageUrl() . "',
-                            icon: 'BrandLaravelIcon',
-                            permission: 'module." . $permissions . "',
-                        },
-                        //add link here ...
-        ", $dashboardLink);
-                file_put_contents($dashboardLinkFile, $dashboardLink);
-            }
-            //Add Icon Tabs
-            $iconTabFile = base_path() . '/modules/' . $this->module . '/Vue/components/' . Str::of($this->module)->snake()->replace('_', '-') . '-icon-tab.vue';
-            if (File::exists($iconTabFile)) {
-                $iconTab = file_get_contents($iconTabFile);
-                $iconTab = str_replace('//add tabs here ...', "
-                {
-                    title: '" . Str::headline($this->name) . "',
-                    link: '/dashboard/" . $this->pageUrl() . "',
-                    icon: 'BrandLaravelIcon',
-                    permission: 'module." . $permissions . "',
-                },
-                //add tabs here ...
-        ", $iconTab);
-                file_put_contents($iconTabFile, $iconTab);
-            }
+        //     $dashboardLinkFile = base_path() . '/modules/' . $this->module . '/Vue/components/' . Str::of($this->module)->snake()->replace('_', '-') . '-dashboard-link.vue';
+        //     if (File::exists($dashboardLinkFile)) {
+        //         $dashboardLink = file_get_contents($dashboardLinkFile);
+        //         $dashboardLink = str_replace('//add link here ...', "
+        //                 {
+        //                     title: '" . Str::headline($this->name) . "',
+        //                     link: '/dashboard/" . $this->pageUrl() . "',
+        //                     icon: 'BrandLaravelIcon',
+        //                     permission: 'module." . $permissions . "',
+        //                 },
+        //                 //add link here ...
+        // ", $dashboardLink);
+        //         file_put_contents($dashboardLinkFile, $dashboardLink);
+        //     }
+        //     //Add Icon Tabs
+        //     $iconTabFile = base_path() . '/modules/' . $this->module . '/Vue/components/' . Str::of($this->module)->snake()->replace('_', '-') . '-icon-tab.vue';
+        //     if (File::exists($iconTabFile)) {
+        //         $iconTab = file_get_contents($iconTabFile);
+        //         $iconTab = str_replace('//add tabs here ...', "
+        //         {
+        //             title: '" . Str::headline($this->name) . "',
+        //             link: '/dashboard/" . $this->pageUrl() . "',
+        //             icon: 'BrandLaravelIcon',
+        //             permission: 'module." . $permissions . "',
+        //         },
+        //         //add tabs here ...
+        // ", $iconTab);
+        //         file_put_contents($iconTabFile, $iconTab);
+        //     }
 
             //Fix Controller File
             $controllerFile = base_path() . '/modules/' . $this->module . '/Controllers/' . Str::studly($this->name) . 'Controller.php';
@@ -297,7 +301,7 @@ class CreateModuleSub extends Command
             'create:module:vue:page:new',
             'create:module:vue:page:view',
             'create:module:vue:component:form',
-            'create:module:vue:component:filter',
+            // 'create:module:vue:component:filter',
         ];
 
         foreach ($commands as $command) {
@@ -307,6 +311,44 @@ class CreateModuleSub extends Command
                 '--fillable' => $this->fields,
             ]);
         }
+
+        $this->createFilter();
+    }
+
+    private function createFilter(): void
+    {
+        $filters = [];
+        $basePath = base_path() . '/modules/' . $this->module . '/Vue/filters/';
+        $jsonPath = $basePath . Str::of($this->name)->snake()->slug()->lower() . '.json';
+        File::ensureDirectoryExists($basePath);
+        if (File::exists($jsonPath)) {
+            $filters = json_decode(file_get_contents($jsonPath), true);
+        }
+
+        $relation = $this->relation;
+        if(!empty($relation)){
+            foreach ($relation as $key => $value) {
+                if(in_array($key,['BelongsTo','HasOne'])){
+                    foreach ($value as $v) {
+                        $modules = Str::of($this->module)->plural()->headline()->slug()->lower();
+                        $name = Str::of($v)->singular()->headline()->slug()->lower()->toString();
+                        $names = Str::of($v)->plural()->headline()->slug()->lower()->toString();
+                        $filters[] = [
+                            'name' => $v,
+                            'source' => "/{$modules}/queries/{$names}",
+                            'field' => $name,
+                            'type' => 'select',
+                            'multiple' => true,
+                            'selectLabel' => 'name',
+                            'withParams' => false,
+                            'expand' => false,
+                        ];
+                    }
+                }
+            }
+        }
+
+        file_put_contents($jsonPath, json_encode($filters,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
     private function createModelFactorySeeder(): void

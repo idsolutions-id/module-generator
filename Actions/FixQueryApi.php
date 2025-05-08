@@ -17,7 +17,7 @@ class FixQueryApi
 
     public $filePath;
 
-    public function handle($module, $query)
+    public function handle($module, $query): void
     {
         $this->module = $module;
         $this->query = $query;

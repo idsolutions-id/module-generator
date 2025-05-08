@@ -34,28 +34,7 @@ export default {
 </script>
 
 <template>
-    <div class="list-header">
-        <div class="uk-grid-small uk-flex-middle" uk-grid>
-            <div class="uk-width-expand uk-first-column">
-                <strong class="text-color-primary">
-                    {{ $t(store.moduleName) }}
-                </strong>
-                <DashboardBreadcrumb showDisabled="true" />
-            </div>
-            <div class="uk-width-auto">
-                <div class="uk-button-group rounded uk-box-shadow-small">
-                    <$CLASS$Filter />
-                    <RouterLink :to="`${store.route}/create`" v-if="can(`${store.permission}-create`) && !options.hideAction"
-                        class="uk-button uk-button-small uk-border-rounded uk-button-primary red uk-flex uk-flex-middle">
-                        <PlusIcon />
-                        <span class="uk-visible@m">{{ $t('Add') }}</span>
-                    </RouterLink>
-                </div>
-            </div>
-        </div>
-        <div class="uk-sticky-placeholder" style="height: 32px; margin: 0px 0px 0px -15px;" hidden=""></div>
-    </div>
-
+    <DashboardAction :title="$t(store?.moduleName)" :store="store" withFilter />
     <div class="container-xl uk-padding-small">
         <$MODULE$IconTab />
         <Table :table="options">

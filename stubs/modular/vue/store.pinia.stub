@@ -1,4 +1,5 @@
 import $axios from '~/helpers/axios';
+import filter from '../filters/$FILTER_NAME$.json';
 
 const blankData = $FILLABLE$;
 
@@ -8,6 +9,7 @@ export const useModule$CLASS$Store = defineStore('module.$PERMISSION$', {
         permission: 'module.$PERMISSION$',
         apiRoute: '/$API_ROUTE$',
         route: '/dashboard/$API_ROUTE$',
+        filterForm: filter,
         data: blankData,
         list: null,
         create: false,
