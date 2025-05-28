@@ -93,8 +93,8 @@ class CreateRelation
         $this->module = $args['module'];
         $this->name = $args['name'];
         $this->relations = $args['relations'];
-        $this->modelFile = base_path() . '/modules/' . $this->module . '/Models/' . Str::studly($this->name) . '.php';
-        $this->controllerFile = base_path() . '/modules/' . $this->module . '/Controllers/' . Str::studly($this->name) . 'Controller.php';
+        $this->modelFile = config('modules.paths.modules') . '/'. $this->module . '/Models/' . Str::studly($this->name) . '.php';
+        $this->controllerFile = config('modules.paths.modules') . '/'. $this->module . '/Controllers/' . Str::studly($this->name) . 'Controller.php';
 
         foreach ($this->relations as $k => $v) {
 

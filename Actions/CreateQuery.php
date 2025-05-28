@@ -22,7 +22,7 @@ class CreateQuery
         $this->module = $args['module'];
         $this->name = $args['name'];
         $this->fileStub = base_path() . '/stubs/controller.query.stub';
-        $this->filePath = base_path() . '/modules/' . $this->module . '/Controllers/QueryController.php';
+        $this->filePath = config('modules.paths.modules') . '/'. $this->module . '/Controllers/QueryController.php';
 
         $this->checkController();
 

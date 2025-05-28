@@ -25,7 +25,7 @@ class CreateNavigation
     {
         $this->module = $module;
         $this->name = $name;
-        $this->path = base_path() . '/modules/' . $module . '/navigation.json';
+        $this->path = config('modules.paths.modules') . '/'. $module . '/navigation.json';
         $this->moduleId = 'module.' . Str::of($module)->slug('.')->toString();
         $this->childPermission = $this->moduleId . '.' . Str::lower($this->name);
 

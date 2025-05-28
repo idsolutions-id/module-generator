@@ -21,7 +21,7 @@ class FixQueryApi
     {
         $this->module = $module;
         $this->query = $query;
-        $this->filePath = base_path() . '/modules/' . $this->module . '/api.php';
+        $this->filePath = config('modules.paths.modules') . '/'. $this->module . '/api.php';
 
         $textApi = file_get_contents($this->filePath);
         $routeClass = 'use ' . config('modules.namespace') . '\\' . $this->module . '\\Controllers\\QueryController;';

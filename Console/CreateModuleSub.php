@@ -99,7 +99,7 @@ class CreateModuleSub extends Command
             $permissions = Str::of($unique)->replace('-', '.');
 
             //Add New API Route
-            $routeApiFile = base_path() . '/modules/' . $this->module . '/api.php';
+            $routeApiFile = config('modules.paths.modules') . '/'. $this->module . '/api.php';
             $routeApi = file_get_contents($routeApiFile);
             $routeClass = 'use ' . config('modules.namespace') . '\\' . $this->module . '\\Controllers\\' . $this->name . 'Controller;';
             $contains = Str::contains($routeApi, $routeClass);
@@ -114,7 +114,7 @@ class CreateModuleSub extends Command
             file_put_contents($routeApiFile, $routeApi);
 
             //Add Dashboard Link
-        //     $dashboardLinkFile = base_path() . '/modules/' . $this->module . '/Vue/components/' . Str::of($this->module)->snake()->replace('_', '-') . '-dashboard-link.vue';
+        //     $dashboardLinkFile = config('modules.paths.modules') . '/'. $this->module . '/Vue/components/' . Str::of($this->module)->snake()->replace('_', '-') . '-dashboard-link.vue';
         //     if (File::exists($dashboardLinkFile)) {
         //         $dashboardLink = file_get_contents($dashboardLinkFile);
         //         $dashboardLink = str_replace('//add link here ...', "
@@ -129,7 +129,7 @@ class CreateModuleSub extends Command
         //         file_put_contents($dashboardLinkFile, $dashboardLink);
         //     }
         //     //Add Icon Tabs
-        //     $iconTabFile = base_path() . '/modules/' . $this->module . '/Vue/components/' . Str::of($this->module)->snake()->replace('_', '-') . '-icon-tab.vue';
+        //     $iconTabFile = config('modules.paths.modules') . '/'. $this->module . '/Vue/components/' . Str::of($this->module)->snake()->replace('_', '-') . '-icon-tab.vue';
         //     if (File::exists($iconTabFile)) {
         //         $iconTab = file_get_contents($iconTabFile);
         //         $iconTab = str_replace('//add tabs here ...', "
@@ -145,7 +145,7 @@ class CreateModuleSub extends Command
         //     }
 
             //Fix Controller File
-            $controllerFile = base_path() . '/modules/' . $this->module . '/Controllers/' . Str::studly($this->name) . 'Controller.php';
+            $controllerFile = config('modules.paths.modules') . '/'. $this->module . '/Controllers/' . Str::studly($this->name) . 'Controller.php';
             if (File::exists($controllerFile)) {
                 $controller = file_get_contents($controllerFile);
                 $controller = str_replace('$modelVar$', Str::camel($this->name), $controller);
@@ -211,7 +211,7 @@ class CreateModuleSub extends Command
 
         // $foreign = $this->getForeign();
         //Create Store Action
-        $storeActionFile = base_path() . '/modules/' . $this->module . '/Actions/' . $this->name . '/Store.php';
+        $storeActionFile = config('modules.paths.modules') . '/'. $this->module . '/Actions/' . $this->name . '/Store.php';
         $storeAction = file_get_contents($storeActionFile);
         $storeAction = str_replace('//use .. ;', 'use ' . config('modules.namespace') . '\\' . $this->module . '\\Models\\' . $this->name . ";\nuse " . config('modules.namespace') . "\\$this->module\\Requests\\" . $this->name . 'Request;', $storeAction);
         $storeAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . 'Request $request): ' . $this->name, $storeAction);
@@ -230,7 +230,7 @@ class CreateModuleSub extends Command
             'module' => $this->module,
         ]);
         //Create Update Action
-        $updateActionFile = base_path() . '/modules/' . $this->module . '/Actions/' . $this->name . '/Update.php';
+        $updateActionFile = config('modules.paths.modules') . '/'. $this->module . '/Actions/' . $this->name . '/Update.php';
         $updateAction = file_get_contents($updateActionFile);
         $updateAction = str_replace('//use .. ;', 'use ' . config('modules.namespace') . '\\' . $this->module . '\\Models\\' . $this->name . ";\nuse " . config('modules.namespace') . "\\$this->module\\Requests\\" . $this->name . 'Request;', $updateAction);
         $updateAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . 'Request $request, ' . $this->name . ' $' . Str::camel($this->name) . '): ' . $this->name, $updateAction);
@@ -246,7 +246,7 @@ class CreateModuleSub extends Command
             'name' => $this->name . '/Delete',
             'module' => $this->module,
         ]);
-        $deleteActionFile = base_path() . '/modules/' . $this->module . '/Actions/' . $this->name . '/Delete.php';
+        $deleteActionFile = config('modules.paths.modules') . '/'. $this->module . '/Actions/' . $this->name . '/Delete.php';
         $deleteAction = file_get_contents($deleteActionFile);
         $deleteAction = str_replace('//use .. ;', 'use ' . config('modules.namespace') . '\\' . $this->module . '\\Models\\' . $this->name . ';', $deleteAction);
         $deleteAction = str_replace('public function handle($handle)', 'public function handle(' . $this->name . ' $' . Str::camel($this->name) . '): ?bool', $deleteAction);
@@ -286,7 +286,7 @@ class CreateModuleSub extends Command
             CreateNavigation::run($this->module, $this->name);
 
             //Fix Route File
-            $routeApiFile = base_path() . '/modules/' . $this->module . '/api.php';
+            $routeApiFile = config('modules.paths.modules') . '/'. $this->module . '/api.php';
             $routeApi = file_get_contents($routeApiFile);
             $routeApi = str_replace('$API_ROUTE$', Str::of($this->module)->snake()->slug()->plural()->lower(), $routeApi);
             file_put_contents($routeApiFile, $routeApi);
@@ -318,7 +318,7 @@ class CreateModuleSub extends Command
     private function createFilter(): void
     {
         $filters = [];
-        $basePath = base_path() . '/modules/' . $this->module . '/Vue/filters/';
+        $basePath = config('modules.paths.modules') . '/'. $this->module . '/Vue/filters/';
         $jsonPath = $basePath . Str::of($this->name)->snake()->slug()->lower() . '.json';
         File::ensureDirectoryExists($basePath);
         if (File::exists($jsonPath)) {
